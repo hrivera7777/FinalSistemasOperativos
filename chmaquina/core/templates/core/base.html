@@ -1,0 +1,326 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CH Maquina</title>
+    {% load static %}
+	<!--Boostrap-->
+	<script src="{% static 'core/js/jquery-3.4.1.min.js' %}"></script>
+	<link rel="stylesheet" href="{% static 'core/css/bootstrap.min.css' %}"> 
+	<script src="{% static 'core/js/bootstrap.min.js' %}"></script>
+	
+	
+	<!--others-->
+	<link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
+	
+	
+</head>
+
+<body>
+	<!--barra de navegación-->
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	 <!-- <a class="navbar-brand" href="#">Navbar</a>-->
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+		<div class="navbar-nav">
+		  <!--<a class="nav-item nav-link active" href="#">Abrir </a>-->
+		  <a class="nav-item nav-link " href="#">Abrir </a>
+		  <a class="nav-item nav-link" href="#">Ejecutar</a>
+		  <a class="nav-item nav-link" href="#">Mostrar Memoria</a>
+		  <a class="nav-item nav-link" href="#">Paso a Paso</a>
+		  <a class="nav-item nav-link" href="#">Salir</a>
+		  <!--<a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>-->
+		</div>
+	  </div>
+	</nav>
+	
+	<!--contenido-->
+		<!--nombre del programa, variables, acumulador y otros-->
+	<section id="grande1">
+		<section id="uno">
+			<table>
+					<tr>
+							<td>
+							Memoria:
+							</td>
+							<td id="cajaM">
+								<input type="number" name="memoria" id="memoria" min="1" max="100" value="100">
+							</td>
+					</tr>
+
+					<tr>
+							<td>
+							Kernel:
+							</td>
+							<td id="cajaK">
+								<input type="number" name="kernel" id="kernel" min="1" max="100" value="69">
+							</td>
+					</tr>
+				</table>
+		</section>
+
+
+		<section id="dos">
+			<table>
+				<tr>
+					<td>
+					Acumulador:
+					</td>
+					<td id="cajaAcum">
+						<input type="text" name="acumulador" id="acumulador">
+					</td>
+
+				</tr>
+				<tr id="rowProg">
+					<td>
+					Programa:
+					</td>
+					<td id="cajaProg">
+						<input type="text" name="programa" id="programa">
+					</td>
+
+				</tr>
+				<tr>
+					<td>
+					PC:
+					</td>
+					<td id="cajaPC">
+						<input type="text" name="pc" id="pc">
+					</td>
+
+				</tr>
+
+
+			</table>
+
+		</section>
+		
+		<section class="overflow-auto" id="tres" >
+			<!--<textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>-->
+			
+			
+			<table class="table table-borderless table-hover table-sm">
+			  <thead>
+				<tr>
+				  <th scope="col">Memoria</th>
+				  <th scope="col">Instrucción</th>
+				</tr>
+			  </thead>
+			  <tbody>
+				<tr>
+				  <th scope="row">1</th>
+				  <td>Mark</td>
+				  
+			
+				</tr>
+				<tr>
+				  <th scope="row">2</th>
+				  <td>Jacob</td>
+				  
+				  
+				</tr>
+				
+			  </tbody>
+			</table>
+
+			
+		</section>
+		
+		<section class="overflow-auto" id="cuarta">
+			
+			<table class="table table-borderless table-hover table-sm">
+				  <thead>
+					<tr>
+					  <th scope="col">Pos</th>
+					  <th scope="col">Variables</th>
+					</tr>
+				  </thead>
+				  <tbody>
+					<tr>
+					  <th scope="row">1</th>
+					  <td>Mark</td>
+
+
+					</tr>
+					<tr>
+					  <th scope="row">2</th>
+					  <td>Jacob</td>
+
+
+					</tr>
+
+				  </tbody>
+			</table>
+		
+		</section>
+		
+		<section class="overflow-auto" id="quinta">
+			<table class="table table-borderless table-hover table-sm">
+				  <thead>
+					<tr>
+					  <th scope="col">Pos</th>
+					  <th scope="col">Etiquetas</th>
+					</tr>
+				  </thead>
+				  <tbody>
+					<tr>
+					  <th scope="row">1</th>
+					  <td>Mark</td>
+
+
+					</tr>
+					<tr>
+					  <th scope="row">2</th>
+					  <td>Jacob</td>
+
+
+					</tr>
+
+				  </tbody>
+			</table>
+			
+		</section>
+		
+		<section class="overflow-auto" id="sexta">
+			<table class="table table-borderless table-hover table-responsive-sm" >
+				  <thead>
+					<tr>
+					  <th scope="col">ID</th>
+					  <th scope="col">Programa</th>
+						<th scope="col">#Ins</th>
+						<th scope="col">RB</th>
+						<th scope="col">RLC</th>
+						<th scope="col">RLP</th>
+					</tr>
+				  </thead>
+				  <tbody>
+					<tr>
+					  <th scope="row">1</th>
+					  <td>xxx</td>
+						<td>xxxx</td>
+						<td>xxxx</td>
+						<td>xxxx</td>
+						<td>xxxx</td>
+
+
+					</tr>
+					<tr>
+					  <th scope="row">2</th>
+					    <td>xxx</td>
+						<td>xxxx</td>
+						<td>xxxx</td>
+						<td>xxxx</td>
+						<td>xxxx</td>
+
+
+					</tr>
+					  
+					  <tr>
+					  <th scope="row">3</th>
+					    <td>xxxxx</td>
+						<td>xxxx</td>
+						<td>xxxx</td>
+						<td>xxxxx</td>
+						<td>xxxxxx</td>
+
+
+					</tr>
+					  <tr>
+					  <th scope="row">4</th>
+					    <td>xxxxx</td>
+						<td>xxxx</td>
+						<td>xxxx</td>
+						<td>xxxxx</td>
+						<td>xxxxxx</td>
+
+
+					</tr>
+					  <tr>
+					  <th scope="row">5</th>
+					    <td>xxxxx</td>
+						<td>xxxx</td>
+						<td>xxxx</td>
+						<td>xxxxx</td>
+						<td>xxxxxx</td>
+
+
+					</tr>
+					  <tr>
+					  <th scope="row">6</th>
+					    <td>xxxxx</td>
+						<td>xxxx</td>
+						<td>xxxx</td>
+						<td>xxxxx</td>
+						<td>xxxxxx</td>
+
+
+					</tr>
+
+				  </tbody>
+			</table>
+		
+		</section>
+		
+	</section>
+	
+		<!--contenedores de imágenes-->
+	<section id="grande2">
+		<figure>
+			<img src="{% static 'core/img/screen_tablet.png' %}" id="pantalla" alt="">
+			
+			<div class="overflow-auto" id="contPantalla"> 
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas commodo faucibus nulla, at finibus nunc tristique id. Nulla non sapien id tortor posuere commodo quis sed leo. Nunc a mauris velit. Fusce metus urna, eleifend nec imperdiet vel, gravida eu nibh. Vivamus lobortis eu ante ac tincidunt. Vivamus id pharetra metus, vitae rhoncus sem. Nulla facilisi. Pellentesque nec accumsan arcu. Maecenas id erat congue velit cursus elementum. Nullam eget euismod velit. Quisque euismod ultricies dapibus. Proin maximus ex vitae libero feugiat pretium.
+
+Integer augue libero, venenatis ut suscipit sit amet, tristique in nisi. Vestibulum neque nunc, gravida a porttitor sed, sollicitudin in sapien. Maecenas viverra eros at consectetur rutrum. In at imperdiet metus. Mauris eleifend convallis magna, ac volutpat sapien interdum quis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec non vehicula eros, vel pulvinar diam.
+			</div>
+			
+			<section id="modo">
+				Modo Kernel
+			</section>
+			
+			<img src="{% static 'core/img/impresora.png' %}" id="impresora" alt="">
+			
+			<div id="contImpresora"> 
+				hi there
+			</div>
+			
+		</figure>
+	</section>
+		
+	
+		<!--Para cargar la memoria-->
+	<section class="overflow-auto" id="grande3">
+		
+		<table class="table table-borderless table-hover table-sm">
+				  <thead>
+					<tr>
+					 <th scope="col"></th>
+					  <th scope="col">Dirección</th>
+					  <th scope="col">Contenido</th>
+					</tr>
+				  </thead>
+				  <tbody>
+					<tr>
+				      <td><img src="{% static 'core/img/icon_a.png' %}" alt="" height="20px" width="20px"></td>
+					  <th scope="row">0035</th>
+					  <td>xxxxx</td>
+
+
+					</tr>
+					<tr>
+						<td><img src="{% static 'core/img/icon_os.png' %}" alt="" height="20px" width="20px"></td>
+					  <th scope="row">0036</th>
+					  <td>xxxxx</td>
+
+
+					</tr>
+
+				  </tbody>
+			</table>
+	
+	</section>
+	
+</body>
+</html>
