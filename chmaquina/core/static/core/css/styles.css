@@ -12,6 +12,65 @@ tr{
 	font-weight: bold;
 }
 
+
+#btnAbrir{
+	cursor: pointer;
+}
+
+#btnUp{
+	display: none;
+    font-family: unset;
+    font-size: unset;
+    line-height: unset;
+    margin-top: 6px;
+    background-color: #343a40;
+    color: #9a9da0;
+	border: none;
+	outline: none;
+	animation: parpadeo 5s ease infinite;
+}
+
+#btnUp:hover{
+	color: #8C4545;
+}
+@keyframes parpadeo { 
+	0%{
+		background-color: rgba(0, 0, 0, 0.0);
+		color: #B4D5D9;
+	}
+
+	25%{
+		background-color: rgba(255, 249, 249, 1);
+		color: #343a40;
+	}
+
+	50%{
+		background-color: rgba(255, 255, 255, 0.0);
+		color: #B4D5D9;
+	}
+	75%{
+		background-color: rgba(247, 242, 242, 1);
+		color: #343a40;
+	}
+	100%{
+		background-color: rgba(243, 241, 241, 0.0);
+		color: #B4D5D9;
+	}
+	
+
+ }
+
+
+/*input[type="file"]#subirArchivoCh{
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+	}
+*/
+
 #grande1{
 	width: 528px;
 	height: 660px;
@@ -21,6 +80,8 @@ tr{
 	float: left;
 }
 /* para la primera caja de texto */
+
+
 #uno{
 	float: left;
 	background-color: #FFFFFF;

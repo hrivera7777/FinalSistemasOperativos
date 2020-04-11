@@ -2,17 +2,20 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>CH Maquina</title>
+<title>CH Maquina</title> <!--carga de archivos static-->
     {% load static %}
 	<!--Boostrap-->
-	<script src="{% static 'core/js/jquery-3.4.1.min.js' %}"></script>
+	
+	
 	<link rel="stylesheet" href="{% static 'core/css/bootstrap.min.css' %}"> 
-	<script src="{% static 'core/js/bootstrap.min.js' %}"></script>
+	
+	<link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
 	
 	
 	<!--others-->
-	<link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
-	
+	<script src="{% static 'core/js/jquery-3.4.1.min.js' %}"></script>
+	<script src="{% static 'core/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'core/js/script.js' %}"></script>
 	
 </head>
 
@@ -26,7 +29,17 @@
 	  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 		<div class="navbar-nav">
 		  <!--<a class="nav-item nav-link active" href="#">Abrir </a>-->
-		  <a class="nav-item nav-link " href="#">Abrir </a>
+
+		  <!--formulario para subir el archivo a una carpeta especifica-->
+		  <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+		  	<input type="file" name="archivo" id="subirArchivoCh" accept=".ch" style="display : none;" >
+			 <a class="nav-item nav-link" id="btnAbrir" onclick="document.getElementById('subirArchivoCh').click();
+		 	 document.getElementById('btnUp').style = 'display : block;'
+		 	 document.getElementById('btnAbrir').style = 'display : none;'" >Abrir</a>
+		 	 <input type="submit" value="Subir" id="btnUp"  class="btnsubir" >
+		  </form>
+		 <!---------------------------------------------->
+		 
 		  <a class="nav-item nav-link" href="#">Ejecutar</a>
 		  <a class="nav-item nav-link" href="#">Mostrar Memoria</a>
 		  <a class="nav-item nav-link" href="#">Paso a Paso</a>
