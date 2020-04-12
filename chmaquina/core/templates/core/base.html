@@ -2,17 +2,14 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>CH Maquina</title> <!--carga de archivos static-->
+<title>{{title}}</title> <!--carga de archivos static-->
     {% load static %}
-	<!--Boostrap-->
-	
-	
+	<!--css-->
 	<link rel="stylesheet" href="{% static 'core/css/bootstrap.min.css' %}"> 
-	
 	<link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
 	
 	
-	<!--others-->
+	<!--js-->
 	<script src="{% static 'core/js/jquery-3.4.1.min.js' %}"></script>
 	<script src="{% static 'core/js/bootstrap.min.js' %}"></script>
 	<script src="{% static 'core/js/script.js' %}"></script>
@@ -82,7 +79,8 @@
 					Acumulador:
 					</td>
 					<td id="cajaAcum">
-						<input type="text" name="acumulador" id="acumulador">
+						<div id="acumulador"></div>
+						<!--<input type="text" name="acumulador" id="acumulador">-->
 					</td>
 
 				</tr>
@@ -91,7 +89,8 @@
 					Programa:
 					</td>
 					<td id="cajaProg">
-						<input type="text" name="programa" id="programa">
+						<div id="programa">{{nombre}} </div>
+						<!--<input type="text" name="programa" id="programa">-->
 					</td>
 
 				</tr>
@@ -100,7 +99,8 @@
 					PC:
 					</td>
 					<td id="cajaPC">
-						<input type="text" name="pc" id="pc">
+						<div id="pc"></div>
+						<!--<input type="text" name="pc" id="pc">-->
 					</td>
 
 				</tr>
@@ -284,9 +284,7 @@
 			<img src="{% static 'core/img/screen_tablet.png' %}" id="pantalla" alt="">
 			
 			<div class="overflow-auto" id="contPantalla"> 
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas commodo faucibus nulla, at finibus nunc tristique id. Nulla non sapien id tortor posuere commodo quis sed leo. Nunc a mauris velit. Fusce metus urna, eleifend nec imperdiet vel, gravida eu nibh. Vivamus lobortis eu ante ac tincidunt. Vivamus id pharetra metus, vitae rhoncus sem. Nulla facilisi. Pellentesque nec accumsan arcu. Maecenas id erat congue velit cursus elementum. Nullam eget euismod velit. Quisque euismod ultricies dapibus. Proin maximus ex vitae libero feugiat pretium.
-
-Integer augue libero, venenatis ut suscipit sit amet, tristique in nisi. Vestibulum neque nunc, gravida a porttitor sed, sollicitudin in sapien. Maecenas viverra eros at consectetur rutrum. In at imperdiet metus. Mauris eleifend convallis magna, ac volutpat sapien interdum quis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec non vehicula eros, vel pulvinar diam.
+				{{sintax}}
 			</div>
 			
 			<section id="modo">

@@ -5,6 +5,7 @@ from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
 from .models import ArchivosCh
 from django.shortcuts import get_object_or_404
+from .comprobar import sintax
 
 
 
@@ -14,12 +15,21 @@ class HomePageView(UpdateView):
     #form_class = ArchivoForm
     model = ArchivosCh
     fields = ['archivo']
+    
+
     success_url= reverse_lazy('home')
     template_name = "core/base.html"
     
     
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name,{'title': "Ch Máquina"})
+        #ruta=request.FILES.get('archivo')
+        #nombre = ruta.name
+        tup = ArchivosCh.objects.all()
+        for tp in tup:
+            nombre=tp.archivo
+        instancia= sintax()
+        #print(sintax.abrirArchivo(self))    
+        return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'sintax':instancia.abrirArchivo()})
     """
     def get_object(self, queryset=None):
         return get_object_or_404(ArchivosCh)
