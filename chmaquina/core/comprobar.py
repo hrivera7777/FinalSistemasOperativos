@@ -113,4 +113,49 @@ class sintax:
     def sAlmacene(self, linea):
         pass
     
+    def sVaya(self, linea):
+        pass
+    def sNueva(self, linea):
+        pass
+    def sEtiqueta(self, linea):
+        pass
+    def sLea(self, linea):
+        pass
+    def sSume(self, linea):
+        pass
+    def sReste(self, linea):
+        pass
+    def sMultiplique(self, linea):
+        pass
+    def sDivida(self, linea):
+        pass
+    def sPotencia(self, linea):
+        pass
+    def sModulo(self, linea):
+        pass
+    def sConcatene(self, linea):
+        pass
+    def sElimine(self, linea):
+        pass
+    def sExtraiga(self, linea):
+        pass
+    def sY(self, linea):
+        pass
+    def sO(self, linea):
+        pass
+    def sNo(self, linea):
+        pass
+    def sMuestre(self, linea):
+        pass
+    def sImprima(self, linea):
+        pass
+    def sAbsoluto(self, linea):
+        pass
+    def sRetorne(self, linea, i):
+        if not (linea[0] == 'retorne') or not isinstance(linea[1], (int, float, complex)):  
+            return -1
+        else:
+            return i
+        
+
 #print(sintax.abrirArchivo())
