@@ -100,6 +100,8 @@ class sintax:
                 return i
             elif operador == 'vayasi':
                 return i
+            elif operador == '//':
+                return i
             else:
                 return -1
         return i
@@ -109,25 +111,49 @@ class sintax:
 
     #funcion si existe la variable dentro del archivo ch 
     def existe(self, texto, nomVar, i): #nomVar = nombre variable 
-        for j in range(0,(i-1)):
-            linea = texto[j].rstrip().split()
+        if i==0:
+            return False
+        else:
+            for j in range(0,(i-1)):
+                linea = texto[j].rstrip().split()
 
-            if(linea[0]=='nueva' and linea[1]==nomVar):
-                return True
-            else:
-                return False
+                if(linea[0]=='nueva' and linea[1]==nomVar):
+                    return True
+                else:
+                    return False
+
+    def tipoCorrec(self, texto, tipoVar, nomVar, i): #funcion que verifica si el tipo de la variable es correcto
+        if i==0:
+            return False
+        else:
+            for j in range(0,(i-1)):
+                linea = texto[j].rstrip().split()
+
+                if(linea[0]=='nueva' and linea[1]==nomVar and linea[2]==tipoVar):
+                    return True
+                else:
+                    return False
+
 
 
     #todos los metodos de sintaxis comienzan con s y a continuación con el nombre del operador
     
-    def sCargue(self, linea, i):
+    def sCargue(self, linea, i,texto):
+        if linea[0] == 'cargue' and __self__.exite(texto, linea[1], i):
+            return -1
+        else:
+            return i
+        
+
+    def sAlmacene(self, linea, i,texto):
+        if linea[0] == 'alamacene' and __self__.exite(texto, linea[1], i):
+            return -1
+        else:
+            return i
+    
+    def sVaya(self, linea, i,texto):
         pass
 
-    def sAlmacene(self, linea, i):
-        pass
-    
-    def sVaya(self, linea, i):
-        pass
     def sNueva(self, linea, i):
         if(len(linea)==4) :
             if linea[0] == 'nueva' and (linea[2] == 'C' or linea[2] == 'I' or linea[2] == 'R' or linea[2] == 'L'):
@@ -176,15 +202,15 @@ class sintax:
                 else:
                     return i
 
-        
         elif (len(linea)==3):
-            if linea[0] == 'nueva' and (linea[2] == 'C' or linea[2] == 'I' or linea[2] == 'R' or linea[2] == 'L'):
+            if (linea[0] == 'nueva') and (linea[2] == 'C' or linea[2] == 'I' or linea[2] == 'R' or linea[2] == 'L'):
                 return -1
             else:
                 return i    
+        
         else:
             return i
-
+        """
         anumero = 0
         bandera = False
         try:
@@ -198,43 +224,89 @@ class sintax:
             return -1
         else:
             return i
+        """
+    def sEtiqueta(self, linea, i,texto):
+        pass
 
+    def sLea(self, linea, i,texto):
+        if linea[0] == 'lea' and __self__.exite(texto, linea[1], i):
+            return -1
+        else:
+            return i
 
+    def sSume(self, linea, i,texto):
+        if linea[0] == 'sume' and __self__.exite(texto, linea[1], i) and (__self__.tipoCorrec(texto,linea[1],'i',i) or __self__.tipoCorrec(texto,linea[1],'r',i)):
+            return -1
+        else:
+            return i
+
+    def sReste(self, linea, i,texto):
+        if linea[0] == 'reste' and __self__.exite(texto, linea[1], i) and (__self__.tipoCorrec(texto,linea[1],'i',i) or __self__.tipoCorrec(texto,linea[1],'r',i)):
+            return -1
+        else:
+            return i
+
+    def sMultiplique(self, linea, i,texto):
+        if linea[0] == 'multiplique' and __self__.exite(texto, linea[1], i) and (__self__.tipoCorrec(texto,linea[1],'i',i) or __self__.tipoCorrec(texto,linea[1],'r',i)):
+            return -1
+        else:
+            return i
+
+    def sDivida(self, linea, i,texto):
+        if linea[0] == 'divida' and __self__.exite(texto, linea[1], i) and (__self__.tipoCorrec(texto,linea[1],'i',i) or __self__.tipoCorrec(texto,linea[1],'r',i)):
+            return -1
+        else:
+            return i
+
+    def sPotencia(self, linea, i,texto):
         pass
-    def sEtiqueta(self, linea, i):
+
+    def sModulo(self, linea, i,texto): # puede que solo sea entero 
+        if linea[0] == 'modulo' and __self__.exite(texto, linea[1], i) and (__self__.tipoCorrec(texto,linea[1],'i',i) or __self__.tipoCorrec(texto,linea[1],'r',i)):
+            return -1
+        else:
+            return i
+
+    def sConcatene(self, linea, i,texto):
+        if linea[0] == 'concatene' and __self__.exite(texto, linea[1], i):
+            return -1
+        else:
+            return i
+
+    def sElimine(self, linea, i,texto):
+        if linea[0] == 'elimine' and __self__.exite(texto, linea[1], i):
+            return -1
+        else:
+            return i
+
+    def sExtraiga(self, linea, i,texto):
         pass
-    def sLea(self, linea, i):
+
+    def sY(self, linea, i,texto):
         pass
-    def sSume(self, linea, i):
+
+    def sO(self, linea, i,texto):
         pass
-    def sReste(self, linea, i):
+    def sNo(self, linea, i,texto):
         pass
-    def sMultiplique(self, linea, i):
-        pass
-    def sDivida(self, linea, i):
-        pass
-    def sPotencia(self, linea, i):
-        pass
-    def sModulo(self, linea, i):
-        pass
-    def sConcatene(self, linea, i):
-        pass
-    def sElimine(self, linea, i):
-        pass
-    def sExtraiga(self, linea, i):
-        pass
-    def sY(self, linea, i):
-        pass
-    def sO(self, linea, i):
-        pass
-    def sNo(self, linea, i):
-        pass
-    def sMuestre(self, linea, i):
-        pass
-    def sImprima(self, linea, i):
-        pass
-    def sAbsoluto(self, linea, i):
-        pass
+
+    def sMuestre(self, linea, i,texto):
+        if linea[0] == 'muestre' and __self__.exite(texto, linea[1], i):
+            return -1
+        else:
+            return i
+
+    def sImprima(self, linea, i,texto):
+        if linea[0] == 'almacene' and __self__.exite(texto, linea[1], i):
+            return -1
+        else:
+            return i
+            
+    def sAbsoluto(self, linea, i,texto):
+        if linea[0] == 'absoluto' and __self__.exite(texto, linea[1], i) and len(linea)==3:
+            return -1
+        else:
+            return i
     
     def sRetorne(self, linea, i):
         #####################################
@@ -253,16 +325,29 @@ class sintax:
             return -1
         else:
             return i
+        
+    def sComentario(self, linea):
+        if linea[0].find('//') == 0:
+            return -1
+        else:
+            return
+        pass
 
     #pruba metodo sRetorne
 
     j=0
     palabras2=[]
     bandera = False
+    
+    """
+    for palabras2 in leer[::1]:
+
+        palabras2.rstrip().split()
+        
+    """
     for j in range(len(leer)):
         palabras2 = leer[j].rstrip().split()
-        anumero = 0
-        
+        anumero = 0    
         try:
             anumero = int(palabras2[1])
             bandera= True
@@ -271,7 +356,7 @@ class sintax:
             print('no se pudo convertir')
             
         if (palabras2[0] == 'retorne')  and (len(palabras2)==2 and bandera):  #and (isinstance(anumero, (int, float)))
-            print (-1)
+            print ("\n",-1)
             print(type(palabras2[1]), 'if')
             print(palabras2,'if')
             print(len(palabras2), 'if')
@@ -279,6 +364,6 @@ class sintax:
             print(type(palabras2[1]), 'else')
             print(palabras2,'else')
             print(len(palabras2), 'else')
-            print (j)
+            print ("\n",j)
 
 #print(sintax.abrirArchivo())
