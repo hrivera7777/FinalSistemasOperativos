@@ -120,6 +120,16 @@ class sintax:
                     return True
                 else:
                     return False
+    
+    #funcion si existe la etiqueta dentro del archivo ch 
+    def existeEtiq(self, texto, nomEtiq): #nomVar = nombre variable 
+        for j in range(len(texto)-1):
+            linea = texto[j].rstrip().split()
+
+            if(linea[0]=='etiqueta' and linea[1]==nomEtiq):
+                 return True
+            else:
+                return False
 
     #funcion que verifica si el tipo de la variable es correcto
     def tipoCorrec(self, texto, tipoVar, nomVar, i): 
@@ -138,32 +148,38 @@ class sintax:
     #todos los metodos de sintaxis comienzan con s y a continuación con el nombre del operador
     
     def sCargue(self, linea, i,texto):
-        if linea[0] == 'cargue' and __self__.existe(texto, linea[1], i):
+        if linea[0] == 'cargue' and self.existe(texto, linea[1], i):
             return -1
         else:
             return i
         
 
     def sAlmacene(self, linea, i,texto):
-        if linea[0] == 'alamacene' and __self__.existe(texto, linea[1], i):
+        if linea[0] == 'alamacene' and self.existe(texto, linea[1], i):
             return -1
         else:
             return i
     
     def sVaya(self, linea, i,texto):
-        pass
+        if len(linea)==2 and self.existeEtiq(self, texto, linea[1]):
+            return -1
+        else:
+            return i
 
     def sVayasi(self, linea, i,texto):
-        pass
+        if len(linea)==3 and self.existeEtiq(self, texto, linea[1]) and self.existe(self, texto, linea[2]):
+            return -1
+        else:
+            return i
 
-    def sNueva(self, linea, i):
+    def sNueva(self, linea, texto, i):
         if(len(linea)==4) :
-            if linea[0] == 'nueva' and (linea[2] == 'C' or linea[2] == 'I' or linea[2] == 'R' or linea[2] == 'L'):
+            if linea[0] == 'nueva' and not(self.existe(texto, linea[1], i)) and (linea[2] == 'C' or linea[2] == 'I' or linea[2] == 'R' or linea[2] == 'L'):
                 if linea[2] == 'I':
                     anumero = 0
                     bandera = False
                     try:
-                        anumero = int(linea[1])
+                        anumero = int(linea[3])
                         bandera= True
                     except:
                         bandera= False
@@ -177,7 +193,7 @@ class sintax:
                     anumero = 0.0
                     bandera = False
                     try:
-                        anumero = float(linea[1])
+                        anumero = float(linea[3])
                         bandera= True
                     except:
                         bandera= False
@@ -191,7 +207,7 @@ class sintax:
                     anumero = 2
                     bandera = False
                     try:
-                        anumero = int(linea[1])
+                        anumero = int(linea[3])
                         bandera= True
                     except:
                         bandera= False
@@ -199,11 +215,13 @@ class sintax:
                     if bandera and (anumero== 0 or anumero == 1):
                         return -1
                     else:
-                        return i       
+                        return i
                 else:
-                    return i
+                        return i       
+            else:
+               return i
         elif (len(linea)==3):
-            if (linea[0] == 'nueva') and (linea[2] == 'C' or linea[2] == 'I' or linea[2] == 'R' or linea[2] == 'L'):
+            if (linea[0] == 'nueva') and not(self.existe(texto, linea[1], i)) and (linea[2] == 'C' or linea[2] == 'I' or linea[2] == 'R' or linea[2] == 'L'):
                 return -1
             else:
                 return i    
@@ -212,103 +230,114 @@ class sintax:
     #fin funcion sNueva
       
     def sEtiqueta(self, linea, i,texto):
-        if len(linea)==3 and linea[0] == 'etiqueta' and (linea[2] >=0 or linea[2] <= len(texto)):
+        #con este segmento convierto a int la variable si es posible 
+        #####################################
+        anumero = 0
+        bandera = False
+        try:
+            anumero = int(linea[2])
+            bandera= True
+        except:
+            bandera= False
+            print('no se pudo convertir a entero')
+        #############################################  
+        if len(linea)==3 and bandera and linea[0] == 'etiqueta' and (anumero >=0 and anumero <= (len(texto)-1)):
             return -1
         else:
             return i
 
     def sLea(self, linea, i,texto):
-        if  len(linea)==2 and linea[0] == 'lea' and __self__.existe(texto, linea[1], i):
+        if  len(linea)==2 and linea[0] == 'lea' and self.existe(texto, linea[1], i):
             return -1
         else:
             return i
 
     def sSume(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'sume' and __self__.existe(texto, linea[1], i) and (__self__.tipoCorrec(texto,linea[1],'I',i) or __self__.tipoCorrec(texto,linea[1],'R',i)):
+        if len(linea)==2 and linea[0] == 'sume' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,linea[1],'I',i) or self.tipoCorrec(texto,linea[1],'R',i)):
             return -1
         else:
             return i
 
     def sReste(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'reste' and __self__.existe(texto, linea[1], i) and (__self__.tipoCorrec(texto,linea[1],'I',i) or __self__.tipoCorrec(texto,linea[1],'R',i)):
+        if len(linea)==2 and linea[0] == 'reste' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,linea[1],'I',i) or self.tipoCorrec(texto,linea[1],'R',i)):
             return -1
         else:
             return i
 
     def sMultiplique(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'multiplique' and __self__.existe(texto, linea[1], i) and (__self__.tipoCorrec(texto,linea[1],'I',i) or __self__.tipoCorrec(texto,linea[1],'R',i)):
+        if len(linea)==2 and linea[0] == 'multiplique' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,linea[1],'I',i) or self.tipoCorrec(texto,linea[1],'R',i)):
             return -1
         else:
             return i
 
     def sDivida(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'divida' and __self__.existe(texto, linea[1], i) and (__self__.tipoCorrec(texto,linea[1],'I',i) or __self__.tipoCorrec(texto,linea[1],'R',i)):
+        if len(linea)==2 and linea[0] == 'divida' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,linea[1],'I',i) or self.tipoCorrec(texto,linea[1],'R',i)):
             return -1
         else:
             return i
 
     def sPotencia(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'potencia' and __self__.existe(texto, linea[1], i) and __self__.tipoCorrec(texto,linea[1],'I',i):
+        if len(linea)==2 and linea[0] == 'potencia' and self.existe(texto, linea[1], i) and self.tipoCorrec(texto,linea[1],'I',i):
             return -1
         else:
             return i
 
     def sModulo(self, linea, i,texto): # puede que solo sea entero 
-        if len(linea)==2 and linea[0] == 'modulo' and __self__.existe(texto, linea[1], i) and (__self__.tipoCorrec(texto,linea[1],'I',i) or __self__.tipoCorrec(texto,linea[1],'R',i)):
+        if len(linea)==2 and linea[0] == 'modulo' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,linea[1],'I',i) or self.tipoCorrec(texto,linea[1],'R',i)):
             return -1
         else:
             return i
 
     def sConcatene(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'concatene' and __self__.existe(texto, linea[1], i):
+        if len(linea)==2 and linea[0] == 'concatene' and self.existe(texto, linea[1], i):
             return -1
         else:
             return i
 
     def sElimine(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'elimine' and __self__.existe(texto, linea[1], i):
+        if len(linea)==2 and linea[0] == 'elimine' and self.existe(texto, linea[1], i):
             return -1
         else:
             return i
 
     def sExtraiga(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'extraiga' and __self__.existe(texto, linea[1], i) and __self__.tipoCorrec(texto,linea[1],'I',i):
+        if len(linea)==2 and linea[0] == 'extraiga' and self.existe(texto, linea[1], i) and self.tipoCorrec(texto,linea[1],'I',i):
             return -1
         else:
             return i
 
     def sY(self, linea, i,texto):
-        if len(linea)==4 and linea[0] == 'Y' and __self__.existe(texto, linea[1], i) and __self__.existe(texto, linea[2], i) and __self__.tipoCorrec(texto,linea[1],'L',i) and __self__.tipoCorrec(texto,linea[2],'L',i) and not(__self__.existe(texto, linea[3], i)):
+        if len(linea)==4 and linea[0] == 'Y' and self.existe(texto, linea[1], i) and self.existe(texto, linea[2], i) and self.tipoCorrec(texto,linea[1],'L',i) and self.tipoCorrec(texto,linea[2],'L',i) and not(self.existe(texto, linea[3], i)):
             return -1
         else:
             return i
 
     def sO(self, linea, i,texto):
-        if len(linea)==4 and linea[0] == 'O' and __self__.existe(texto, linea[1], i) and __self__.existe(texto, linea[2], i) and __self__.tipoCorrec(texto,linea[1],'L',i) and __self__.tipoCorrec(texto,linea[2],'L',i) and not(__self__.existe(texto, linea[3], i)):
+        if len(linea)==4 and linea[0] == 'O' and self.existe(texto, linea[1], i) and self.existe(texto, linea[2], i) and self.tipoCorrec(texto,linea[1],'L',i) and self.tipoCorrec(texto,linea[2],'L',i) and not(self.existe(texto, linea[3], i)):
             return -1
         else:
             return i
         
     def sNo(self, linea, i,texto):
-        if len(linea)==3 and linea[0] == 'NO' and __self__.existe(texto, linea[1], i) and __self__.tipoCorrec(texto,linea[1],'L',i) and not(__self__.existe(texto, linea[2], i)):
+        if len(linea)==3 and linea[0] == 'NO' and self.existe(texto, linea[1], i) and self.tipoCorrec(texto,linea[1],'L',i) and not(self.existe(texto, linea[2], i)):
             return -1
         else:
             return i
 
     def sMuestre(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'muestre' and __self__.existe(texto, linea[1], i):
+        if len(linea)==2 and linea[0] == 'muestre' and self.existe(texto, linea[1], i):
             return -1
         else:
             return i
 
     def sImprima(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'imprima' and __self__.existe(texto, linea[1], i):
+        if len(linea)==2 and linea[0] == 'imprima' and self.existe(texto, linea[1], i):
             return -1
         else:
             return i
             
     def sAbsoluto(self, linea, i,texto):
-        if len(linea)==3 and linea[0] == 'absoluto' and __self__.existe(texto, linea[1], i) and (__self__.tipoCorrec(texto,linea[1],'I',i) or __self__.tipoCorrec(texto,linea[1],'R',i)) and not(__self__.existe(texto, linea[2], i)) :
+        if len(linea)==3 and linea[0] == 'absoluto' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,linea[1],'I',i) or self.tipoCorrec(texto,linea[1],'R',i)) and not(self.existe(texto, linea[2], i)) :
             return -1
         else:
             return i
@@ -353,6 +382,7 @@ class sintax:
         palabras2.rstrip().split()
         
     """
+    """
     #prueba comentario
     for j in range(len(leer)):
         palabras2 = leer[j].rstrip().split()
@@ -362,6 +392,7 @@ class sintax:
         else:
             print(palabras[0])
             print(j)
+    """
     """
     #pruba metodo sRetorne
     for j in range(len(leer)):
@@ -400,4 +431,90 @@ class sintax:
         else:
             return i
         """
+    """
+    #prueba metodo sNueva
+    anumero = 0    
+    for j in range(len(leer)):
+        palabras2 = leer[j].rstrip().split()
+        if(len(palabras2)==4) :
+                if palabras2[0] == 'nueva' and (palabras2[2] == 'C' or palabras2[2] == 'I' or palabras2[2] == 'R' or palabras2[2] == 'L'):
+                    if palabras2[2] == 'I':
+                        anumero = 0
+                        bandera = False
+                        try:
+                            anumero = int(palabras2[3])
+                            bandera= True
+                        except:
+                            bandera= False
+                            print('no se pudo convertir a entero')
+                        if bandera:
+                            print(-1, "if tam 4 Integer") 
+                        else:
+                            print(j, ' else del if de 4 integer')
+                    
+                    elif palabras2[2] == 'R':
+                        anumero = 0.0
+                        bandera = False
+                        try:
+                            anumero = float(palabras2[3])
+                            bandera= True
+                        except:
+                            bandera= False
+                            print('no se pudo convertir a real')
+                        if bandera:
+                            print(-1, "if tam 4 Real")
+                        else:
+                            print(j, ' else del if de 4 real')
+
+                    elif palabras2[2] == 'L':
+                        anumero = 2
+                        bandera = False
+                        try:
+                            anumero = int(palabras2[3])
+                            bandera= True
+                        except:
+                            bandera= False
+                            print('no se pudo convertir a lógico')
+                        if bandera and (anumero== 0 or anumero == 1):
+                            print(-1, "if tam 4 logico")
+                        else:
+                            print (j, ' else del if de 4 logico')       
+                else:
+                    print (j, ' else del if de 4 grande')
+        elif (len(palabras2)==3):
+            if (palabras2[0] == 'nueva') and (palabras2[2] == 'C' or palabras2[2] == 'I' or palabras2[2] == 'R' or palabras2[2] == 'L'):
+                print(-1, "if tam 3")
+            else:
+                print(j, ' else del elif de 3')    
+        else:
+             print(j, ' else del if principal')
+    """
+    
+    """
+    #prueba metodo etiqueta 
+    anumero = 0    
+    for j in range(len(leer)):
+        palabras2 = leer[j].rstrip().split()
+        bandera = False
+        try:
+            anumero = int(palabras2[2])
+            bandera= True
+        except:
+            bandera= False
+            print('no se pudo convertir a entero')
+        #############################################  
+        if len(palabras2)==3 and bandera and palabras2[0] == 'etiqueta' and (anumero >=0 and anumero <= (len(leer)-1)):
+            print(-1, 'if')
+        else:
+            print(j, 'else')
+    """
+    """
+    for j in range(len(leer)):
+        palabras2 = leer[j].rstrip().split()
+        bandera = False
+        if len(palabras2)==2 and palabras2[0] == 'modulo' and self.existe(leer, palabras2[1], j) and (self.tipoCorrec(leer,palabras2[1],'I',j) or self.tipoCorrec(leer,palabras2[1],'R',j)):
+            print(-1, 'if')
+        else:
+            print(j, 'else')
+    """
 #print(sintax.abrirArchivo())
