@@ -1,3 +1,4 @@
+modulo cuatro
 nueva dos I 3
 modulo dos
 modulo tres

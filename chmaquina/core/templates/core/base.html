@@ -288,7 +288,10 @@
 			<img src="{% static 'core/img/screen_tablet.png' %}" id="pantalla" alt="">
 			
 			<div class="overflow-auto" id="contPantalla"> 
-				{{sintax}}
+			{% for sin in  sintax %}
+				{{sin}}
+			{% endfor %}
+				<!--{{sintax}}-->
 			</div>
 			
 			<section id="modo">

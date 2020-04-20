@@ -11,33 +11,43 @@ for tp in tup:
     ruta = str(nombre)
 class sintax:
     #while(True):
-    
-    
     #ruta = "media/" + ruta
     #print(ruta) 
-
     f = open("media/" + ruta, "r")
     myfile = File(f)
     print(myfile)
-    leer = myfile.readlines() #para leer linea a linea 
-    #print(leer)
+    leer = myfile.readlines() #para leer linea a linea #print(leer)
     f.close()
     myfile.close()
     
     def abrirArchivo(self):
         return str(self.leer)
     
+    ################################################
+    #metodo para hacer puebas de cada funcion
+
+    def prueba(self):
+        varPrueba = -2
+        lista2=[]
+        for i in range(len(self.leer)):
+            palabras2 = self.leer[i].rstrip().split()
+            varPrueba = self.sModulo(palabras2, i ,self.leer)
+            if varPrueba >=0:
+                concatene = "error en la linea " + str(varPrueba + 1)
+                lista2.append(concatene)
+            else:
+                lista2.append("Todo ok")
+        return lista2 
+    
     """
     print(leer[0].rstrip()) # con .rstrip() se pude eliminar el salto de linea generado automaticamente.
     print(leer[1])
     """
 
-    # funciones para verificar sintaxis de cada operador 
+    
     palabras = leer[0].rstrip().split()
     #print(palabras)
-    
-    
-
+  
     #la letra i se usará para indicar en que linea hay un error
 
     #funcion para verificar si una linea comienza con un operador
@@ -110,16 +120,19 @@ class sintax:
 
     #funcion si existe la variable dentro del archivo ch 
     def existe(self, texto, nomVar, i): #nomVar = nombre variable 
+        bandera = False
         if i==0:
             return False
         else:
-            for j in range(0,(i-1)):
+            for j in range(i):
+                print('buscando si existe en ', j+1)
+                print('estamos en la linea', i+1)
                 linea = texto[j].rstrip().split()
-
                 if(linea[0]=='nueva' and linea[1]==nomVar):
-                    return True
+                    bandera = True
                 else:
-                    return False
+                    bandera = False
+            return bandera
     
     #funcion si existe la etiqueta dentro del archivo ch 
     def existeEtiq(self, texto, nomEtiq): #nomVar = nombre variable 
@@ -132,18 +145,21 @@ class sintax:
                 return False
 
     #funcion que verifica si el tipo de la variable es correcto
-    def tipoCorrec(self, texto, tipoVar, nomVar, i): 
+    def tipoCorrec(self, texto, tipoVar, nomVar, i):
+        bandera = False 
         if i==0:
             return False
         else:
-            for j in range(0,(i-1)):
+            for j in range(i):
                 linea = texto[j].rstrip().split()
 
                 if(linea[0]=='nueva' and linea[1]==nomVar and linea[2]==tipoVar):
-                    return True
+                    bandera = True
                 else:
-                    return False
-
+                    bandera = False
+            return bandera
+    
+    # funciones para verificar sintaxis de cada operador 
     ##########################################################################################
     #todos los metodos de sintaxis comienzan con s y a continuación con el nombre del operador
     
@@ -253,37 +269,37 @@ class sintax:
             return i
 
     def sSume(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'sume' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,linea[1],'I',i) or self.tipoCorrec(texto,linea[1],'R',i)):
+        if len(linea)==2 and linea[0] == 'sume' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,'I',linea[1],i) or self.tipoCorrec(texto,'R',linea[1],i)):
             return -1
         else:
             return i
 
     def sReste(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'reste' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,linea[1],'I',i) or self.tipoCorrec(texto,linea[1],'R',i)):
+        if len(linea)==2 and linea[0] == 'reste' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,'I',linea[1],i) or self.tipoCorrec(texto,'R',linea[1],i)):
             return -1
         else:
             return i
 
     def sMultiplique(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'multiplique' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,linea[1],'I',i) or self.tipoCorrec(texto,linea[1],'R',i)):
+        if len(linea)==2 and linea[0] == 'multiplique' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,'I',linea[1],i) or self.tipoCorrec(texto,'R',linea[1],i)):
             return -1
         else:
             return i
 
     def sDivida(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'divida' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,linea[1],'I',i) or self.tipoCorrec(texto,linea[1],'R',i)):
+        if len(linea)==2 and linea[0] == 'divida' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,'I',linea[1],i) or self.tipoCorrec(texto,'R',linea[1],i)):
             return -1
         else:
             return i
 
     def sPotencia(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'potencia' and self.existe(texto, linea[1], i) and self.tipoCorrec(texto,linea[1],'I',i):
+        if len(linea)==2 and linea[0] == 'potencia' and self.existe(texto, linea[1], i) and self.tipoCorrec(texto,'I',linea[1],i):
             return -1
         else:
             return i
 
     def sModulo(self, linea, i,texto): # puede que solo sea entero 
-        if len(linea)==2 and linea[0] == 'modulo' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,linea[1],'I',i) or self.tipoCorrec(texto,linea[1],'R',i)):
+        if len(linea)==2 and linea[0] == 'modulo' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,'I',linea[1],i) or self.tipoCorrec(texto,'R',linea[1],i)):
             return -1
         else:
             return i
@@ -301,25 +317,25 @@ class sintax:
             return i
 
     def sExtraiga(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'extraiga' and self.existe(texto, linea[1], i) and self.tipoCorrec(texto,linea[1],'I',i):
+        if len(linea)==2 and linea[0] == 'extraiga' and self.existe(texto, linea[1], i) and self.tipoCorrec(texto,'I',linea[1],i):
             return -1
         else:
             return i
 
     def sY(self, linea, i,texto):
-        if len(linea)==4 and linea[0] == 'Y' and self.existe(texto, linea[1], i) and self.existe(texto, linea[2], i) and self.tipoCorrec(texto,linea[1],'L',i) and self.tipoCorrec(texto,linea[2],'L',i) and not(self.existe(texto, linea[3], i)):
+        if len(linea)==4 and linea[0] == 'Y' and self.existe(texto, linea[1], i) and self.existe(texto, linea[2], i) and self.tipoCorrec(texto,'L',linea[1],i) and self.tipoCorrec(texto,'L',linea[2],i) and not(self.existe(texto, linea[3], i)):
             return -1
         else:
             return i
 
     def sO(self, linea, i,texto):
-        if len(linea)==4 and linea[0] == 'O' and self.existe(texto, linea[1], i) and self.existe(texto, linea[2], i) and self.tipoCorrec(texto,linea[1],'L',i) and self.tipoCorrec(texto,linea[2],'L',i) and not(self.existe(texto, linea[3], i)):
+        if len(linea)==4 and linea[0] == 'O' and self.existe(texto, linea[1], i) and self.existe(texto, linea[2], i) and self.tipoCorrec(texto,'L',linea[1],i) and self.tipoCorrec(texto,'L',linea[2],i) and not(self.existe(texto, linea[3], i)):
             return -1
         else:
             return i
         
     def sNo(self, linea, i,texto):
-        if len(linea)==3 and linea[0] == 'NO' and self.existe(texto, linea[1], i) and self.tipoCorrec(texto,linea[1],'L',i) and not(self.existe(texto, linea[2], i)):
+        if len(linea)==3 and linea[0] == 'NO' and self.existe(texto, linea[1], i) and self.tipoCorrec(texto,'L',linea[1],i) and not(self.existe(texto, linea[2], i)):
             return -1
         else:
             return i
@@ -337,7 +353,7 @@ class sintax:
             return i
             
     def sAbsoluto(self, linea, i,texto):
-        if len(linea)==3 and linea[0] == 'absoluto' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,linea[1],'I',i) or self.tipoCorrec(texto,linea[1],'R',i)) and not(self.existe(texto, linea[2], i)) :
+        if len(linea)==3 and linea[0] == 'absoluto' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,'I',linea[1],i) or self.tipoCorrec(texto,'R',linea[1],i)) and not(self.existe(texto, linea[2], i)) :
             return -1
         else:
             return i

@@ -29,7 +29,8 @@ class HomePageView(UpdateView):
             nombre=tp.archivo
         instancia= sintax()
         #print(sintax.abrirArchivo(self))    
-        return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'sintax':instancia.abrirArchivo()})
+        return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'sintax':instancia.prueba()})
+        #'sintax':instancia.abrirArchivo()
     """
     def get_object(self, queryset=None):
         return get_object_or_404(ArchivosCh)
