@@ -125,7 +125,7 @@ class sintax:
             return False
         else:
             for j in range(i):
-                print('buscando si existe en ', j+1)
+                print('buscando si existe en linea #', j+1)
                 print('estamos en la linea', i+1)
                 linea = texto[j].rstrip().split()
                 if(linea[0]=='nueva' and linea[1]==nomVar):
@@ -164,14 +164,14 @@ class sintax:
     #todos los metodos de sintaxis comienzan con s y a continuación con el nombre del operador
     
     def sCargue(self, linea, i,texto):
-        if linea[0] == 'cargue' and self.existe(texto, linea[1], i):
+        if len(linea)==2 and linea[0] == 'cargue' and self.existe(texto, linea[1], i):
             return -1
         else:
             return i
         
 
     def sAlmacene(self, linea, i,texto):
-        if linea[0] == 'alamacene' and self.existe(texto, linea[1], i):
+        if len(linea)==2 and linea[0] == 'alamacene' and self.existe(texto, linea[1], i): #self.existe(texto, linea[1], i)
             return -1
         else:
             return i
@@ -305,7 +305,7 @@ class sintax:
             return i
 
     def sConcatene(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'concatene' and self.existe(texto, linea[1], i):
+        if len(linea)==2 and linea[0] == 'concatene' and self.existe(texto, linea[1], i) and self.tipoCorrec(texto,'C',linea[1],i):
             return -1
         else:
             return i
