@@ -32,7 +32,7 @@ class sintax:
         for i in range(len(self.leer)):
             palabras2 = self.leer[i].rstrip().split()
             #varPrueba = self.sModulo(palabras2, i ,self.leer)
-            varPrueba = self.sVaya(palabras2, i ,self.leer)
+            varPrueba = self.sVayasi(palabras2, i ,self.leer)
             if varPrueba >=0:
                 concatene = "error en la linea " + str(varPrueba + 1)
                 lista2.append(concatene)
@@ -139,7 +139,7 @@ class sintax:
     #funcion si existe la etiqueta dentro del archivo ch 
     def existeEtiq(self, texto, nomEtiq): #nomVar = nombre variable 
         bandera = False
-        for j in range(len(texto)-1):
+        for j in range(len(texto)):
             linea = texto[j].rstrip().split()
 
             if(linea[0]=='etiqueta' and linea[1]==nomEtiq):
@@ -188,7 +188,7 @@ class sintax:
             return i
 
     def sVayasi(self, linea, i,texto):
-        if len(linea)==3 and self.existeEtiq(self, texto, linea[1]) and self.existe(texto, linea[2]):
+        if len(linea)==3 and linea[0] == 'vayasi' and self.existeEtiq(texto, linea[1]) and self.existeEtiq(texto, linea[2]):
             return -1
         else:
             return i
