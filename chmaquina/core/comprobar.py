@@ -31,12 +31,13 @@ class sintax:
         lista2=[]
         for i in range(len(self.leer)):
             palabras2 = self.leer[i].rstrip().split()
-            varPrueba = self.sModulo(palabras2, i ,self.leer)
+            #varPrueba = self.sModulo(palabras2, i ,self.leer)
+            varPrueba = self.sVaya(palabras2, i ,self.leer)
             if varPrueba >=0:
                 concatene = "error en la linea " + str(varPrueba + 1)
                 lista2.append(concatene)
             else:
-                lista2.append("Todo ok")
+                lista2.append("Todo ok " + str(i + 1))
         return lista2 
     
     """
@@ -130,19 +131,23 @@ class sintax:
                 linea = texto[j].rstrip().split()
                 if(linea[0]=='nueva' and linea[1]==nomVar):
                     bandera = True
+                    break
                 else:
                     bandera = False
             return bandera
     
     #funcion si existe la etiqueta dentro del archivo ch 
     def existeEtiq(self, texto, nomEtiq): #nomVar = nombre variable 
+        bandera = False
         for j in range(len(texto)-1):
             linea = texto[j].rstrip().split()
 
             if(linea[0]=='etiqueta' and linea[1]==nomEtiq):
-                 return True
+                 bandera = True
+                 break
             else:
-                return False
+                bandera = False
+        return bandera
 
     #funcion que verifica si el tipo de la variable es correcto
     def tipoCorrec(self, texto, tipoVar, nomVar, i):
@@ -155,6 +160,7 @@ class sintax:
 
                 if(linea[0]=='nueva' and linea[1]==nomVar and linea[2]==tipoVar):
                     bandera = True
+                    break
                 else:
                     bandera = False
             return bandera
@@ -169,21 +175,20 @@ class sintax:
         else:
             return i
         
-
     def sAlmacene(self, linea, i,texto):
         if len(linea)==2 and linea[0] == 'alamacene' and self.existe(texto, linea[1], i): #self.existe(texto, linea[1], i)
             return -1
         else:
             return i
     
-    def sVaya(self, linea, i,texto):
-        if len(linea)==2 and self.existeEtiq(self, texto, linea[1]):
+    def sVaya(self, linea, i, texto):
+        if len(linea)==2 and linea[0] == 'vaya' and self.existeEtiq(texto, linea[1]):
             return -1
         else:
             return i
 
     def sVayasi(self, linea, i,texto):
-        if len(linea)==3 and self.existeEtiq(self, texto, linea[1]) and self.existe(self, texto, linea[2]):
+        if len(linea)==3 and self.existeEtiq(self, texto, linea[1]) and self.existe(texto, linea[2]):
             return -1
         else:
             return i
@@ -323,7 +328,7 @@ class sintax:
             return i
 
     def sY(self, linea, i,texto):
-        if len(linea)==4 and linea[0] == 'Y' and self.existe(texto, linea[1], i) and self.existe(texto, linea[2], i) and self.tipoCorrec(texto,'L',linea[1],i) and self.tipoCorrec(texto,'L',linea[2],i) and not(self.existe(texto, linea[3], i)):
+        if len(linea)==4 and linea[0] == 'Y' and self.existe(texto, linea[1], i) and  self.existe(texto, linea[2], i) and self.tipoCorrec(texto,'L',linea[1],i) and self.tipoCorrec(texto,'L',linea[2],i) and not(self.existe(texto, linea[3], i)):
             return -1
         else:
             return i
