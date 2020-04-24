@@ -48,11 +48,18 @@ class sintax:
         varRetorne = -2 # con esta variable verificamos si existe y esta bien la ultima instruccion que es retorne
         varCantRetorne =0 
         varInstrucciones =-2 # con esta variable verificamos si existe y esta bien cada una de las instrucciones en el doc .ch 
-        lista2=[] # lista donde se agregan los errores de sintaxis 
+        lista2=[] # lista donde se agregan los errores de sintaxis                      #ultimaPalabra = ultimaLinea[0]
 
+        # necesasario para quitar el \n que se genera en algunos archivos .ch
+        for i in self.leer:
+            contra = self.leer[len(self.leer)-1]
+            if contra == str('\n'):
+                self.leer.pop(len(self.leer)-1)
+
+        # se resta otra posición para estar en el rango de la lista creada para dividir
         ultimaLinea = self.leer[len(self.leer)-1].rstrip().split()
-        #ultimaPalabra = ultimaLinea[0]
-        varRetorne = self.sRetorne(ultimaLinea, len(self.leer)-1)
+        varRetorne = self.sRetorne(ultimaLinea, len(self.leer)-1) 
+        print(self.leer)
 
         if varRetorne >=0:
             concatene = "Error, no tiene instrucción retorne al final "
@@ -60,7 +67,7 @@ class sintax:
             varCantRetorne +=1
         else:
             #lista2.append("si tiene retorne al final \n")
-            for i in range(len(self.leer)):
+            for i in range(len(self.leer)-1):
                 palabras = self.leer[i].rstrip().split()
                 operador = palabras[0]
                 if operador == 'cargue':
@@ -212,8 +219,8 @@ class sintax:
             return False
         else:
             for j in range(i):
-                print('buscando si existe en linea #', j+1)
-                print('estamos en la linea', i+1)
+                #print('buscando si existe en linea #', j+1)
+                #print('estamos en la linea', i+1)
                 linea = texto[j].rstrip().split()
                 if(linea[0]=='nueva' and linea[1]==nomVar):
                     bandera = True
@@ -262,7 +269,7 @@ class sintax:
             return i
         
     def sAlmacene(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'alamacene' and self.existe(texto, linea[1], i): #self.existe(texto, linea[1], i)
+        if len(linea)==2 and linea[0] == 'almacene' and self.existe(texto, linea[1], i): #self.existe(texto, linea[1], i)
             return -1
         else:
             return i
@@ -348,7 +355,7 @@ class sintax:
             bandera= False
             print('no se pudo convertir a entero')
         #############################################  
-        if len(linea)==3 and bandera and linea[0] == 'etiqueta' and (anumero >=0 and anumero <= (len(texto)-1)):
+        if len(linea)==3 and bandera and linea[0] == 'etiqueta' and (anumero >=0 and anumero <= (len(texto))):
             return -1
         else:
             return i
@@ -450,6 +457,8 @@ class sintax:
             return i
     
     def sRetorne(self, linea, i):
+       # print(len(linea))
+       # print(linea)
         if len(linea)==2:
             #con este segmento convierto a int la variable si es posible 
             #####################################
@@ -463,6 +472,11 @@ class sintax:
                 print('no se pudo convertir a entero')
             #############################################    
             if (linea[0] == 'retorne') and bandera:  #and (isinstance(anumero, (int, float)))
+                return -1
+            else:
+                return i
+        elif len(linea) == 1:
+            if (linea[0] == 'retorne'):
                 return -1
             else:
                 return i
