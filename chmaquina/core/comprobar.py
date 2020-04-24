@@ -39,18 +39,103 @@ class sintax:
             else:
                 lista2.append("Todo ok " + str(i + 1))
         return lista2 
-    
+    ###########################################################################
+
+
+    #metodo para hacer puebas de todas las funciones juntas
+    #la letra i se usará para indicar en que linea hay un error
+    def pruebaTotal(self):
+        varRetorne = -2 # con esta variable verificamos si existe y esta bien la ultima instruccion que es retorne
+        varCantRetorne =0 
+        varInstrucciones =-2 # con esta variable verificamos si existe y esta bien cada una de las instrucciones en el doc .ch 
+        lista2=[] # lista donde se agregan los errores de sintaxis 
+
+        ultimaLinea = self.leer[len(self.leer)-1].rstrip().split()
+        #ultimaPalabra = ultimaLinea[0]
+        varRetorne = self.sRetorne(ultimaLinea, len(self.leer)-1)
+
+        if varRetorne >=0:
+            concatene = "Error, no tiene instrucción retorne al final "
+            lista2.append(concatene)
+            varCantRetorne +=1
+        else:
+            #lista2.append("si tiene retorne al final \n")
+            for i in range(len(self.leer)):
+                palabras = self.leer[i].rstrip().split()
+                operador = palabras[0]
+                if operador == 'cargue':
+                    varInstrucciones = self.sCargue(palabras, i ,self.leer) 
+                elif operador == 'almacene':
+                    varInstrucciones = self.sAlmacene(palabras, i ,self.leer)
+                elif operador == 'vaya':
+                    varInstrucciones = self.sVaya(palabras, i ,self.leer)
+                elif operador == 'nueva':
+                    varInstrucciones = self.sNueva(palabras, i ,self.leer)
+                elif operador == 'etiqueta':
+                    varInstrucciones = self.sEtiqueta(palabras, i ,self.leer)
+                elif operador == 'lea':
+                    varInstrucciones = self.sLea(palabras, i ,self.leer)
+                elif operador == 'sume':
+                    varInstrucciones = self.sSume(palabras, i ,self.leer)
+                elif operador == 'reste':
+                    varInstrucciones = self.sReste(palabras, i ,self.leer)
+                elif operador == 'multiplique':
+                    varInstrucciones = self.sMultiplique(palabras, i ,self.leer)
+                elif operador == 'divida':
+                    varInstrucciones = self.sDivida(palabras, i ,self.leer)
+                elif operador == 'potencia':
+                    varInstrucciones = self.sPotencia(palabras, i ,self.leer)
+                elif operador == 'modulo':
+                    varInstrucciones = self.sModulo(palabras, i ,self.leer)
+                elif operador == 'concatene':
+                    varInstrucciones = self.sConcatene(palabras, i ,self.leer)
+                elif operador == 'elimine':
+                    varInstrucciones = self.sElimine(palabras, i ,self.leer)
+                elif operador == 'extraiga':
+                    varInstrucciones = self.sExtraiga(palabras, i ,self.leer)
+                elif operador == 'Y':
+                    varInstrucciones = self.sY(palabras, i ,self.leer)
+                elif operador == 'O':
+                    varInstrucciones = self.sO(palabras, i ,self.leer)
+                elif operador == 'NO':
+                    varInstrucciones = self.sNo(palabras, i ,self.leer)
+                elif operador == 'muestre':
+                    varInstrucciones = self.sMuestre(palabras, i ,self.leer)
+                elif operador == 'imprima':
+                    varInstrucciones = self.sImprima(palabras, i ,self.leer)
+                elif operador == 'absoluto':
+                    varInstrucciones = self.sAbsoluto(palabras, i ,self.leer)
+                elif operador == 'vayasi':
+                    varInstrucciones = self.sVayasi(palabras, i ,self.leer)
+                elif operador == '//':
+                    varInstrucciones = self.sComentario(palabras, i)
+                elif operador == 'retorne':
+                    varCantRetorne +=1
+                else:
+                    varInstrucciones = -1
+
+                if varInstrucciones >=0:
+                    concatene = "error en la linea " + str(varInstrucciones + 1)
+                    lista2.append(concatene)
+                elif varCantRetorne > 1:
+                    concatene = "se tienen más instrucciones retorne de lo necesario "
+                    lista2.append(concatene)
+                else:
+                    lista2.append("Todo ok " + str(i + 1))
+
+        return lista2
+
     """
     print(leer[0].rstrip()) # con .rstrip() se pude eliminar el salto de linea generado automaticamente.
     print(leer[1])
     """
 
     
-    palabras = leer[0].rstrip().split()
+    #palabras = leer[0].rstrip().split()
     #print(palabras)
   
-    #la letra i se usará para indicar en que linea hay un error
-
+   
+    """
     #funcion para verificar si una linea comienza con un operador
     
     def iniOper(self, texto):
@@ -118,6 +203,7 @@ class sintax:
         # fin ciclo for para verificar 
     #fin funcion
     
+    """
 
     #funcion si existe la variable dentro del archivo ch 
     def existe(self, texto, nomVar, i): #nomVar = nombre variable 
@@ -193,7 +279,7 @@ class sintax:
         else:
             return i
 
-    def sNueva(self, linea, texto, i):
+    def sNueva(self, linea, i, texto):
         if(len(linea)==4) :
             if linea[0] == 'nueva' and not(self.existe(texto, linea[1], i)) and (linea[2] == 'C' or linea[2] == 'I' or linea[2] == 'R' or linea[2] == 'L'):
                 if linea[2] == 'I':
@@ -390,12 +476,14 @@ class sintax:
             return i
     
     #########################################################################
-    #pruba para los metodos
-
+    #pruba para los metodos de manera local 
+    """
     j=0
     palabras2=[]
     bandera = False
-    
+
+    """
+
     """
     #prueba for each
     for palabras2 in leer[::1]:

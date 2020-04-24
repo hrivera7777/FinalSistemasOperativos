@@ -26,10 +26,12 @@ class HomePageView(UpdateView):
         #nombre = ruta.name
         tup = ArchivosCh.objects.all()
         for tp in tup:
-            nombre=tp.archivo
+            nombres=tp.archivo
+            tempo2= str(nombres).split('/')
+            nombre=tempo2[1]
         instancia= sintax()
         #print(sintax.abrirArchivo(self))    
-        return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'sintax':instancia.prueba()})
+        return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'sintax':instancia.pruebaTotal()})
         #'sintax':instancia.abrirArchivo()
     """
     def get_object(self, queryset=None):

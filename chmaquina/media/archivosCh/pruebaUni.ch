@@ -6,3 +6,7 @@ etiqueta dos 3
 vayasi fin
 //nueva siete L 0
 //Y seis siete ocho
+//otra cosa
+retorne 2
+//dos cosas mas 
+retorne 0
