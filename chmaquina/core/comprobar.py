@@ -1,5 +1,4 @@
 from django.core.files import File
-#from io import .
 from .models import ArchivosCh
 
 
@@ -51,10 +50,14 @@ class sintax:
         lista2=[] # lista donde se agregan los errores de sintaxis                      #ultimaPalabra = ultimaLinea[0]
 
         # necesasario para quitar el \n que se genera en algunos archivos .ch
-        for i in self.leer:
-            contra = self.leer[len(self.leer)-1]
-            if contra == str('\n'):
-                self.leer.pop(len(self.leer)-1)
+        contadorSalto=0 # contador de salto de linea
+        for i in range(len(self.leer)):
+            contraS = self.leer[i] # variable para verificar si hay un salto de linea
+            if contraS == str('\n'):
+                contadorSalto +=1
+
+        for j in range(contadorSalto):
+            self.leer.remove(str('\n'))
 
         # se resta otra posición para estar en el rango de la lista creada para dividir
         ultimaLinea = self.leer[len(self.leer)-1].rstrip().split()
@@ -66,10 +69,11 @@ class sintax:
             lista2.append(concatene)
             varCantRetorne +=1
         else:
-            #lista2.append("si tiene retorne al final \n")
             for i in range(len(self.leer)-1):
+
                 palabras = self.leer[i].rstrip().split()
                 operador = palabras[0]
+            
                 if operador == 'cargue':
                     varInstrucciones = self.sCargue(palabras, i ,self.leer) 
                 elif operador == 'almacene':
@@ -121,6 +125,7 @@ class sintax:
                 else:
                     varInstrucciones = -1
 
+                # muestra en que lienea se encuentra el error 
                 if varInstrucciones >=0:
                     concatene = "error en la linea " + str(varInstrucciones + 1)
                     lista2.append(concatene)
@@ -135,81 +140,6 @@ class sintax:
     """
     print(leer[0].rstrip()) # con .rstrip() se pude eliminar el salto de linea generado automaticamente.
     print(leer[1])
-    """
-
-    
-    #palabras = leer[0].rstrip().split()
-    #print(palabras)
-  
-   
-    """
-    #funcion para verificar si una linea comienza con un operador
-    
-    def iniOper(self, texto):
-        #siempre debe terminar el programa con retorne, si esto no ocurre sería el problema inicial    
-        ultimaLinea = texto[len(texto)].rstrip().split()
-        ultimaPalabra = ultimaLinea[0]
-
-        if ultimaLinea == "retorne":
-            return len(texto)
-        else:
-            return -1
-        i=0
-        for i in range(len(leer)):
-            palabras = texto[i].rstrip().split()
-            operador = palabras[0]
-            if operador == 'cargue':
-                return i 
-            elif operador == 'almacene':
-                return i
-            elif operador == 'vaya':
-                return i
-            elif operador == 'nueva':
-                return i
-            elif operador == 'etiqueta':
-                return i
-            elif operador == 'lea':
-                return i
-            elif operador == 'sume':
-                return i
-            elif operador == 'reste':
-                return i
-            elif operador == 'multiplique':
-                return i
-            elif operador == 'divida':
-                return i
-            elif operador == 'potencia':
-                return i
-            elif operador == 'modulo':
-                return i
-            elif operador == 'concatene':
-                return i
-            elif operador == 'elimine':
-                return i
-            elif operador == 'extraiga':
-                return i
-            elif operador == 'Y':
-                return i
-            elif operador == 'O':
-                return i
-            elif operador == 'NO':
-                return i
-            elif operador == 'muestre':
-                return i
-            elif operador == 'imprima':
-                return i
-            elif operador == 'absoluto':
-                return i
-            elif operador == 'vayasi':
-                return i
-            elif operador == '//':
-                return i
-            else:
-                return -1
-        return i
-        # fin ciclo for para verificar 
-    #fin funcion
-    
     """
 
     #funcion si existe la variable dentro del archivo ch 
@@ -232,7 +162,7 @@ class sintax:
     #funcion si existe la etiqueta dentro del archivo ch 
     def existeEtiq(self, texto, nomEtiq): #nomVar = nombre variable 
         bandera = False
-        for j in range(len(texto)):
+        for j in range(len(texto)-1):
             linea = texto[j].rstrip().split()
 
             if(linea[0]=='etiqueta' and linea[1]==nomEtiq):
@@ -489,7 +419,7 @@ class sintax:
         else:
             return i
     
-    #########################################################################
+    ####################################################################################################################################################33
     #pruba para los metodos de manera local 
     """
     j=0
