@@ -1,13 +1,17 @@
 from django.core.files import File
-from .models import ArchivosCh
+from .models import ArchivosCh, EjecArchCh
 
 
 #ruta=request.FILES.get('archivo')
 ruta =""
-tup = ArchivosCh.objects.all()
+#tup = ArchivosCh.objects.all() cambio de modelo para tomar la memoria y el kernel
+tup = EjecArchCh.objects.all()
+
 for tp in tup:
     nombre=tp.archivo
     ruta = str(nombre)
+    print(ruta)
+
 class sintax:
     #while(True):
     #ruta = "media/" + ruta

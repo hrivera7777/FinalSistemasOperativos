@@ -32,7 +32,7 @@
 		  <!--<a class="nav-item nav-link active" href="#">Abrir </a>-->
 
 		  <!--formulario para subir el archivo a una carpeta especifica-->
-		  <form name="formularioprinc" action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+		  <form id="formularioprin" name="formularioprinc" action="" method="post" enctype="multipart/form-data">{% csrf_token %}
 		  	<input type="file" name="archivo" id="subirArchivoCh" accept=".ch" style="display : none;" >
 			 <a class="nav-item nav-link" id="btnAbrir" onclick="document.getElementById('subirArchivoCh').click();
 		 	 document.getElementById('btnUp').style = 'display : block;'
@@ -60,7 +60,7 @@
 							Memoria:
 							</td>
 							<td id="cajaM">
-								<input type="number" name="memoria" id="memoria" min="1" max="100" value="100" form ="formularioprinc">
+								<input type="number" name="memoria" id="memoria" min="1" max="100" value="100" form ="formularioprin">
 							</td>
 					</tr>
 
@@ -69,7 +69,7 @@
 							Kernel:
 							</td>
 							<td id="cajaK">
-								<input type="number" name="kernel" id="kernel" min="1" max="100" value="69" form="formularioprinc">
+								<input type="number" name="kernel" id="kernel" min="1" max="100" value="69" form="formularioprin">
 							</td>
 					</tr>
 				</table>
