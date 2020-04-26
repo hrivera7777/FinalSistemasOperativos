@@ -12,5 +12,8 @@ def custom_upload_to(instance, filename):
 class ArchivosCh(models.Model):
     
     archivo = models.FileField(upload_to=custom_upload_to, null=True, blank =True)
+    #memoria = models.IntegerField(null=True, blank =True)
+    #kernel = models.IntegerField(null=True, blank =True)
+
     #nombre = archivo.name
         #archivo = models.FileField(upload_to='archivosCh/', null=True, blank =True)

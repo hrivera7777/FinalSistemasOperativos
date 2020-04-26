@@ -14,7 +14,7 @@ class sintax:
     #print(ruta) 
     f = open("media/" + ruta, "r")
     myfile = File(f)
-    print(myfile)
+    #print(myfile)
     leer = myfile.readlines() #para leer linea a linea #print(leer)
     f.close()
     myfile.close()
@@ -62,7 +62,7 @@ class sintax:
         # se resta otra posición para estar en el rango de la lista creada para dividir
         ultimaLinea = self.leer[len(self.leer)-1].rstrip().split()
         varRetorne = self.sRetorne(ultimaLinea, len(self.leer)-1) 
-        print(self.leer)
+        #print(self.leer)
 
         if varRetorne >=0:
             concatene = "Error, no tiene instrucción retorne al final "
