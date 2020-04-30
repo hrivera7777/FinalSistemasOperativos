@@ -22,6 +22,7 @@ class sintax:
     leer = myfile.readlines() #para leer linea a linea #print(leer)
     f.close()
     myfile.close()
+    #print(leer)
     
     def abrirArchivo(self):
         return str(self.leer)
