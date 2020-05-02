@@ -68,40 +68,59 @@ class ejecucion:
         memoria.append(leer[i].rstrip())
     cantmemoria -= len(leer)
     print(cantmemoria, 'cantidad de disponible')
-    #print(memoria)
-
+    #print(len(memoria))
+    #variables.append('0'+'-'+'variable')
+    #print(variables)
+    #palabras = variables[0].split('-')
+    #print(palabras)
 
     #metodo para agregar la variable a una lista con su id corresponidiente
 
     def varConIdProg(self, idProg, nombVar, posMemoria): # idprog > id  del programa y nombre de la variable 
         self.posMemVar.append(posMemoria) # posMemVar es global
         self.variables.append(str(idProg) + "-"+ nombVar)
-        pass
+        
 
+    
+    #identificar la variable en memoria
+
+    def idenVar(self, nomVar, idProg):
+        posMem = 0
+        indice = 0
+        for i in range(len(self.variables)-1):
+            palabras = self.variables[i].split('-')
+            if palabras[2] == nomVar and palabras[1]== idProg :
+                indice=i
+
+        posMem = self.posMemVar[indice]
+        return posMem
 
     # metodos para ejecutar cada operando del arhivo .ch 
     
-    def eNueva(self, linea):
+    def eNueva(self, linea, idProg):
         if(len(linea)==4) :
             memoria.append(linea[3])
-            self.varConIdProg(proEjec, linea[1],len(memoria))
+            self.varConIdProg(idProg, linea[1],len(memoria))
             
         elif (len(linea)==3):
             if linea[2] == 'I':
                 memoria.append(0)
-                self.varConIdProg(proEjec, linea[1], len(memoria))
+                self.varConIdProg(idProg, linea[1], len(memoria))
                 
             elif linea[2] == 'R':
                 memoria.append(0.0)
-                self.varConIdProg(proEjec, linea[1], len(memoria))
+                self.varConIdProg(idProg, linea[1], len(memoria))
 
             elif linea[2] == 'L':
                 memoria.append(0)
-                self.varConIdProg(proEjec, linea[1], len(memoria))
+                self.varConIdProg(idProg, linea[1], len(memoria))
             else:
                 memoria.append('')
-                self.varConIdProg(proEjec, linea[1], len(memoria))
+                self.varConIdProg(idProg, linea[1], len(memoria))
         else:
             print('no se agregó nada nuevo')
     #fin funcion sNueva
-        pass
+
+    def eCargue(self, linea, idProg):
+        memoria[0] = memoria[self.idenVar(linea[2],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+   
