@@ -77,6 +77,7 @@ class sintax:
             for i in range(len(self.leer)-1):
 
                 palabras = self.leer[i].rstrip().split()
+                #print(palabras)
                 operador = palabras[0]
             
                 if operador == 'cargue':

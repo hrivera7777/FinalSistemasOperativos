@@ -8,4 +8,9 @@ $(document).ready(function () {
 
         $('#btnUp').removeClass('displayNone');
     };
+
+    $('#myModal').on('shown.bs.modal', function () {
+        $('#myInput').trigger('focus')
+      });
 });
+
