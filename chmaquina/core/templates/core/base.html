@@ -325,19 +325,21 @@
 					  <th scope="row">0</th>
 					  <td></td>
 					</tr>
-
+					{% for i in kernel %}	
 					<tr><!--kernel-->
 					  <td><img src="{% static 'core/img/icon_os.png' %}" alt="" height="20px" width="20px"></td>
-					  <th scope="row">1</th>
-					  <td></td>
+					  <th scope="row">{{i}}</th>
+					  <td>Kernel ch</td>
 					</tr>
+					{%endfor%}
 
+					{% for i in memoriaFinal %}
 					<tr><!--memoria disponible-->
 					  <td><img src="{% static 'core/img/icon_mem.png' %}" alt="" height="20px" width="20px"></td>
-					  <th scope="row">2</th>
+					  <th scope="row">{{i}}</th>
 					  <td></td>
 					</tr>
-
+					{%endfor%}
 					<tr><!--Programa-->
 					  <td><img src="{% static 'core/img/icon_progr.png' %}" alt="" height="20px" width="20px"></td>
 					  <th scope="row">3</th>
