@@ -401,3 +401,126 @@ class ejecucion:
             print("error al tomar el modulo, division por Cero")
         else:
             print("error al tomar el modulo, no corresponden los tipos")
+    
+    def eAbsoluto(self, linea, idProg):
+        #con este segmento convierto a int la variable y el acumulador si es posible 
+        #####################################
+        anumeroIntAcum = 0
+        acumInt = False # corresponde al valor que se encuentra en el acumulador
+        try:
+            anumeroIntAcum = int(memoria[0])
+            acumInt = True
+        except:
+            acumInt = False
+            print('no se pudo convertir a entero el acumulador')
+        #############################################  
+        #con este segmento convierto a real la variable y el acumulador si es posible 
+        #############################################
+        anumeroFloatAcum = 0.0
+        acumFloat = False # corresponde al valor que se encuentra en el acumulador
+        try:
+            anumeroFloatAcum = float(memoria[0])
+            acumFloat = True
+        except:
+            acumFloat = False
+            print('no se pudo convertir a real el acumulador')
+        #############################################  
+
+        if (acumInt or acumFloat):
+            memoria[self.idenVar(linea[1],idProg)] = abs(memoria[0]) # se identifica la posicion de memoria y se trae el valor al acumulador
+        else:
+            print("error no se puede tomar el valor absoluto, no corresponden los tipos")
+
+    def eConcatene(self, linea, idProg):
+        cadAcum = str(memoria[0])
+        cadVar = str(memoria[self.idenVar(linea[1],idProg)])
+        memoria[0] =cadAcum + cadVar
+
+    def eElimine(self, linea, idProg):
+        varTem = memoria[0].replace(memoria[self.idenVar(linea[1],idProg)],"") # se guara en una variable temporal el resultado de quitar la cadena en Variable a el acumulador
+        memoria[0] = varTem
+        """
+        variable = "quedeque" # ejemplo de elimine
+        var2 = variable.replace("que","")
+        print(var2, len(var2))
+        """
+    def eExtraiga(self, linea, idProg):
+        varTem = str(memoria[0])
+        memoria[0] = varTem[:memoria[self.idenVar(linea[1],idProg)]] # se extraen los primeros(cantidad que esté en la variable) caracteres de la cadena que se encuentra en el acumulador 
+    
+    def eY(self, linea, idProg):
+        #valores boleanos son  0 para falso y 1 para verdadero
+
+        var1 = linea[1] # aquí se toman los datos ingresados a la variable lógica 1
+        var2= linea[2] # aquí se toman los datos ingresados a la variable lógica 2
+        var1Bol = False # variable para convertir el dato(variable 1) ingresado a booleano 
+        var2Bol = False # variable para convertir el dato(variable 2) ingresado a booleano 
+
+        if var1 ==0:
+            var1Bol=False
+        elif var1 ==1:
+            var1Bol = True 
+        else:
+            print("la variable 1 no es de tipo lógico")   
+        
+        if var2 ==0:
+            var2Bol=False
+        elif var2 ==1:
+            var2Bol = True 
+        else:
+            print("la variable 2 no es de tipo lógico")  
+
+        memoria[self.idenVar(linea[3],idProg)] = var1Bol and var2Bol
+
+    def eO(self, linea, idProg):
+        #valores boleanos son  0 para falso y 1 para verdadero
+
+        var1 = linea[1] # aquí se toman los datos ingresados a la variable lógica 1
+        var2= linea[2] # aquí se toman los datos ingresados a la variable lógica 2
+        var1Bol = False # variable para convertir el dato(variable 1) ingresado a booleano 
+        var2Bol = False # variable para convertir el dato(variable 2) ingresado a booleano 
+
+        if var1 ==0:
+            var1Bol=False
+        elif var1 ==1:
+            var1Bol = True 
+        else:
+            print("la variable 1 no es de tipo lógico")   
+        
+        if var2 ==0:
+            var2Bol=False
+        elif var2 ==1:
+            var2Bol = True 
+        else:
+            print("la variable 2 no es de tipo lógico")  
+
+        memoria[self.idenVar(linea[3],idProg)] = var1Bol or var2Bol
+
+    def eNo(self, linea, idProg):
+        #valores boleanos son  0 para falso y 1 para verdadero
+
+        var1 = linea[1] # aquí se toman los datos ingresados a la variable lógica 1
+        var2= linea[2] # aquí se toman los datos ingresados a la variable lógica 2
+        var1Bol = False # variable para convertir el dato(variable 1) ingresado a booleano 
+        var2Bol = False # variable para convertir el dato(variable 2) ingresado a booleano 
+
+        if var1 ==0:
+            var1Bol=False
+        elif var1 ==1:
+            var1Bol = True 
+        else:
+            print("la variable 1 no es de tipo lógico")   
+
+        memoria[self.idenVar(linea[2],idProg)] = not(var1Bol)
+    
+    def eMuestre(self, linea, idProg):
+        if(linea[1]=='acumulador'):
+            return memoria[0]
+        else:
+            return memoria[self.idenVar(linea[1],idProg)]
+
+    def eImprima(self, linea, idProg):
+        if(linea[1]=='acumulador'):
+            return memoria[0]
+        else:
+            return memoria[self.idenVar(linea[1],idProg)]    

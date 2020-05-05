@@ -357,37 +357,37 @@ class sintax:
             return i
 
     def sY(self, linea, i,texto):
-        if len(linea)==4 and linea[0] == 'Y' and self.existe(texto, linea[1], i) and  self.existe(texto, linea[2], i) and self.tipoCorrec(texto,'L',linea[1],i) and self.tipoCorrec(texto,'L',linea[2],i) and not(self.existe(texto, linea[3], i)):
+        if len(linea)==4 and linea[0] == 'Y' and self.existe(texto, linea[1], i) and  self.existe(texto, linea[2], i) and self.tipoCorrec(texto,'L',linea[1],i) and self.tipoCorrec(texto,'L',linea[2],i) and self.existe(texto, linea[3], i) and self.tipoCorrec(texto,'L',linea[3],i):
             return -1
         else:
             return i
 
     def sO(self, linea, i,texto):
-        if len(linea)==4 and linea[0] == 'O' and self.existe(texto, linea[1], i) and self.existe(texto, linea[2], i) and self.tipoCorrec(texto,'L',linea[1],i) and self.tipoCorrec(texto,'L',linea[2],i) and not(self.existe(texto, linea[3], i)):
+        if len(linea)==4 and linea[0] == 'O' and self.existe(texto, linea[1], i) and self.existe(texto, linea[2], i) and self.tipoCorrec(texto,'L',linea[1],i) and self.tipoCorrec(texto,'L',linea[2],i) and self.existe(texto, linea[3], i) and self.tipoCorrec(texto,'L',linea[3],i):
             return -1
         else:
             return i
         
     def sNo(self, linea, i,texto):
-        if len(linea)==3 and linea[0] == 'NO' and self.existe(texto, linea[1], i) and self.tipoCorrec(texto,'L',linea[1],i) and not(self.existe(texto, linea[2], i)):
+        if len(linea)==3 and linea[0] == 'NO' and self.existe(texto, linea[1], i) and self.tipoCorrec(texto,'L',linea[1],i) and self.existe(texto, linea[2], i): # not(self.existe(texto, linea[2], i)): esta linea esta igual en las dos anteriores 
             return -1
         else:
             return i
 
     def sMuestre(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'muestre' and self.existe(texto, linea[1], i):
+        if len(linea)==2 and linea[0] == 'muestre' and (self.existe(texto, linea[1], i) or linea[1]=='acumulador'):
             return -1
         else:
             return i
 
     def sImprima(self, linea, i,texto):
-        if len(linea)==2 and linea[0] == 'imprima' and self.existe(texto, linea[1], i):
+        if len(linea)==2 and linea[0] == 'imprima' and (self.existe(texto, linea[1], i) or linea[1]=='acumulador'):
             return -1
         else:
             return i
             
     def sAbsoluto(self, linea, i,texto):
-        if len(linea)==3 and linea[0] == 'absoluto' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,'I',linea[1],i) or self.tipoCorrec(texto,'R',linea[1],i)) and not(self.existe(texto, linea[2], i)) :
+        if len(linea)==2 and linea[0] == 'absoluto' and self.existe(texto, linea[1], i) and (self.tipoCorrec(texto,'I',linea[1],i) or self.tipoCorrec(texto,'R',linea[1],i)):# and not(self.existe(texto, linea[2], i)) :
             return -1
         else:
             return i
