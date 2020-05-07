@@ -61,19 +61,25 @@ class ejecucion:
     #aquí se llena la memoria con el "kernel"
     i=0
     for i in range(kernel):
-        memoria.append("***kernel ch***")
+        memoria.append("***kernel ch***") # self.
     cantmemoria -= kernel 
 
     #aquí se agregan las instrucciones a la memoria 
     for i in range(len(leer)):
-        memoria.append(leer[i].rstrip())
+        memoria.append(leer[i].rstrip()) # self.
     cantmemoria -= len(leer)
+    #print(memoria)
     #print(cantmemoria, 'cantidad de disponible')
     #print(len(memoria))
     #variables.append('0'+'-'+'variable')
     #print(variables)
     #palabras = variables[0].split('-')
     #print(palabras)
+
+    #metodos de retorno para entregar la instrucción y su posición de memoria
+
+    def getInstruccion(self):
+        pass
 
     #metodo para agregar la variable a una lista con su id corresponidiente
 
@@ -82,7 +88,12 @@ class ejecucion:
         self.variables.append(str(idProg) + "-"+ nombVar)
         
 
+    #metodo para identificar una linea especifica dentro de la memoria, se usará para las etiquetas 
+
+    def encontrarLinea(self, i):
+        return self.leer[i-1].rstrip()
     
+
     #identificar la variable en memoria
 
     def idenVar(self, nomVar, idProg):
@@ -100,33 +111,33 @@ class ejecucion:
     
     def eNueva(self, linea, idProg):
         if(len(linea)==4) :
-            memoria.append(linea[3])
-            self.varConIdProg(idProg, linea[1],len(memoria))
+            self.memoria.append(linea[3])
+            self.varConIdProg(idProg, linea[1],len(self.memoria))
             
         elif (len(linea)==3):
             if linea[2] == 'I':
-                memoria.append(0)
-                self.varConIdProg(idProg, linea[1], len(memoria))
+                self.memoria.append(0)
+                self.varConIdProg(idProg, linea[1], len(self.memoria))
                 
             elif linea[2] == 'R':
-                memoria.append(0.0)
-                self.varConIdProg(idProg, linea[1], len(memoria))
+                self.memoria.append(0.0)
+                self.varConIdProg(idProg, linea[1], len(self.memoria))
 
             elif linea[2] == 'L':
-                memoria.append(0)
-                self.varConIdProg(idProg, linea[1], len(memoria))
+                self.memoria.append(0)
+                self.varConIdProg(idProg, linea[1], len(self.memoria))
             else:
-                memoria.append('')
-                self.varConIdProg(idProg, linea[1], len(memoria))
+                self.memoria.append('')
+                self.varConIdProg(idProg, linea[1], len(self.memoria))
         else:
             print('no se agregó nada nuevo')
     #fin funcion sNueva
 
     def eCargue(self, linea, idProg):
-        memoria[0] = memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+        self.memoria[0] = self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
     
     def eAlmacene(self, linea, idProg):
-        memoria[self.idenVar(linea[1],idProg)] = memoria[0] # se identifica la posicion de memoria y se trae el valor del acumulador
+        self.memoria[self.idenVar(linea[1],idProg)] = self.memoria[0] # se identifica la posicion de memoria y se trae el valor del acumulador
 
     def eSume(self, linea, idProg):
         #con este segmento convierto a int la variable y el acumulador si es posible 
@@ -136,13 +147,13 @@ class ejecucion:
         varInt = False # corresponde al valor que se encuentra en la variable
         acumInt = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroIntVar = int(memoria[self.idenVar(linea[1],idProg)])
+            anumeroIntVar = int(self.memoria[self.idenVar(linea[1],idProg)])
             varInt = True
         except:
             varInt = False
             print('no se pudo convertir a entero la variable')
         try:
-            anumeroIntAcum = int(memoria[0])
+            anumeroIntAcum = int(self.memoria[0])
             acumInt = True
         except:
             acumInt = False
@@ -155,14 +166,14 @@ class ejecucion:
         varFloat = False # corresponde al valor que se encuentra en la variable
         acumFloat = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroFloatVar = float(memoria[self.idenVar(linea[1],idProg)])
+            anumeroFloatVar = float(self.memoria[self.idenVar(linea[1],idProg)])
             varFloat = True
         except:
             varFloat = False
             print('no se pudo convertir a real la variable')
 
         try:
-            anumeroFloatAcum = float(memoria[0])
+            anumeroFloatAcum = float(self.memoria[0])
             acumFloat = True
         except:
             acumFloat = False
@@ -170,7 +181,7 @@ class ejecucion:
         #############################################  
 
         if (varInt or varFloat) and (acumInt or acumFloat):
-            memoria[0] += memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[0] += self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
         else:
             print("error al sumar no corresponden los tipos")
 
@@ -182,13 +193,13 @@ class ejecucion:
         varInt = False # corresponde al valor que se encuentra en la variable
         acumInt = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroIntVar = int(memoria[self.idenVar(linea[1],idProg)])
+            anumeroIntVar = int(self.memoria[self.idenVar(linea[1],idProg)])
             varInt = True
         except:
             varInt = False
             print('no se pudo convertir a entero la variable')
         try:
-            anumeroIntAcum = int(memoria[0])
+            anumeroIntAcum = int(self.memoria[0])
             acumInt = True
         except:
             acumInt = False
@@ -201,14 +212,14 @@ class ejecucion:
         varFloat = False # corresponde al valor que se encuentra en la variable
         acumFloat = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroFloatVar = float(memoria[self.idenVar(linea[1],idProg)])
+            anumeroFloatVar = float(self.memoria[self.idenVar(linea[1],idProg)])
             varFloat = True
         except:
             varFloat = False
             print('no se pudo convertir a real la variable')
 
         try:
-            anumeroFloatAcum = float(memoria[0])
+            anumeroFloatAcum = float(self.memoria[0])
             acumFloat = True
         except:
             acumFloat = False
@@ -216,7 +227,7 @@ class ejecucion:
         #############################################  
 
         if (varInt or varFloat) and (acumInt or acumFloat):
-            memoria[0] -= memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[0] -= self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
         else:
             print("error al restar, no corresponden los tipos")
     
@@ -228,13 +239,13 @@ class ejecucion:
         varInt = False # corresponde al valor que se encuentra en la variable
         acumInt = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroIntVar = int(memoria[self.idenVar(linea[1],idProg)])
+            anumeroIntVar = int(self.memoria[self.idenVar(linea[1],idProg)])
             varInt = True
         except:
             varInt = False
             print('no se pudo convertir a entero la variable')
         try:
-            anumeroIntAcum = int(memoria[0])
+            anumeroIntAcum = int(self.memoria[0])
             acumInt = True
         except:
             acumInt = False
@@ -247,14 +258,14 @@ class ejecucion:
         varFloat = False # corresponde al valor que se encuentra en la variable
         acumFloat = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroFloatVar = float(memoria[self.idenVar(linea[1],idProg)])
+            anumeroFloatVar = float(self.memoria[self.idenVar(linea[1],idProg)])
             varFloat = True
         except:
             varFloat = False
             print('no se pudo convertir a real la variable')
 
         try:
-            anumeroFloatAcum = float(memoria[0])
+            anumeroFloatAcum = float(self.memoria[0])
             acumFloat = True
         except:
             acumFloat = False
@@ -262,7 +273,7 @@ class ejecucion:
         #############################################  
 
         if (varInt or varFloat) and (acumInt or acumFloat):
-            memoria[0] *= memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[0] *= self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
         else:
             print("error al multiplicar, no corresponden los tipos")
     
@@ -275,13 +286,13 @@ class ejecucion:
         varInt = False # corresponde al valor que se encuentra en la variable
         acumInt = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroIntVar = int(memoria[self.idenVar(linea[1],idProg)])
+            anumeroIntVar = int(self.memoria[self.idenVar(linea[1],idProg)])
             varInt = True
         except:
             varInt = False
             print('no se pudo convertir a entero la variable')
         try:
-            anumeroIntAcum = int(memoria[0])
+            anumeroIntAcum = int(self.memoria[0])
             acumInt = True
         except:
             acumInt = False
@@ -294,14 +305,14 @@ class ejecucion:
         varFloat = False # corresponde al valor que se encuentra en la variable
         acumFloat = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroFloatVar = float(memoria[self.idenVar(linea[1],idProg)])
+            anumeroFloatVar = float(self.memoria[self.idenVar(linea[1],idProg)])
             varFloat = True
         except:
             varFloat = False
             print('no se pudo convertir a real la variable')
 
         try:
-            anumeroFloatAcum = float(memoria[0])
+            anumeroFloatAcum = float(self.memoria[0])
             acumFloat = True
         except:
             acumFloat = False
@@ -309,7 +320,7 @@ class ejecucion:
         #############################################  
 
         if (varInt or varFloat) and (acumInt or acumFloat) and (anumeroIntVar!= 0 or anumeroFloatVar != 0.0):
-            memoria[0] /= memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[0] /= self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
         
         elif (varInt or varFloat) and (acumInt or acumFloat) and (anumeroIntVar == 0 or anumeroFloatVar == 0.0):
             print("error al dividir, division por Cero")
@@ -324,13 +335,13 @@ class ejecucion:
         varInt = False # corresponde al valor que se encuentra en la variable
         acumInt = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroIntVar = int(memoria[self.idenVar(linea[1],idProg)])
+            anumeroIntVar = int(self.memoria[self.idenVar(linea[1],idProg)])
             varInt = True
         except:
             varInt = False
             print('no se pudo convertir a entero la variable')
         try:
-            anumeroIntAcum = int(memoria[0])
+            anumeroIntAcum = int(self.memoria[0])
             acumInt = True
         except:
             acumInt = False
@@ -341,7 +352,7 @@ class ejecucion:
         anumeroFloatAcum = 0.0
         acumFloat = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroFloatAcum = float(memoria[0])
+            anumeroFloatAcum = float(self.memoria[0])
             acumFloat = True
         except:
             acumFloat = False
@@ -349,7 +360,7 @@ class ejecucion:
         #############################################  
 
         if (varInt) and (acumInt or acumFloat):
-            memoria[0] **= memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[0] **= self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
         else:
             print("error al elevar la potencia, no corresponden los tipos")
     
@@ -361,13 +372,13 @@ class ejecucion:
         varInt = False # corresponde al valor que se encuentra en la variable
         acumInt = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroIntVar = int(memoria[self.idenVar(linea[1],idProg)])
+            anumeroIntVar = int(self.memoria[self.idenVar(linea[1],idProg)])
             varInt = True
         except:
             varInt = False
             print('no se pudo convertir a entero la variable')
         try:
-            anumeroIntAcum = int(memoria[0])
+            anumeroIntAcum = int(self.memoria[0])
             acumInt = True
         except:
             acumInt = False
@@ -380,14 +391,14 @@ class ejecucion:
         varFloat = False # corresponde al valor que se encuentra en la variable
         acumFloat = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroFloatVar = float(memoria[self.idenVar(linea[1],idProg)])
+            anumeroFloatVar = float(self.memoria[self.idenVar(linea[1],idProg)])
             varFloat = True
         except:
             varFloat = False
             print('no se pudo convertir a real la variable')
 
         try:
-            anumeroFloatAcum = float(memoria[0])
+            anumeroFloatAcum = float(self.memoria[0])
             acumFloat = True
         except:
             acumFloat = False
@@ -395,7 +406,7 @@ class ejecucion:
         #############################################  
 
         if (varInt or varFloat) and (acumInt or acumFloat) and (anumeroIntVar!= 0 or anumeroFloatVar != 0.0):
-            memoria[0] %= memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[0] %= self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
         
         elif (varInt or varFloat) and (acumInt or acumFloat) and (anumeroIntVar == 0 or anumeroFloatVar == 0.0):
             print("error al tomar el modulo, division por Cero")
@@ -408,7 +419,7 @@ class ejecucion:
         anumeroIntAcum = 0
         acumInt = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroIntAcum = int(memoria[0])
+            anumeroIntAcum = int(self.memoria[0])
             acumInt = True
         except:
             acumInt = False
@@ -419,7 +430,7 @@ class ejecucion:
         anumeroFloatAcum = 0.0
         acumFloat = False # corresponde al valor que se encuentra en el acumulador
         try:
-            anumeroFloatAcum = float(memoria[0])
+            anumeroFloatAcum = float(self.memoria[0])
             acumFloat = True
         except:
             acumFloat = False
@@ -427,26 +438,26 @@ class ejecucion:
         #############################################  
 
         if (acumInt or acumFloat):
-            memoria[self.idenVar(linea[1],idProg)] = abs(memoria[0]) # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[self.idenVar(linea[1],idProg)] = abs(self.memoria[0]) # se identifica la posicion de memoria y se trae el valor al acumulador
         else:
             print("error no se puede tomar el valor absoluto, no corresponden los tipos")
 
     def eConcatene(self, linea, idProg):
-        cadAcum = str(memoria[0])
-        cadVar = str(memoria[self.idenVar(linea[1],idProg)])
-        memoria[0] =cadAcum + cadVar
+        cadAcum = str(self.memoria[0])
+        cadVar = str(self.memoria[self.idenVar(linea[1],idProg)])
+        self.memoria[0] =cadAcum + cadVar
 
     def eElimine(self, linea, idProg):
-        varTem = memoria[0].replace(memoria[self.idenVar(linea[1],idProg)],"") # se guara en una variable temporal el resultado de quitar la cadena en Variable a el acumulador
-        memoria[0] = varTem
+        varTem = self.memoria[0].replace(self.memoria[self.idenVar(linea[1],idProg)],"") # se guara en una variable temporal el resultado de quitar la cadena en Variable a el acumulador
+        self.memoria[0] = varTem
         """
         variable = "quedeque" # ejemplo de elimine
         var2 = variable.replace("que","")
         print(var2, len(var2))
         """
     def eExtraiga(self, linea, idProg):
-        varTem = str(memoria[0])
-        memoria[0] = varTem[:memoria[self.idenVar(linea[1],idProg)]] # se extraen los primeros(cantidad que esté en la variable) caracteres de la cadena que se encuentra en el acumulador 
+        varTem = str(self.memoria[0])
+        self.memoria[0] = varTem[:self.memoria[self.idenVar(linea[1],idProg)]] # se extraen los primeros(cantidad que esté en la variable) caracteres de la cadena que se encuentra en el acumulador 
     
     def eY(self, linea, idProg):
         #valores boleanos son  0 para falso y 1 para verdadero
@@ -470,7 +481,7 @@ class ejecucion:
         else:
             print("la variable 2 no es de tipo lógico")  
 
-        memoria[self.idenVar(linea[3],idProg)] = var1Bol and var2Bol
+        self.memoria[self.idenVar(linea[3],idProg)] = var1Bol and var2Bol
 
     def eO(self, linea, idProg):
         #valores boleanos son  0 para falso y 1 para verdadero
@@ -494,7 +505,7 @@ class ejecucion:
         else:
             print("la variable 2 no es de tipo lógico")  
 
-        memoria[self.idenVar(linea[3],idProg)] = var1Bol or var2Bol
+        self.memoria[self.idenVar(linea[3],idProg)] = var1Bol or var2Bol
 
     def eNo(self, linea, idProg):
         #valores boleanos son  0 para falso y 1 para verdadero
@@ -511,16 +522,23 @@ class ejecucion:
         else:
             print("la variable 1 no es de tipo lógico")   
 
-        memoria[self.idenVar(linea[2],idProg)] = not(var1Bol)
+        self.memoria[self.idenVar(linea[2],idProg)] = not(var1Bol)
     
     def eMuestre(self, linea, idProg):
         if(linea[1]=='acumulador'):
-            return memoria[0]
+            return self.memoria[0]
         else:
-            return memoria[self.idenVar(linea[1],idProg)]
+            return self.memoria[self.idenVar(linea[1],idProg)]
 
     def eImprima(self, linea, idProg):
         if(linea[1]=='acumulador'):
-            return memoria[0]
+            return self.memoria[0]
         else:
-            return memoria[self.idenVar(linea[1],idProg)]    
+            return self.memoria[self.idenVar(linea[1],idProg)]    
+
+    def eEtiqueta(self, linea, idProg):
+        
+        self.etiquetas.append(linea[1])
+        instruccion = self.encontrarLinea(linea[2])
+        ##esta perdiente por terminar 
+        pass
