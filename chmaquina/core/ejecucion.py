@@ -40,10 +40,14 @@ class ejecucion:
     memoria =[]
     variables =[]
     posMemVar=[]
+    cantidVarixPro=[] # aqui se sabe cuantas variables son agregadas en cada uno de los programas, que representan una posicion en el arreglo 
     etiquetas =[]
     posMemEtiq=[]
     memoria.append(0) # memoria en la primera posición será el acumudador (variable requerida en el ch máquina)
-    
+    rb=[] # registro base del programa, donde empieza el programa, cada posicion corresponde a un programa (ejem rb[0] es el rb del programa 0)
+    rlc =[] # registro limite del codigo, hasta donde llegan las instrucciones del programa, cada posicion corresponde a un programa (ejem rlc[0] es el rlc del programa 0) 
+    rlp=[] # registro limite del programa, hasta donde llega el programa, con variables incluidas, cada posicion corresponde a un programa (ejem rlp[0] es el rlp del programa 0)
+
     ###############################################################################
     # necesasario para quitar el \n que se genera en algunos archivos .ch
     contadorSalto=0 # contador de salto de linea
@@ -64,10 +68,20 @@ class ejecucion:
         memoria.append("***kernel ch***") # self.
     cantmemoria -= kernel 
 
-    #aquí se agregan las instrucciones a la memoria 
-    for i in range(len(leer)):
-        memoria.append(leer[i].rstrip()) # self.
-    cantmemoria -= len(leer)
+    #metodo para agregar las instrucciones a la memoria 
+    def agregarInstrMemoria(self, idProg):
+        for i in range(len(self.leer)):
+            if i==0:
+                self.rb[idProg]=len(self.memoria) # para saber donde inicia el programa 
+                memoria.append(self.leer[i].rstrip()) 
+            elif i == len(self.leer):
+                self.rlc[idProg] = len(self.memoria) # para saber donde termina el programa
+                memoria.append(self.leer[i].rstrip()) 
+            else:
+                memoria.append(self.leer[i].rstrip()) 
+            
+        self.cantmemoria -= len(self.leer)
+    
     #print(memoria)
     #print(cantmemoria, 'cantidad de disponible')
     #print(len(memoria))
@@ -75,6 +89,12 @@ class ejecucion:
     #print(variables)
     #palabras = variables[0].split('-')
     #print(palabras)
+
+    #metodo para saber donde inicia las instrucciones del programa en la memoria 
+
+    def registroBase(self):
+        pass
+
 
     #metodos de retorno para entregar la instrucción y su posición de memoria
 
@@ -113,22 +133,28 @@ class ejecucion:
         if(len(linea)==4) :
             self.memoria.append(linea[3])
             self.varConIdProg(idProg, linea[1],len(self.memoria))
+            self.cantidVarixPro[idProg] += 1
             
         elif (len(linea)==3):
             if linea[2] == 'I':
                 self.memoria.append(0)
                 self.varConIdProg(idProg, linea[1], len(self.memoria))
-                
+                self.cantidVarixPro[idProg] += 1
+
             elif linea[2] == 'R':
                 self.memoria.append(0.0)
                 self.varConIdProg(idProg, linea[1], len(self.memoria))
+                self.cantidVarixPro[idProg] += 1
 
             elif linea[2] == 'L':
                 self.memoria.append(0)
                 self.varConIdProg(idProg, linea[1], len(self.memoria))
+                self.cantidVarixPro[idProg] += 1
+
             else:
                 self.memoria.append('')
                 self.varConIdProg(idProg, linea[1], len(self.memoria))
+                self.cantidVarixPro[idProg] += 1
         else:
             print('no se agregó nada nuevo')
     #fin funcion sNueva
@@ -538,7 +564,16 @@ class ejecucion:
 
     def eEtiqueta(self, linea, idProg):
         
-        self.etiquetas.append(linea[1])
-        instruccion = self.encontrarLinea(linea[2])
+        self.etiquetas.append(linea[1]) # guardamos el nombre de la etiqueta
+        instruccion = self.encontrarLinea(linea[2]) # identificamos a que instruccion se refiere la etiqu
+        posMemoriaEti = 0 # variable temporal
+
+        i=self.rb[idProg] # con esto identificamos donde inicia el programa 
+        for i in range(self.rlc[idProg]): # ciclo que recorre solamente las posiciones de memoria que corresponden a las instrucciones
+            if instruccion == self.memoria[i]:
+                posMemoriaEti = i
+                break
+        self.posMemEtiq.append(posMemoriaEti) # se agrega la posicion de memoria de la instruccion a donde apunta la etiq
+        
         ##esta perdiente por terminar 
         pass
