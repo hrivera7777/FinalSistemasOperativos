@@ -68,6 +68,99 @@ class ejecucion:
         memoria.append("***kernel ch***") # self.
     cantmemoria -= kernel 
 
+    #############################################################################################################################
+    #metodos para obterner los valores y mostrarlos en el frontend
+
+    #metodo para obtener el valor del acumulador (acumulador en el frontend)
+    def getAcumulador(self):
+        for i in range(len(self.memoria)):
+            tempoVar = self.memoria[0]
+        return tempoVar
+    
+    #metodo para obtener la linea que se esta ejecutando (pc en el frontend)
+    def getLineaActual(self):
+        i= rb[proEjec]
+        for i in range(self.rlc[proEjec]):
+            tempoVar = self.memoria[i]
+        return tempoVar
+
+    #metodo para obtener cada linea que se esta ejecutando (instruccion en el frontend)
+    def getProgActual(self):
+        i= rb[proEjec]
+        tempoList=[]
+        for i in range(self.rlc[proEjec]):
+            tempoList[i] = self.memoria[i]
+        return tempoList
+
+    #metodo para obtener cada posicion de memoria de cada linea que se esta ejecutando (memoria (al lado izq instruccion) en el frontend)
+    def getProgActual(self):
+        i= rb[proEjec]
+        tempoList=[]
+        for i in range(self.rlc[proEjec]):
+             tempoList[i] = i
+        return  tempoList
+    
+    #metodo para obtener cada variable que esta memoria del programa que se esta ejecutando (variables en el frontend)
+    def getVariablesActuales(self):
+        i= 0
+        tempoList=[]
+        j=0
+        for i in range(len(self.variables)-1):
+            palabras = self.variables[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
+            if palabras[0]== proEjec:
+                tempoList[j]= self.variables[i]
+                j +=1
+        return tempoList
+    
+    #metodo para obtener cada posicion de memoria de la variable que esta memoria del programa que se esta ejecutando (pos al la izq de variables en el frontend)
+    def getPosVariablesActuales(self):
+        i= 0
+        tempoList=[]
+        j=0
+        for i in range(len(self.variables)-1):
+            palabras = self.variables[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
+            if palabras[0]== proEjec:
+                tempoList[j]= self.posMemVar[i]
+                j +=1
+        return tempoList
+
+    #metodo para obtener cada etiqueta que esta memoria del programa que se esta ejecutando (etiquetas en el frontend)
+    def getEtiquetasActuales(self):
+        i= 0
+        tempoList=[]
+        j=0
+        for i in range(len(self.etiquetas)-1):
+            palabras = self.etiquetas[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
+            if palabras[0]== proEjec:
+                tempoList[j]= self.etiquetas[i]
+                j +=1
+        return tempoList
+
+    #metodo para obtener cada posicion de memoria de la variable que esta memoria del programa que se esta ejecutando (pos al la izq de variables en el frontend)
+    def getPosEtiquetasActuales(self):
+        i= 0
+        tempoList=[]
+        j=0
+        for i in range(len(self.etiquetas)-1):
+            palabras = self.etiquetas[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
+            if palabras[0]== proEjec:
+                tempoList[j]= self.posMemEtiq[i]
+                j +=1
+        return tempoList
+    
+    #metodo para retornar lo que se encuentra en la memoria 
+    def getMemoria(self):
+        return self.memoria
+        
+    #metodo para retornar lo las posiciones en la memoria 
+    def getPosMemoria(self):
+        tempoList = []
+        for i in range(len(self.memoria)-1):
+            tempoList[i] = i
+        return tempoList
+    
+    ###########################################################################################################################################################
+
     #metodo para agregar las instrucciones a la memoria 
     def agregarInstrMemoria(self, idProg):
         for i in range(len(self.leer)):
