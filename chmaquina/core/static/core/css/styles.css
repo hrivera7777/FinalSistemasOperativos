@@ -13,7 +13,7 @@ tr{
 }
 
 
-.hidden{
+.hidden{ /*se usa para oculatar la parte de la memoria*/
 	display: none;
 }
 

@@ -38,10 +38,10 @@ class ejecucion:
     myfile.close()
     #estructuras de datos necesarias (se contempla leer[] y ruta2[]=>que es la lista de programas(los nombres)).
     memoria =[]
-    variables =[]
+    variables =[] #aqui se guardan los nombres de las variables
     posMemVar=[]
     cantidVarixPro=[] # aqui se sabe cuantas variables son agregadas en cada uno de los programas, que representan una posicion en el arreglo 
-    etiquetas =[]
+    etiquetas =[] #aqui se guardan los nombres de la etiquetas
     posMemEtiq=[]
     memoria.append(0) # memoria en la primera posición será el acumudador (variable requerida en el ch máquina)
     rb=[] # registro base del programa, donde empieza el programa, cada posicion corresponde a un programa (ejem rb[0] es el rb del programa 0)
@@ -90,16 +90,24 @@ class ejecucion:
     #palabras = variables[0].split('-')
     #print(palabras)
 
-    #metodo para saber donde inicia las instrucciones del programa en la memoria 
-
-    def registroBase(self):
-        pass
-
-
     #metodos de retorno para entregar la instrucción y su posición de memoria
 
     def getInstruccion(self):
         pass
+
+
+    # identificar la etiqueta en memoria
+    def idenEtiq(self, nomEtiq, idProg):
+        posMem = 0
+        indice = 0
+        for i in range(len(self.etiquetas)-1):
+            palabras = self.etiquetas[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la etiqueta
+            if palabras[0]== idProg and palabras[1] == nomEtiq:
+                indice=i
+
+        posMem = self.posMemVar[indice]
+        return posMem   
+
 
     #metodo para agregar la variable a una lista con su id corresponidiente
 
@@ -120,7 +128,7 @@ class ejecucion:
         posMem = 0
         indice = 0
         for i in range(len(self.variables)-1):
-            palabras = self.variables[i].split('-')
+            palabras = self.variables[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
             if palabras[0]== idProg and palabras[1] == nomVar:
                 indice=i
 
@@ -564,7 +572,7 @@ class ejecucion:
 
     def eEtiqueta(self, linea, idProg):
         
-        self.etiquetas.append(linea[1]) # guardamos el nombre de la etiqueta
+        self.etiquetas.append(str(idProg) + '-' +str(linea[1]) ) # guardamos el nombre de la etiqueta
         instruccion = self.encontrarLinea(linea[2]) # identificamos a que instruccion se refiere la etiqu
         posMemoriaEti = 0 # variable temporal
 
@@ -575,4 +583,19 @@ class ejecucion:
                 break
         self.posMemEtiq.append(posMemoriaEti) # se agrega la posicion de memoria de la instruccion a donde apunta la etiq
 
+    def eVaya(self, linea, idProg):
+        posMemEti = self.idenEtiq(linea[1], idProg)
+        #aquí se llamará el metodo final donde cambiará el flujo del programa con la posicion que entregue 
     
+    def eVayaSi(self, linea, idProg):
+        posMemEti1 = self.idenEtiq(linea[1], idProg)
+        posMemEti2 = self.idenEtiq(linea[2], idProg)
+
+        if self.memoria[0] > 0:
+            pass # #aquí se llamará el metodo final donde cambiará el flujo del programa con la posicion que entregue (posMemEti1)
+
+        elif self.memoria[0] < 0:
+            pass # #aquí se llamará el metodo final donde cambiará el flujo del programa con la posicion que entregue (posMemEti2)
+        else:
+            print('continuando con la ejecucion')
+            pass
