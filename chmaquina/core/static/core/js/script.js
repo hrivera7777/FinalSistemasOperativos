@@ -11,6 +11,16 @@ $(document).ready(function () {
 
     $('#myModal').on('shown.bs.modal', function () {
         $('#myInput').trigger('focus')
-      });
+    });
+    let bandera = false;
+    this.showHidden=function (){
+        if (bandera) {
+     $('#grande3').removeClass('hidden');
+
+     } else {
+        $('#grande3').addClass('hidden');
+     }
+        bandera = !bandera;
+   };
 });
 

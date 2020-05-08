@@ -574,6 +574,5 @@ class ejecucion:
                 posMemoriaEti = i
                 break
         self.posMemEtiq.append(posMemoriaEti) # se agrega la posicion de memoria de la instruccion a donde apunta la etiq
-        
-        ##esta perdiente por terminar 
-        pass
+
+    
