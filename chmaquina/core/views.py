@@ -11,12 +11,13 @@ from .ejecucion import ejecucion
 
 
 
+
+#################################################################################################################3
 """
 
 esto es update view cuidado
 
 """
-#################################################################################################################3
 class HomePageView(UpdateView):
     #form_class = ArchivoForm
     #model = ArchivosCh se cambió el modelo para poder recuperar la memoria y el kernel
@@ -27,7 +28,12 @@ class HomePageView(UpdateView):
     success_url= reverse_lazy('home')
     template_name = "core/base.html"
     
-    
+    """
+
+    esto es update view cuidado
+
+    """
+
     def get(self, request, *args, **kwargs):
         #ruta=request.FILES.get('archivo')
         #nombre = ruta.name
@@ -52,7 +58,12 @@ class HomePageView(UpdateView):
         #profile, created= ArchivosCh.objects.get_or_create()
         profile, created= EjecArchCh.objects.get_or_create()
         return profile
-    
+    """
+
+    esto es update view cuidado
+
+    """
+
 # ########################################################################################################################
 
 

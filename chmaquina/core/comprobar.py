@@ -23,7 +23,8 @@ class sintax:
     f.close()
     myfile.close()
     #print(leer)
-    
+    pantalla ="" # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
+
     def abrirArchivo(self):
         return str(self.leer)
     
@@ -44,7 +45,6 @@ class sintax:
                 lista2.append("Todo ok " + str(i + 1))
         return lista2 
     ###########################################################################
-
 
     #metodo para hacer puebas de todas las funciones juntas
     #la letra i se usará para indicar en que linea hay un error
@@ -142,11 +142,113 @@ class sintax:
                     lista2.append("Todo ok " + str(i + 1))
 
         return lista2
+    ############################################################################################################
+    ###########################################################################################################
+
+
+    #metodo principal para realizar la verificación de la sintaxis en el archivo
+
+    #la letra i se usará para indicar en que linea hay un error
+    def errSintax(self):
+        varRetorne = -2 # con esta variable verificamos si existe y esta bien la ultima instruccion que es retorne
+        varCantRetorne =0 #con esta variable se verifica si existen mas de un retorne 
+        varInstrucciones =-2 # con esta variable verificamos si existe y esta bien cada una de las instrucciones en el doc .ch 
+
+        # necesasario para quitar el \n que se genera en algunos archivos .ch
+        contadorSalto=0 # contador de salto de linea
+        for i in range(len(self.leer)):
+            contraS = self.leer[i] # variable para verificar si hay un salto de linea
+            if contraS == str('\n'):
+                contadorSalto +=1
+
+        for j in range(contadorSalto):
+            self.leer.remove(str('\n'))
+
+        # se resta otra posición para estar en el rango de la lista creada para dividir
+        ultimaLinea = self.leer[len(self.leer)-1].rstrip().split()
+        varRetorne = self.sRetorne(ultimaLinea, len(self.leer)-1) 
+        #print(self.leer)
+
+        if varRetorne >=0:
+            self.pantalla = "Error, no tiene instrucción retorne al final "
+            varCantRetorne +=1
+        else:
+            for i in range(len(self.leer)-1):
+
+                palabras = self.leer[i].rstrip().split()
+                operador = palabras[0]
+            
+                if operador == 'cargue':
+                    varInstrucciones = self.sCargue(palabras, i ,self.leer) 
+                elif operador == 'almacene':
+                    varInstrucciones = self.sAlmacene(palabras, i ,self.leer)
+                elif operador == 'vaya':
+                    varInstrucciones = self.sVaya(palabras, i ,self.leer)
+                elif operador == 'nueva':
+                    varInstrucciones = self.sNueva(palabras, i ,self.leer)
+                elif operador == 'etiqueta':
+                    varInstrucciones = self.sEtiqueta(palabras, i ,self.leer)
+                elif operador == 'lea':
+                    varInstrucciones = self.sLea(palabras, i ,self.leer)
+                elif operador == 'sume':
+                    varInstrucciones = self.sSume(palabras, i ,self.leer)
+                elif operador == 'reste':
+                    varInstrucciones = self.sReste(palabras, i ,self.leer)
+                elif operador == 'multiplique':
+                    varInstrucciones = self.sMultiplique(palabras, i ,self.leer)
+                elif operador == 'divida':
+                    varInstrucciones = self.sDivida(palabras, i ,self.leer)
+                elif operador == 'potencia':
+                    varInstrucciones = self.sPotencia(palabras, i ,self.leer)
+                elif operador == 'modulo':
+                    varInstrucciones = self.sModulo(palabras, i ,self.leer)
+                elif operador == 'concatene':
+                    varInstrucciones = self.sConcatene(palabras, i ,self.leer)
+                elif operador == 'elimine':
+                    varInstrucciones = self.sElimine(palabras, i ,self.leer)
+                elif operador == 'extraiga':
+                    varInstrucciones = self.sExtraiga(palabras, i ,self.leer)
+                elif operador == 'Y':
+                    varInstrucciones = self.sY(palabras, i ,self.leer)
+                elif operador == 'O':
+                    varInstrucciones = self.sO(palabras, i ,self.leer)
+                elif operador == 'NO':
+                    varInstrucciones = self.sNo(palabras, i ,self.leer)
+                elif operador == 'muestre':
+                    varInstrucciones = self.sMuestre(palabras, i ,self.leer)
+                elif operador == 'imprima':
+                    varInstrucciones = self.sImprima(palabras, i ,self.leer)
+                elif operador == 'absoluto':
+                    varInstrucciones = self.sAbsoluto(palabras, i ,self.leer)
+                elif operador == 'vayasi':
+                    varInstrucciones = self.sVayasi(palabras, i ,self.leer)
+                elif operador == '//':
+                    varInstrucciones = self.sComentario(palabras, i)
+                elif operador == 'retorne':
+                    varCantRetorne +=1
+                else:
+                    varInstrucciones = -1
+
+                # muestra en que lienea se encuentra el error 
+                if varInstrucciones >=0:
+                    self.pantalla = "error en la linea " + str(varInstrucciones + 1)
+                    break
+                elif varCantRetorne > 1:
+                    self.pantalla = "se tienen más instrucciones retorne de lo necesario "
+                    break
+                else:
+                    self. pantalla= "Todo ok " + str(i + 1) 
+
 
     """
     print(leer[0].rstrip()) # con .rstrip() se pude eliminar el salto de linea generado automaticamente.
     print(leer[1])
     """
+
+    #metodo para obtener lo que será mostrado en pantalla
+    def getPantalla(self):
+        return self.pantalla
+
 
     #funcion si existe la variable dentro del archivo ch 
     def existe(self, texto, nomVar, i): #nomVar = nombre variable 
