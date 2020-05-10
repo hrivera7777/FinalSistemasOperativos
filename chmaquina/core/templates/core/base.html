@@ -33,11 +33,9 @@
 
 		  <!--formulario para subir el archivo a una carpeta especifica-->
 		  <form id="formularioprin" name="formularioprinc" action="" method="post" enctype="multipart/form-data">{% csrf_token %}
-		  	<input type="file" name="archivo" id="subirArchivoCh" accept=".ch" style="display : none;" >
-			 <a class="nav-item nav-link" id="btnAbrir" onclick="document.getElementById('subirArchivoCh').click();
-		 	 document.getElementById('btnUp').style = 'display : block;'
-		 	 document.getElementById('btnAbrir').style = 'display : none;'" >Abrir</a>
-		 	 <input type="submit" value="Subir" id="btnUp"  class="btnsubir" >
+		  	<input type="file" name="archivo" id="subirArchivoCh" accept=".ch" style="display : none;" required >
+			 <a class="nav-item nav-link" id="btnAbrir" onclick="actionOpen()" >Abrir</a> <!--boton abrir-->
+		 	 <input type="submit" value="Subir" id="btnUp"  class="btnsubir" > <!--boton subir-->
 		  </form>
 		 <!---------------------------------------------->
 		 
@@ -60,7 +58,8 @@
 							Memoria:
 							</td>
 							<td id="cajaM">
-								<input type="number" name="memoria" id="memoria" min="1" max="100" value="100" form ="formularioprin">
+								
+								<input type="number" name="memoria" id="memoria" min="2" max="100" value="100" form ="formularioprin" required>
 							</td>
 					</tr>
 
@@ -69,7 +68,7 @@
 							Kernel:
 							</td>
 							<td id="cajaK">
-								<input type="number" name="kernel" id="kernel" min="1" max="100" value="10" form="formularioprin"><!--kernel debe ser 69 por requerimientos-->
+								<input type="number" name="kernel" id="kernel" min="1" max="100" value="10" form="formularioprin" required> <!--kernel debe ser 69 por requerimientos-->
 							</td>
 					</tr>
 				</table>
@@ -83,7 +82,8 @@
 					Acumulador:
 					</td>
 					<td id="cajaAcum">
-						<div id="acumulador"></div>
+						<div id="acumulador">{{acum}}</div>
+						
 						<!--<input type="text" name="acumulador" id="acumulador">-->
 					</td>
 
@@ -103,7 +103,7 @@
 					PC:
 					</td>
 					<td id="cajaPC">
-						<div id="pc"></div>
+						<div id="pc">{{linAct}}</div>
 						<!--<input type="text" name="pc" id="pc">-->
 					</td>
 
@@ -126,19 +126,23 @@
 				</tr>
 			  </thead>
 			  <tbody>
-				<tr>
-				  <th scope="row">1</th>
-				  <td>Mark</td>
-				  
-			
-				</tr>
+				{% for x, y in codProAct.items %}  <!--codProActi.codProAct-->
+					<tr>
+					<!--<th scope="row"></th>-->
+					<td>{{x}}</td> <!--codProActi.posCodProAct-->
+					
+					<td>{{y}}</td>
+					
+					</tr>
+				{%endfor%}
+				<!--
 				<tr>
 				  <th scope="row">2</th>
 				  <td>Jacob</td>
 				  
 				  
 				</tr>
-				
+				-->
 			  </tbody>
 			</table>
 
@@ -155,7 +159,18 @@
 					</tr>
 				  </thead>
 				  <tbody>
+
+				  {% for i in varActi.posVarAct %}
 					<tr>
+					<!--<th scope="row"></th>-->
+					<td>{{i}}</td>
+					
+					<td>{{varActi.varAct}}</td>
+					
+					</tr>
+				   {%endfor%}
+
+					<!--<tr>
 					  <th scope="row">1</th>
 					  <td>Mark</td>
 
@@ -166,7 +181,7 @@
 					  <td>Jacob</td>
 
 
-					</tr>
+					</tr>-->
 
 				  </tbody>
 			</table>
@@ -182,6 +197,17 @@
 					</tr>
 				  </thead>
 				  <tbody>
+
+				  {% for i in etiqAct %}
+					<tr>
+					<!--<th scope="row"></th>-->
+					<td>{{posEtiqAct}}</td>
+					
+					<td>{{i}}</td>
+					
+					</tr>
+					{%endfor%}
+				  <!--
 					<tr>
 					  <th scope="row">1</th>
 					  <td>Mark</td>
@@ -194,7 +220,7 @@
 
 
 					</tr>
-
+					-->
 				  </tbody>
 			</table>
 			
@@ -213,6 +239,20 @@
 					</tr>
 				  </thead>
 				  <tbody>
+				  {% for i in proga.prog %} <!--asi deberia ser-->
+					<tr>
+						<!--<th scope="row"></th>-->
+						<td>{{proga.idPr}}</td>
+						
+						<td>{{i}}</td>
+						<td>{{proga.cantInsProg}}</td>
+						<td>{{proga.regBas}}</td>
+						<td>{{proga.regLimCod}}</td>
+						<td>{{proga.regLimPro}}</td>
+					
+					</tr>
+					{%endfor%}
+					<!--
 					<tr>
 					  <th scope="row">1</th>
 					  <td>xxx</td>
@@ -274,7 +314,7 @@
 
 
 					</tr>
-
+					-->
 				  </tbody>
 			</table>
 		
@@ -287,11 +327,11 @@
 		<figure>
 			<img src="{% static 'core/img/screen_tablet.png' %}" id="pantalla" alt="">
 			
-			<div class="overflow-auto" id="contPantalla"> 
-			{% for sin in  sintax %}
-				{{sin}}
-			{% endfor %}
-				<!--{{sintax}}-->
+			<div class="overflow-auto" id="contPantalla">  <!--div que muestra la informacion que debe aparecer por pantalla-->
+				{{pantallaBack}}
+				<!---{% for sin in  sintax %}
+					{{sin}} esto sirve para mostrar una lista con cada elemento que tenga dentro
+				{% endfor %}-->
 			</div>
 			
 			<section id="modo">
@@ -300,8 +340,8 @@
 			
 			<img src="{% static 'core/img/impresora.png' %}" id="impresora" alt="">
 			
-			<div id="contImpresora"> 
-				hi there
+			<div id="contImpresora"> <!--div que muestra la informacion que debe aparecer en la impresora-->
+				{{impre}}
 			</div>
 			
 		</figure>
@@ -320,19 +360,38 @@
 					</tr>
 				  </thead>
 				  <tbody>
-					<tr> <!--acumulador-->
-				      <td><img src="{% static 'core/img/icon_a.png' %}" alt="" height="20px" width="20px"></td>
-					  <th scope="row">0</th>
-					  <td></td>
-					</tr>
+					{% for i in memo.mem%}
+						{% if forloop.first %}
+							<tr> <!--acumulador-->
+						<td><img src="{% static 'core/img/icon_a.png' %}" alt="" height="20px" width="20px"></td>
+						<th scope="row">{{forloop.counter0}}</th>
+						<td>{{acum}}</td>
+						</tr>
+						{% elif i == "***kernel ch***" %}
+						<tr> 
+							<td><img src="{% static 'core/img/icon_os.png' %}" alt="" height="20px" width="20px"></td>
+							<th scope="row">{{forloop.counter0}}</th>
+							<td>{{i}}</td>
+						</tr>
+
+						{% else %}
+						<tr><!--Programa-->
+							<td><img src="{% static 'core/img/icon_progr.png' %}" alt="" height="20px" width="20px"></td>
+							<td>{{forloop.counter0}}</td>
+							<!--<th scope="row">3</th>-->
+							<td>{{i}}</td>
+						</tr>
+						{% endif %}
+					{%endfor%}
+					<!--
 					{% for i in kernel %}	
-					<tr><!--kernel-->
+					<tr> kernel
 					  <td><img src="{% static 'core/img/icon_os.png' %}" alt="" height="20px" width="20px"></td>
 					  <th scope="row">{{i}}</th>
 					  <td>***Kernel ch***</td>
 					</tr>
 					{%endfor%}
-
+					-->
 					{% for i in memoriaFinal %}
 					<tr><!--memoria disponible-->
 					  <td><img src="{% static 'core/img/icon_mem.png' %}" alt="" height="20px" width="20px"></td>
@@ -340,12 +399,17 @@
 					  <td></td>
 					</tr>
 					{%endfor%}
-					<tr><!--Programa-->
+
+
+					
+
+					<!-- programa anterior
+					<tr>
 					  <td><img src="{% static 'core/img/icon_progr.png' %}" alt="" height="20px" width="20px"></td>
 					  <th scope="row">3</th>
 					  <td>vayasi salto salto</td>
 					</tr>
-
+					-->
 				  </tbody>
 			</table>
 	

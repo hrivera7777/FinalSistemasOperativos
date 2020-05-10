@@ -1,6 +1,6 @@
 from django.core.files import File
 from .models import EjecArchCh
-
+"""
 ruta =""
 #tup = ArchivosCh.objects.all()
 tup2 = EjecArchCh.objects.all()
@@ -22,6 +22,7 @@ for tp in tup2:
 proEjec=len(tup2)-1 #cual programa se encuentra en ejecución  
 
 print(ruta2)
+"""
 
 """
 for tp in tup:
@@ -30,6 +31,34 @@ for tp in tup:
 """
 
 class ejecucion:
+    ruta =""
+    #tup = ArchivosCh.objects.all()
+    tup2 = EjecArchCh.objects.all()
+    #aqui se agregan todos los archivos para abrir 
+    ruta2=[] #ok
+    w=0
+    cantmemoria=-2
+    kernel=-3
+
+    tp =[]
+    tempo=""
+    nombre2=""
+    proEjec=0
+    for tp in tup2:
+        nombre2=tp.archivo
+        tempo = tp.memoria
+        cantmemoria=int(tempo) # cantidad total de memoria, se va disminuyendo si se agrega el kernel o programas
+        tempo = tp.kernel
+        kernel=int(tempo)
+        ruta2.append(str(nombre2))
+        tempo = tp.id
+        #print(tempo)
+        #proEjec= int(tempo)
+
+    #proEjec=len(tup2)-1 #cual programa se encuentra en ejecución  
+
+    #print(ruta2)
+
     f = open("media/" + ruta2[proEjec], "r")
     myfile = File(f)
     print(myfile)
@@ -40,7 +69,7 @@ class ejecucion:
     memoria =[] # memoria donde se guarda el kernel, los programas y el acumulador
     variables =[] #aqui se guardan los nombres de las variables
     posMemVar=[]
-    cantidVarixPro=[] # aqui se sabe cuantas variables son agregadas en cada uno de los programas, que representan una posicion en el arreglo 
+    cantidVarixPro=[0]*30 # aqui se sabe cuantas variables son agregadas en cada uno de los programas, que representan una posicion en el arreglo 
     etiquetas =[] #aqui se guardan los nombres de la etiquetas
     posMemEtiq=[]
     memoria.append(0) # memoria en la primera posición será el acumudador (variable requerida en el ch máquina)
@@ -56,8 +85,9 @@ class ejecucion:
     contadorSalto=0 # contador de salto de linea
     i=0
     contraS=""
-    for i in range(len(leer)):
-        contraS = leer[i] # variable para verificar si hay un salto de linea
+    w=0
+    for w in range(len(leer)):  
+        contraS = leer[w] # variable para verificar si hay un salto de linea
         if contraS == str('\n'):
             contadorSalto +=1
     j=0
@@ -65,38 +95,12 @@ class ejecucion:
         leer.remove(str('\n'))
     ################################################################################
 
-    #aquí se llena la memoria con el "kernel"
-    i=0
-    for i in range(kernel):
-        memoria.append("***kernel ch***") # self.
     
-
-    #metodo para agregar las instrucciones a la memoria 
-    def agregarInstrMemoria(self): # idProg la variable global es proEjec, este metodo puede ser llamado desde views
-        for i in range(len(self.leer)):
-            if i==0:
-                self.rb[proEjec]=len(self.memoria) # para saber donde inicia el programa 
-                memoria.append(self.leer[i].rstrip()) 
-            elif i == len(self.leer):
-                self.rlc[proEjec] = len(self.memoria) # para saber donde termina el programa
-                memoria.append(self.leer[i].rstrip()) 
-            else:
-                memoria.append(self.leer[i].rstrip()) 
-            
-        
-    
-    #print(memoria)
-    #print(cantmemoria, 'cantidad de disponible')
-    #print(len(memoria))
-    #variables.append('0'+'-'+'variable')
-    #print(variables)
-    #palabras = variables[0].split('-')
-    #print(palabras)
 
     # metodo que comprueba si es posible realizar la ejecución (la memoria debe ser mayor al kernel)
     def puedeEjecKernel(self):
-        if cantmemoria > kernel:
-            cantmemoria -= kernel 
+        if self.cantmemoria > self.kernel:
+            self.cantmemoria -= self.kernel 
             return True
         else:
             return False #se mostraria un error en la pantalla 
@@ -110,12 +114,32 @@ class ejecucion:
             operador = palabras[0]
             if operador == 'nueva':
                 posiblesVar +=1
-        if cantmemoria >= (len(self.leer)+posiblesVar):
-            cantmemoria -= len(self.leer)
+        if self.cantmemoria >= (len(self.leer)+posiblesVar): 
+            self.cantmemoria -= len(self.leer)
             return True
         else:
             return False #se mostraria un error en la pantalla 
+    
 
+    #aquí se llena la memoria con el "kernel"
+    def agregarKernelMemoria(self):   
+        i=0
+        for i in range(self.kernel):
+            self.memoria.append("***kernel ch***")
+    
+
+    #metodo para agregar las instrucciones a la memoria 
+    def agregarInstrMemoria(self): # idProg la variable global es proEjec, este metodo puede ser llamado desde views
+        for i in range(len(self.leer)):
+            if i==0:
+                self.rb.append(len(self.memoria)) #self.rb[self.proEjec]=len(self.memoria) # para saber donde inicia el programa 
+                self.memoria.append(self.leer[i].rstrip()) 
+            elif i == len(self.leer)-1:
+                self.rlc.append(len(self.memoria)+1) #self.rlc[self.proEjec] = len(self.memoria) # para saber donde termina el programa
+                self.memoria.append(self.leer[i].rstrip()) 
+            else:
+                self.memoria.append(self.leer[i].rstrip()) 
+            
     #metodo que realiza la ejecución del programa
     def ejecutarProg(self, posMemEjec): # posMemEjec se requerirá si se llega  a una instrucción vaya o vayasi para cambiar la ejecucion del programa
         # proEjec no se envia como parametro, porque no se conoce cuando se realice el primer llamado en views
@@ -125,57 +149,57 @@ class ejecucion:
         if posMemEjec >=0: #si se llega a cambiar el orden de ejecucion del programa
             varEjer = posMemEjec 
         else:
-            varEjer = self.rb[proEjec] 
-
-        for varEjer in range(self.rlc[proEjec]):
-            palabras = self.memoria[varEjer].rstrip().split()
+            varEjer = self.rb[self.proEjec] 
+        #print(self.rlc)
+        for i in range(varEjer,self.rlc[self.proEjec]):
+            palabras = self.memoria[i+1].rstrip().split()
             #print(palabras)
             operador = palabras[0]
         
             if operador == 'cargue':
-                self.eCargue(palabras, proEjec) 
+                self.eCargue(palabras, self.proEjec) 
             elif operador == 'almacene':
-                self.eAlmacene(palabras, proEjec)
+                self.eAlmacene(palabras, self.proEjec)
             elif operador == 'vaya':
-                self.eVaya(palabras, proEjec)
+                self.eVaya(palabras, self.proEjec)
             elif operador == 'nueva':
-                self.eNueva(palabras, proEjec)
+                self.eNueva(palabras, self.proEjec)
             elif operador == 'etiqueta':
-                self.eEtiqueta(palabras, proEjec)
+                self.eEtiqueta(palabras, self.proEjec)
             elif operador == 'lea':
-                self.eLea(palabras, proEjec)
+                pass#self.eLea(palabras, self.proEjec)
             elif operador == 'sume':
-                self.eSume(palabras, proEjec)
+                self.eSume(palabras, self.proEjec)
             elif operador == 'reste':
-                self.eReste(palabras, proEjec)
+                self.eReste(palabras, self.proEjec)
             elif operador == 'multiplique':
-                self.eMultiplique(palabras, proEjec)
+                self.eMultiplique(palabras, self.proEjec)
             elif operador == 'divida':
-                self.eDivida(palabras, proEjec)
+                self.eDivida(palabras, self.proEjec)
             elif operador == 'potencia':
-                self.ePotencia(palabras, proEjec)
+                self.ePotencia(palabras, self.proEjec)
             elif operador == 'modulo':
-                self.eModulo(palabras, proEjec)
+                self.eModulo(palabras, self.proEjec)
             elif operador == 'concatene':
-                self.eConcatene(palabras, proEjec)
+                self.eConcatene(palabras, self.proEjec)
             elif operador == 'elimine':
-                self.eElimine(palabras, proEjec)
+                self.eElimine(palabras, self.proEjec)
             elif operador == 'extraiga':
-                self.eExtraiga(palabras, proEjec)
+                self.eExtraiga(palabras, self.proEjec)
             elif operador == 'Y':
-                self.eY(palabras, proEjec)
+                self.eY(palabras, self.proEjec)
             elif operador == 'O':
-                self.eO(palabras, proEjec)
+                self.eO(palabras, self.proEjec)
             elif operador == 'NO':
-                self.eNo(palabras, proEjec)
+                self.eNo(palabras, self.proEjec)
             elif operador == 'muestre':
-                self.eMuestre(palabras, proEjec)
+                self.eMuestre(palabras, self.proEjec)
             elif operador == 'imprima':
-                self.eImprima(palabras, proEjec)
+                self.eImprima(palabras, self.proEjec)
             elif operador == 'absoluto':
-                self.eAbsoluto(palabras, proEjec)
+                self.eAbsoluto(palabras, self.proEjec)
             elif operador == 'vayasi':
-                self.eVayasi(palabras, i ,self.leer)
+                self.eVayaSi(palabras, self.proEjec)
             elif operador == 'retorne':
                 self.pantalla += "\n se finalizó la ejecución del programa "
             else:
@@ -195,30 +219,67 @@ class ejecucion:
 
     #metodo para obtener el valor del acumulador (acumulador en el frontend)
     def getAcumulador(self):
-        for i in range(len(self.memoria)):
+        for i in range(len(self.memoria)): #se hace el ciclo for para que se vaya actualizando el valor a medida que se ejecuta el prog
             tempoVar = self.memoria[0]
-        return tempoVar
+        return str(tempoVar)
     
     #metodo para obtener la linea que se esta ejecutando (pc en el frontend)
     def getLineaActual(self):
-        i= rb[proEjec]
-        for i in range(self.rlc[proEjec]):
+        i= self.rb[self.proEjec]
+        for i in range(self.rlc[self.proEjec]):
             tempoVar = self.memoria[i]
-        return tempoVar
+        return str(tempoVar)
+
+    #metodo prueba
+    def getCodProgActualMod(self): # metodo definitivo pendiente actualizar los demas
+
+        i= self.rb[self.proEjec]
+        print(i)
+        tempoDic ={}
+        for j in range(i, self.rlc[self.proEjec]):
+            tempoDic[j] =self.memoria[j]
+        print(type(tempoDic))
+        return tempoDic 
+
+    """
+    def getCodProgActualMod(self):
+
+        i= self.rb[self.proEjec]
+        print(i)
+        tempoList =[[],[]]
+        for j in range(i, self.rlc[self.proEjec]):
+            tempoList[0].append(j) 
+            tempoList[1].append(self.memoria[j])
+        print(type(tempoList))
+        return tempoList 
+    """
+    #metodo para obtener cada linea que se esta ejecutando (instruccion en el frontend)
+    def getPosCodProgActual(self):
+        i= self.rb[self.proEjec]
+        print(i)
+        tempoList =[]
+        for j in range(i, self.rlc[self.proEjec]):
+            print(i,'dentro')
+            tempoList.append(j) 
+        return tempoList 
 
     #metodo para obtener cada linea que se esta ejecutando (instruccion en el frontend)
-    def getProgActual(self):
-        i= rb[proEjec]
-        tempoList=[]
-        for i in range(self.rlc[proEjec]):
-            tempoList[i] = self.memoria[i]
-        return tempoList
+    def getCodProgActual(self):
+        return self.leer 
 
+    """
+    def getCodProgActual(self):
+        i= self.rb[self.proEjec] 
+        tempoList=[]
+        for k in range(i, self.rlc[self.proEjec]):
+            tempoList.append(self.memoria[k])
+        return tempoList
+    """
     #metodo para obtener cada posicion de memoria de cada linea que se esta ejecutando (memoria (al lado izq instruccion) en el frontend)
     def getProgActual(self):
-        i= rb[proEjec]
+        i= self.rb[self.proEjec]
         tempoList=[]
-        for i in range(self.rlc[proEjec]):
+        for i in range(self.rlc[self.proEjec]):
              tempoList[i] = i
         return  tempoList
     
@@ -229,7 +290,7 @@ class ejecucion:
         j=0
         for i in range(len(self.variables)-1):
             palabras = self.variables[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            if palabras[0]== proEjec:
+            if palabras[0]== self.proEjec: 
                 tempoList[j]= self.variables[i]
                 j +=1
         return tempoList
@@ -241,7 +302,7 @@ class ejecucion:
         j=0
         for i in range(len(self.variables)-1):
             palabras = self.variables[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            if palabras[0]== proEjec:
+            if palabras[0]== self.proEjec:
                 tempoList[j]= self.posMemVar[i]
                 j +=1
         return tempoList
@@ -253,7 +314,7 @@ class ejecucion:
         j=0
         for i in range(len(self.etiquetas)-1):
             palabras = self.etiquetas[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            if palabras[0]== proEjec:
+            if palabras[0]== self.proEjec:
                 tempoList[j]= self.etiquetas[i]
                 j +=1
         return tempoList
@@ -265,7 +326,7 @@ class ejecucion:
         j=0
         for i in range(len(self.etiquetas)-1):
             palabras = self.etiquetas[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            if palabras[0]== proEjec:
+            if palabras[0]== self.proEjec:
                 tempoList[j]= self.posMemEtiq[i]
                 j +=1
         return tempoList
@@ -278,9 +339,43 @@ class ejecucion:
     def getPosMemoria(self):
         tempoList = []
         for i in range(len(self.memoria)-1):
-            tempoList[i] = i
-        return tempoList
+            tempoList.append(i) 
+        return tempoList 
+
+    #metodo para retornar los registros bases de los programas 
+    def getRegistroBase(self):
+        return self.rb   
+
+    #metodo para retornar los registros limites del codigo relacionado con los programas 
+    def getRegistroLimCod(self):
+        return self.rlc
+
+    #metodo para retornar los registros limites del programa que incluye las variables relacionado con los programas
+    def getRegistroLimProg(self):
+        for i in range(len(self.rlc)):
+            self.rlp.append(self.rlc[self.proEjec] + self.cantidVarixPro[self.proEjec])
+        return self.rlp
+
+    def getProgramas(self):
+        progList =[]
+        for i in range(len(self.ruta2)):
+            tempo2= str(self.ruta2[i]).split('/')
+            progList.append(tempo2[1])
+        return progList
     
+    def getIdProg(self):
+        return self.proEjec
+    
+    def getCanInstProg(self):
+        #return len(self.leer)
+        return int(self.rlc[self.proEjec] - self.rb[self.proEjec])
+
+    def getMemoriaDispo(self):
+        libre = []
+        for i in range(self.cantmemoria-1):
+            libre.append(len(self.memoria) - 2 + i) # se restan dos, porque se quita el acumulador y el tamaño siempre es 1 mas grande
+        return libre
+        
     ###########################################################################################################################################################
 
     #metodos auxiliares para identificar variables o etiquetas dentro de la memororia 
@@ -308,7 +403,8 @@ class ejecucion:
     #metodo para identificar una linea especifica dentro de la memoria, se usará para las etiquetas 
 
     def encontrarLinea(self, i):
-        return self.leer[i-1].rstrip()
+       # return self.leer[i-1].rstrip()
+        return self.leer[int(i)-1].rstrip()
     
 
     #identificar la variable en memoria
@@ -404,8 +500,25 @@ class ejecucion:
             self.pantalla = 'no se pudo convertir a real el acumulador'
         #############################################  
 
-        if (varInt or varFloat) and (acumInt or acumFloat):
-            self.memoria[0] += self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+        if varInt and varFloat: #(varInt or varFloat) and (acumInt or acumFloat):
+            oper=int(self.memoria[0])
+            oper += int(self.memoria[self.idenVar(linea[1],idProg)]) # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[0] = oper
+
+        elif varFloat and acumFloat:
+            oper=float(self.memoria[0])
+            oper += float(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
+
+        elif varInt and acumFloat:
+            oper=float(self.memoria[0])
+            oper += int(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
+
+        elif varFloat and acumInt:
+            oper=int(self.memoria[0])
+            oper += float(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
         else:
             self.pantalla = "error al sumar no corresponden los tipos"
 
@@ -450,8 +563,25 @@ class ejecucion:
             self.pantalla = 'no se pudo convertir a real el acumulador'
         #############################################  
 
-        if (varInt or varFloat) and (acumInt or acumFloat):
-            self.memoria[0] -= self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+        if varInt and varFloat: #(varInt or varFloat) and (acumInt or acumFloat):
+            oper=int(self.memoria[0])
+            oper -= int(self.memoria[self.idenVar(linea[1],idProg)]) # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[0] = oper
+
+        elif varFloat and acumFloat:
+            oper=float(self.memoria[0])
+            oper -= float(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
+
+        elif varInt and acumFloat:
+            oper=float(self.memoria[0])
+            oper -= int(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
+
+        elif varFloat and acumInt:
+            oper=int(self.memoria[0])
+            oper -= float(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
         else:
             self.pantalla = "error al restar, no corresponden los tipos"
     
@@ -496,8 +626,25 @@ class ejecucion:
             self.pantalla = 'no se pudo convertir a real el acumulador'
         #############################################  
 
-        if (varInt or varFloat) and (acumInt or acumFloat):
-            self.memoria[0] *= self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+        if varInt and varFloat: #(varInt or varFloat) and (acumInt or acumFloat):
+            oper=int(self.memoria[0])
+            oper *= int(self.memoria[self.idenVar(linea[1],idProg)]) # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[0] = oper
+
+        elif varFloat and acumFloat:
+            oper=float(self.memoria[0])
+            oper *= float(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
+
+        elif varInt and acumFloat:
+            oper=float(self.memoria[0])
+            oper *= int(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
+
+        elif varFloat and acumInt:
+            oper=int(self.memoria[0])
+            oper *= float(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
         else:
             self.pantalla = "error al multiplicar, no corresponden los tipos"
     
@@ -542,9 +689,25 @@ class ejecucion:
             acumFloat = False
             self.pantalla = 'no se pudo convertir a real el acumulador'
         #############################################  
+        if varInt and varFloat and (anumeroIntVar!= 0 or anumeroFloatVar != 0.0): #(varInt or varFloat) and (acumInt or acumFloat):
+            oper=int(self.memoria[0])
+            oper /= int(self.memoria[self.idenVar(linea[1],idProg)]) # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[0] = oper
 
-        if (varInt or varFloat) and (acumInt or acumFloat) and (anumeroIntVar!= 0 or anumeroFloatVar != 0.0):
-            self.memoria[0] /= self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+        elif varFloat and acumFloat and (anumeroIntVar!= 0 or anumeroFloatVar != 0.0):
+            oper=float(self.memoria[0])
+            oper /= float(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
+
+        elif varInt and acumFloat and (anumeroIntVar!= 0 or anumeroFloatVar != 0.0):
+            oper=float(self.memoria[0])
+            oper /= int(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
+
+        elif varFloat and acumInt and (anumeroIntVar!= 0 or anumeroFloatVar != 0.0):
+            oper=int(self.memoria[0])
+            oper /= float(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
         
         elif (varInt or varFloat) and (acumInt or acumFloat) and (anumeroIntVar == 0 or anumeroFloatVar == 0.0):
             self.pantalla = "error al dividir, division por Cero"
@@ -583,8 +746,25 @@ class ejecucion:
             self.pantalla = 'no se pudo convertir a real el acumulador'
         #############################################  
 
-        if (varInt) and (acumInt or acumFloat):
-            self.memoria[0] **= self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+        if varInt: #(varInt or varFloat) and (acumInt or acumFloat):
+            oper=int(self.memoria[0])
+            oper **= int(self.memoria[self.idenVar(linea[1],idProg)]) # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[0] = oper
+
+        elif acumFloat:
+            oper=float(self.memoria[0])
+            oper **= float(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
+
+        elif varInt and acumFloat:
+            oper=float(self.memoria[0])
+            oper **= int(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
+
+        elif acumInt:
+            oper=int(self.memoria[0])
+            oper **= float(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
         else:
             self.pantalla = "error al elevar la potencia, no corresponden los tipos"
     
@@ -629,8 +809,25 @@ class ejecucion:
             self.pantalla = 'no se pudo convertir a real el acumulador'
         #############################################  
 
-        if (varInt or varFloat) and (acumInt or acumFloat) and (anumeroIntVar!= 0 or anumeroFloatVar != 0.0):
-            self.memoria[0] %= self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
+        if varInt and varFloat and (anumeroIntVar!= 0 or anumeroFloatVar != 0.0): #(varInt or varFloat) and (acumInt or acumFloat):
+            oper=int(self.memoria[0])
+            oper %= int(self.memoria[self.idenVar(linea[1],idProg)]) # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[0] = oper
+
+        elif varFloat and acumFloat and (anumeroIntVar!= 0 or anumeroFloatVar != 0.0):
+            oper=float(self.memoria[0])
+            oper %= float(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
+
+        elif varInt and acumFloat and (anumeroIntVar!= 0 or anumeroFloatVar != 0.0):
+            oper=float(self.memoria[0])
+            oper %= int(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
+
+        elif varFloat and acumInt and (anumeroIntVar!= 0 or anumeroFloatVar != 0.0):
+            oper=int(self.memoria[0])
+            oper %= float(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[0] = oper
         
         elif (varInt or varFloat) and (acumInt or acumFloat) and (anumeroIntVar == 0 or anumeroFloatVar == 0.0):
             self.pantalla = "error al tomar el modulo, division por Cero"
@@ -661,8 +858,14 @@ class ejecucion:
             self.pantalla = 'no se pudo convertir a real el acumulador'
         #############################################  
 
-        if (acumInt or acumFloat):
-            self.memoria[self.idenVar(linea[1],idProg)] = abs(self.memoria[0]) # se identifica la posicion de memoria y se trae el valor al acumulador
+        if (acumInt):
+            oper= int(self.memoria[self.idenVar(linea[1],idProg)])
+            self.memoria[self.idenVar(linea[1],idProg)] = abs(int(self.memoria[0]))
+            self.memoria[self.idenVar(linea[1],idProg)] = oper
+        elif acumFloat:
+            oper= float(self.memoria[self.idenVar(linea[1],idProg)])
+            oper= abs(float(self.memoria[0])) # se identifica la posicion de memoria y se trae el valor al acumulador
+            self.memoria[self.idenVar(linea[1],idProg)] = oper 
         else:
             self.pantalla = "error no se puede tomar el valor absoluto, no corresponden los tipos"
 
@@ -696,7 +899,7 @@ class ejecucion:
         elif var1 ==1:
             var1Bol = True 
         else:
-            printself.pantalla = "la variable 1 no es de tipo lógico"
+            self.pantalla = "la variable 1 no es de tipo lógico"
         
         if var2 ==0:
             var2Bol=False
@@ -789,3 +992,15 @@ class ejecucion:
         else:
             print('continuando con la ejecucion')
             pass
+
+
+    """
+    prueba local de la cantidad de memoria disponible 
+    #print(memoria)
+    #print(cantmemoria, 'cantidad de disponible')
+    #print(len(memoria))
+    #variables.append('0'+'-'+'variable')
+    #print(variables)
+    #palabras = variables[0].split('-')
+    #print(palabras)
+    """

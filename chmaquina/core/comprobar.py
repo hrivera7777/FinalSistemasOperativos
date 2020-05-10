@@ -139,12 +139,15 @@ class sintax:
                     concatene = "se tienen más instrucciones retorne de lo necesario "
                     lista2.append(concatene)
                 else:
-                    lista2.append("Todo ok " + str(i + 1))
+                    lista2.append("Todo-ok " + str(i + 1))
 
         return lista2
+
+    #####################fin metodo prueba total #####################################3
+    
     ############################################################################################################
     ###########################################################################################################
-
+    
 
     #metodo principal para realizar la verificación de la sintaxis en el archivo
 
@@ -224,7 +227,7 @@ class sintax:
                     varInstrucciones = self.sVayasi(palabras, i ,self.leer)
                 elif operador == '//':
                     varInstrucciones = self.sComentario(palabras, i)
-                elif operador == 'retorne':
+                elif operador == 'retorne'and i != len(self.leer):
                     varCantRetorne +=1
                 else:
                     varInstrucciones = -1
@@ -235,10 +238,21 @@ class sintax:
                     break
                 elif varCantRetorne > 1:
                     self.pantalla = "se tienen más instrucciones retorne de lo necesario "
+                    
                     break
                 else:
-                    self. pantalla= "Todo ok " + str(i + 1) 
+                    self.pantalla= "Todo-ok " + str(i + 1) 
+                    print(self.pantalla, 'esto es la pantalla')
+    
 
+    #metodo para verificar si existe un error al finalizar la revision del archivo
+    def hayError(self):
+        ultimaLinea = len(self.leer)-1
+        paraVerificar = self.pantalla.split()
+        if paraVerificar[0]== 'Todo-ok' and int(paraVerificar[1]) == ultimaLinea:
+            return False
+        else:
+            return True
 
     """
     print(leer[0].rstrip()) # con .rstrip() se pude eliminar el salto de linea generado automaticamente.

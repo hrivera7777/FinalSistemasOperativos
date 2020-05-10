@@ -9,8 +9,8 @@ sume x
 multiplique y
 reste z
 almacene x
-vayasi salto salto
-vaya actualice
+// vayasi salto salto
+// vaya actualice
 divida y
 etiqueta salto 16
 cargue y

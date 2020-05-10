@@ -105,9 +105,57 @@ class HomePageView2(CreateView):
         for i in range (kernelFinal): #aqui se llena la lista con los valores de la posicion de memoria que ocupa el kernel
             cantidadKernel.append(i+1) 
 
-        instancia= sintax() # se crea una instancia de la clase sintax para poder llamar el método que prueba toda la sintaxis de un archivo .ch
-        #print(sintax.abrirArchivo(self))    
-        return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'sintax':instancia.pruebaTotal(),'memoriaFinal': cantidMemoriaDisp, 'kernel': cantidadKernel}) # })#,
+        instanciaSintaxis= sintax() # se crea una instancia de la clase sintax para poder llamar el método que prueba toda la sintaxis de un archivo .ch
+        #print(sintax.abrirArchivo(self))
+        instanciaSintaxis.errSintax() # con esto se llama la funcion donde se verifica cada linea y se entrega en que linea se encuentra el error si lo hay
+
+        if instanciaSintaxis.hayError():  
+            ## se mostraría el error que tiene el programa .ch
+            return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':instanciaSintaxis.getPantalla(),'memoriaFinal': cantidMemoriaDisp, 'kernel': cantidadKernel}) # })#,
+            
+        else:
+            # se continua con la ejecucion
+            instanciaEjec = ejecucion()
+            if not(instanciaEjec.puedeEjecKernel()):
+                return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':'no hay suficiente espacio para el kernel con respecto al tamaño de la memoria','memoriaFinal': cantidMemoriaDisp, 'kernel': cantidadKernel}) # })#,
+            else:
+                instanciaEjec.agregarKernelMemoria()
+                if not(instanciaEjec.puedeEjecProg()):
+                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':'no hay suficiente espacio para el programa con respecto al tamaño de la memoria','memoriaFinal': cantidMemoriaDisp, 'kernel': cantidadKernel}) # })#,
+                else:
+                    instanciaEjec.agregarInstrMemoria()
+                    instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                    #se con el llamado de todos los metodos para mostrar todos los datos en el frontend
+                    pant = instanciaEjec.getPantalla() # (str) datos pantalla en el frontend
+                    impre = instanciaEjec.getImpresora() # (str) datos impresora en el frontend
+                    acum = instanciaEjec.getAcumulador() # (str) 
+                    linAct = instanciaEjec.getLineaActual() # (str) 
+                    codProAct = instanciaEjec.getCodProgActualMod() # (list) 
+                    #posCodProAct = instanciaEjec.getCodProgActualMod() # (list) #getCodProgActualMod
+                    varAct = instanciaEjec.getVariablesActuales()# (list) 
+                    posVarAct = instanciaEjec.getPosVariablesActuales() # (list) 
+                    etiqAct = instanciaEjec.getEtiquetasActuales() # (list) 
+                    posEtiqAct = instanciaEjec.getPosEtiquetasActuales() # (list) 
+                    mem = instanciaEjec.getMemoria() # (list) 
+                    #posMem = instanciaEjec.getPosMemoria() # (list) 
+                    prog = instanciaEjec.getProgramas() # (list) 
+                    idPr = instanciaEjec.getIdProg() # (list)
+                    cantInsProg = instanciaEjec.getCanInstProg() # int
+                    regBas= instanciaEjec.getRegistroBase() # (list) 
+                    regLimCod = instanciaEjec.getRegistroLimCod() # (list) 
+                    regLimPro = instanciaEjec.getRegistroLimProg() # (list) 
+                    memDis = instanciaEjec.getMemoriaDispo() # (list) 
+                    
+                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaFinal': memDis, 'kernel': cantidadKernel, 
+                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varActi':{'varAct': varAct,
+                                    'posVarAct':posVarAct}, 'etiqActi':{'etiqAct': etiqAct, 'posEtiqAct': posEtiqAct}, 'memo':{'mem':mem,},
+                                    'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro},
+                    
+                                    }) # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct} "posCodProAct": posCodProAct,
+
+            #return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':'puede continuar a la ejecución','memoriaFinal': cantidMemoriaDisp, 'kernel': cantidadKernel}) # })#,
+
+        
         #'sintax':instancia.abrirArchivo()
     """
     def get_object(self, queryset=None):
