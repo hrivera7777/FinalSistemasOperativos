@@ -58,8 +58,11 @@
 							Memoria:
 							</td>
 							<td id="cajaM">
-								
+								{%if memoriaTotal == "" %}
 								<input type="number" name="memoria" id="memoria" min="2" max="100" value="100" form ="formularioprin" required>
+								{%else%}
+								<input type="number" name="memoria" id="memoria" min="2" max="100" value="{{memoriaTotal}}" form ="formularioprin" required>
+								{%endif%}
 							</td>
 					</tr>
 
@@ -68,19 +71,24 @@
 							Kernel:
 							</td>
 							<td id="cajaK">
+								{%if kernel == "" %}
 								<input type="number" name="kernel" id="kernel" min="1" max="100" value="10" form="formularioprin" required> <!--kernel debe ser 69 por requerimientos-->
+								{%else%}
+								<input type="number" name="kernel" id="kernel" min="1" max="100" value="{{kernel}}" form="formularioprin" required> <!--kernel debe ser 69 por requerimientos-->
+								{%endif%}
 							</td>
 					</tr>
 				</table>
 		</section>
 
-
+		<!--aqui se muestra lo relacionado con el acumulador, nombre prog y linea activa-->
 		<section id="dos">
 			<table>
 				<tr>
 					<td>
 					Acumulador:
 					</td>
+					<!--aqui se muestra el acumulador -->
 					<td id="cajaAcum">
 						<div id="acumulador">{{acum}}</div>
 						
@@ -92,6 +100,7 @@
 					<td>
 					Programa:
 					</td>
+					<!--aqui se muestra lo relacionado con el nombre del prog en ejec-->
 					<td id="cajaProg">
 						<div id="programa">{{nombre}} </div>
 						<!--<input type="text" name="programa" id="programa">-->
@@ -102,36 +111,32 @@
 					<td>
 					PC:
 					</td>
+					<!--aqui se muestra lo relacionado con la linea que está activa en la ejecución-->
 					<td id="cajaPC">
 						<div id="pc">{{linAct}}</div>
 						<!--<input type="text" name="pc" id="pc">-->
 					</td>
-
 				</tr>
-
-
 			</table>
-
 		</section>
-		
+
+		<!--aqui se muestra lo relacionado con las instruciones del prog que están en ejec (pos memoria e instruccion individual)-->
 		<section class="overflow-auto" id="tres" >
 			<!--<textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>-->
-			
-			
 			<table class="table table-borderless table-hover table-sm">
-			  <thead>
-				<tr>
-				  <th scope="col">Memoria</th>
-				  <th scope="col">Instrucción</th>
+			  <thead >
+				<tr >
+				  <th scope="col" style="background-color: white; text-align: center;">Memoria</th>
+				  <th scope="col" style="background-color: white; text-align: center;">Instrucción</th>
 				</tr>
 			  </thead>
 			  <tbody>
-				{% for x, y in codProAct.items %}  <!--codProActi.codProAct-->
+				{% for pos, cod in codProAct.items %}  <!--codProActi.codProAct-->
 					<tr>
 					<!--<th scope="row"></th>-->
-					<td>{{x}}</td> <!--codProActi.posCodProAct-->
+					<td>{{pos}}</td> <!--codProActi.posCodProAct--> <!--posiciones en memoria-->
 					
-					<td>{{y}}</td>
+					<td>{{cod}}</td> <!--codigo del programa  en memoria-->
 					
 					</tr>
 				{%endfor%}
@@ -148,24 +153,24 @@
 
 			
 		</section>
-		
+
+		<!--aqui se muestra lo relacionado con las variables que están en el prog(pos memoria y nombre)-->
 		<section class="overflow-auto" id="cuarta">
-			
 			<table class="table table-borderless table-hover table-sm">
 				  <thead>
 					<tr>
-					  <th scope="col">Pos</th>
-					  <th scope="col">Variables</th>
+					  <th scope="col"style="background-color: white; text-align: center;">Pos</th>
+					  <th scope="col"style="background-color: white; text-align: center;">Variables</th>
 					</tr>
 				  </thead>
 				  <tbody>
 
-				  {% for i in varActi.posVarAct %}
+				  {% for pos, var in varAct.items %}
 					<tr>
 					<!--<th scope="row"></th>-->
-					<td>{{i}}</td>
+					<th scope="row">{{pos}}</th>
 					
-					<td>{{varActi.varAct}}</td>
+					<td>{{var}}</td>
 					
 					</tr>
 				   {%endfor%}
@@ -187,23 +192,23 @@
 			</table>
 		
 		</section>
-		
+		<!--aqui se muestra lo relacionado con la etiquetas que están en el prog(pos memoria y nombre)-->
 		<section class="overflow-auto" id="quinta">
 			<table class="table table-borderless table-hover table-sm">
 				  <thead>
 					<tr>
-					  <th scope="col">Pos</th>
-					  <th scope="col">Etiquetas</th>
+					  <th scope="col" style="background-color: white; text-align: center;">Pos</th>
+					  <th scope="col" style="background-color: white; text-align: center;">Etiquetas</th>
 					</tr>
 				  </thead>
 				  <tbody>
-
-				  {% for i in etiqAct %}
+				  
+				  {% for pos, eti in etiqAct.items %}
 					<tr>
 					<!--<th scope="row"></th>-->
-					<td>{{posEtiqAct}}</td>
+					<td>{{pos}}</td>
 					
-					<td>{{i}}</td>
+					<td>{{eti}}</td>
 					
 					</tr>
 					{%endfor%}
@@ -225,33 +230,32 @@
 			</table>
 			
 		</section>
-		
-		<section class="overflow-auto" id="sexta">
+		<!--aqui se agrega todo lo relacionado con el prog (id, nombre, #ins, rb, rlc, rlp)-->
+		<section class="overflow-auto" id="sexta"> 
 			<table class="table table-borderless table-hover table-responsive-sm" >
 				  <thead>
 					<tr>
-					  <th scope="col">ID</th>
-					  <th scope="col">Programa</th>
-						<th scope="col">#Ins</th>
-						<th scope="col">RB</th>
-						<th scope="col">RLC</th>
-						<th scope="col">RLP</th>
+					  <th scope="col" style="background-color: white; text-align: center;">ID</th>
+					  <th scope="col" style="background-color: white; text-align: center;">Programa</th>
+						<th scope="col" style="background-color: white; text-align: center;">#Ins</th>
+						<th scope="col" style="background-color: white; text-align: center;">RB</th>
+						<th scope="col" style="background-color: white; text-align: center;">RLC</th>
+						<th scope="col" style="background-color: white; text-align: center;">RLP</th>
 					</tr>
 				  </thead>
 				  <tbody>
-				  {% for i in proga.prog %} <!--asi deberia ser-->
+	
+				  {% for id, pro in prog.items %}	
 					<tr>
 						<!--<th scope="row"></th>-->
-						<td>{{proga.idPr}}</td>
-						
-						<td>{{i}}</td>
-						<td>{{proga.cantInsProg}}</td>
-						<td>{{proga.regBas}}</td>
-						<td>{{proga.regLimCod}}</td>
-						<td>{{proga.regLimPro}}</td>
-					
-					</tr>
-					{%endfor%}
+						<td>{{id}}</td>
+						<td>{{pro.prog}}</td>
+						<td>{{pro.ins}}</td>
+						<td>{{pro.rb}}</td>
+						<td>{{pro.rlc}}</td>
+						<td>{{pro.rlp}}</td>
+						</tr>
+					{% endfor %}
 					<!--
 					<tr>
 					  <th scope="row">1</th>
@@ -322,33 +326,45 @@
 		
 	</section>
 	
-		<!--contenedores de imágenes-->
+		<!--contenedores de imágenes (pantalla e impresora)-->
 	<section id="grande2">
 		<figure>
 			<img src="{% static 'core/img/screen_tablet.png' %}" id="pantalla" alt="">
 			
 			<div class="overflow-auto" id="contPantalla">  <!--div que muestra la informacion que debe aparecer por pantalla-->
-				{{pantallaBack}}
-				<!---{% for sin in  sintax %}
-					{{sin}} esto sirve para mostrar una lista con cada elemento que tenga dentro
-				{% endfor %}-->
+				{% for i in pantallaBack %}
+					<th>{{i}}</th>
+				{% endfor %}
+				
 			</div>
 			
+			<!-- {#{% for sin in  sintax %}#}
+					{#{{sin}}#} esto sirve para mostrar una lista con cada elemento que tenga dentro-->
+			
 			<section id="modo">
+			{%if modo == "" %}
 				Modo Kernel
+			{%else%}
+				{{modo}}
+			{%endif%}
 			</section>
 			
 			<img src="{% static 'core/img/impresora.png' %}" id="impresora" alt="">
 			
 			<div id="contImpresora"> <!--div que muestra la informacion que debe aparecer en la impresora-->
-				{{impre}}
+				{% for i in impre %}
+					<th>{{i}}</th>
+
+				{% endfor %}
+				
+				{#{{impre}}#}
 			</div>
 			
 		</figure>
 	</section>
 		
 	
-		<!--Para cargar la memoria-->
+		<!--Donde se muestra lo que está en memoria-->
 	<section id="grande3" class="overflow-auto hidden" >
 		
 		<table class="table table-borderless table-hover table-sm">
@@ -384,15 +400,15 @@
 						{% endif %}
 					{%endfor%}
 					<!--
-					{% for i in kernel %}	
+					{#{% for i in kernel %}#}
 					<tr> kernel
 					  <td><img src="{% static 'core/img/icon_os.png' %}" alt="" height="20px" width="20px"></td>
 					  <th scope="row">{{i}}</th>
 					  <td>***Kernel ch***</td>
 					</tr>
-					{%endfor%}
+					{#{%endfor%}#}
 					-->
-					{% for i in memoriaFinal %}
+					{% for i in memoriaDis %}
 					<tr><!--memoria disponible-->
 					  <td><img src="{% static 'core/img/icon_mem.png' %}" alt="" height="20px" width="20px"></td>
 					  <th scope="row">{{i}}</th>

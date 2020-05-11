@@ -242,7 +242,7 @@ class sintax:
                     break
                 else:
                     self.pantalla= "Todo-ok " + str(i + 1) 
-                    print(self.pantalla, 'esto es la pantalla')
+                    #print(self.pantalla, 'esto es la pantalla')
     
 
     #metodo para verificar si existe un error al finalizar la revision del archivo
@@ -382,6 +382,8 @@ class sintax:
                         return -1
                     else:
                         return i
+                elif linea[2] == 'C':
+                    return -1
                 else:
                         return i       
             else:

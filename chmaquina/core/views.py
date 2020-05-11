@@ -92,10 +92,10 @@ class HomePageView2(CreateView):
             kernels=tp.kernel # aquí se toman las cantidades de kernel guardadas en la bd
             tempo2= str(nombres).split('/')
             nombre=tempo2[1]
-            memoriaFinal=int(memorias) # con esto sabemos cuanto es la memoria final entregado por el usuario
+            memoriaTotal=int(memorias) # con esto sabemos cuanto es la memoria final entregado por el usuario
             kernelFinal=int(kernels) # con esto sabemos cuanto es el kernel final entregado por el usuario
         
-        tamMemoriaDisp = memoriaFinal- kernelFinal -1 # aquí se verifica cuanta memoria disponible hay (kernel - acumulador - total memoria)
+        tamMemoriaDisp = memoriaTotal- kernelFinal -1 # aquí se verifica cuanta memoria disponible hay (kernel - acumulador - total memoria)
         cantidadKernel=[] # se utilizan listas para mostrar las posiciones de memoria en el kernel 
         cantidMemoriaDisp=[] # se utulizan listas para mostrar las posiciones de memoria disponible  
         
@@ -111,47 +111,47 @@ class HomePageView2(CreateView):
 
         if instanciaSintaxis.hayError():  
             ## se mostraría el error que tiene el programa .ch
-            return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':instanciaSintaxis.getPantalla(),'memoriaFinal': cantidMemoriaDisp, 'kernel': cantidadKernel}) # })#,
+            return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':instanciaSintaxis.getPantalla(),'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal, 'modo':'Modo kernel',}) # })#, cantidadKernel (lista con las posiciones de kernel)
             
         else:
             # se continua con la ejecucion
             instanciaEjec = ejecucion()
             if not(instanciaEjec.puedeEjecKernel()):
-                return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':'no hay suficiente espacio para el kernel con respecto al tamaño de la memoria','memoriaFinal': cantidMemoriaDisp, 'kernel': cantidadKernel}) # })#,
+                return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':'no hay suficiente espacio para el kernel con respecto al tamaño de la memoria','memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal, 'modo':'Modo kernel'}) # })#,
             else:
                 instanciaEjec.agregarKernelMemoria()
                 if not(instanciaEjec.puedeEjecProg()):
-                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':'no hay suficiente espacio para el programa con respecto al tamaño de la memoria','memoriaFinal': cantidMemoriaDisp, 'kernel': cantidadKernel}) # })#,
+                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':'no hay suficiente espacio para el programa con respecto al tamaño de la memoria','memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,'modo':'Modo kernel'}) # })#,
                 else:
                     instanciaEjec.agregarInstrMemoria()
+                    instanciaEjec.agregarEtiquetas()
                     instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
                     #se con el llamado de todos los metodos para mostrar todos los datos en el frontend
                     pant = instanciaEjec.getPantalla() # (str) datos pantalla en el frontend
                     impre = instanciaEjec.getImpresora() # (str) datos impresora en el frontend
                     acum = instanciaEjec.getAcumulador() # (str) 
                     linAct = instanciaEjec.getLineaActual() # (str) 
-                    codProAct = instanciaEjec.getCodProgActualMod() # (list) 
+                    codProAct = instanciaEjec.getCodProgActual() # (list) 
                     #posCodProAct = instanciaEjec.getCodProgActualMod() # (list) #getCodProgActualMod
                     varAct = instanciaEjec.getVariablesActuales()# (list) 
-                    posVarAct = instanciaEjec.getPosVariablesActuales() # (list) 
+                    #posVarAct = instanciaEjec.getPosVariablesActuales() # (list) 
                     etiqAct = instanciaEjec.getEtiquetasActuales() # (list) 
-                    posEtiqAct = instanciaEjec.getPosEtiquetasActuales() # (list) 
+                    #posEtiqAct = instanciaEjec.getPosEtiquetasActuales() # (list) 
                     mem = instanciaEjec.getMemoria() # (list) 
                     #posMem = instanciaEjec.getPosMemoria() # (list) 
                     prog = instanciaEjec.getProgramas() # (list) 
-                    idPr = instanciaEjec.getIdProg() # (list)
-                    cantInsProg = instanciaEjec.getCanInstProg() # int
-                    regBas= instanciaEjec.getRegistroBase() # (list) 
-                    regLimCod = instanciaEjec.getRegistroLimCod() # (list) 
-                    regLimPro = instanciaEjec.getRegistroLimProg() # (list) 
+                    #idPr = instanciaEjec.getIdProg() # (list)
+                    #cantInsProg = instanciaEjec.getCanInstProg() # int
+                    #regBas= instanciaEjec.getRegistroBase() # (list) 
+                    #regLimCod = instanciaEjec.getRegistroLimCod() # (list) 
+                    #regLimPro = instanciaEjec.getRegistroLimProg() # (list) 
                     memDis = instanciaEjec.getMemoriaDispo() # (list) 
                     
-                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaFinal': memDis, 'kernel': cantidadKernel, 
-                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varActi':{'varAct': varAct,
-                                    'posVarAct':posVarAct}, 'etiqActi':{'etiqAct': etiqAct, 'posEtiqAct': posEtiqAct}, 'memo':{'mem':mem,},
-                                    'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro},
-                    
-                                    }) # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct} "posCodProAct": posCodProAct,
+                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                    'etiqAct': etiqAct, 'memo':{'mem':mem,}, 'modo':'Modo usuario', 'prog':prog,
+                                    }) # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
+                                                                  #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro},
 
             #return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':'puede continuar a la ejecución','memoriaFinal': cantidMemoriaDisp, 'kernel': cantidadKernel}) # })#,
 
