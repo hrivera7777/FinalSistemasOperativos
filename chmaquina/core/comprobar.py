@@ -1,7 +1,7 @@
 from django.core.files import File
-from .models import ArchivosCh, EjecArchCh
+#from .models import ArchivosCh, EjecArchCh
 
-
+"""
 #ruta=request.FILES.get('archivo')
 ruta =""
 #tup = ArchivosCh.objects.all() cambio de modelo para tomar la memoria y el kernel
@@ -11,22 +11,69 @@ for tp in tup:
     nombre=tp.archivo
     ruta = str(nombre)
     print(ruta)
-
+"""
 class sintax:
+    
+
+    """
+    contemplado inicialmente para abrir archivos
+    ruta =""
+    tup = EjecArchCh.objects.all()
+    nombre=""
+    tp=[]
+    for tp in tup:
+        nombre=tp.archivo
+        ruta = str(nombre)
+        print(ruta)
     #while(True):
     #ruta = "media/" + ruta
     #print(ruta) 
-    f = open("media/" + ruta, "r")
-    myfile = File(f)
-    #print(myfile)
-    leer = myfile.readlines() #para leer linea a linea #print(leer)
-    f.close()
-    myfile.close()
+    f=""
+    myfile=""
+    leer=["0 0"]*50
+    #if not(tup):
+
+    try:
+        
+        f = open("media/" + ruta, "r")
+        myfile = File(f)
+        #print(myfile)
+        leer = myfile.readlines() #para leer linea a linea #print(leer)
+        f.close()
+        myfile.close()
+    except:
+        print('no se puede abrir el achivo solicitado')
     #print(leer)
-    pantalla ="" # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
+    
+    """
+    leer=[] #donde se almacenan todas las instrucciones del archivo
+    pantalla =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
 
     def abrirArchivo(self):
         return str(self.leer)
+
+    ################################################################################
+
+    ########## metodos para traer los datos de la bd necesarios para la ejecucion del archivo ###################
+    """
+    def setKernel(self, kernel): # introduce cantidad de memoria del programa en ejecucion
+        self.kernel=kernel
+
+    def setCantMemo(self, cantidMemo):  # introduce la cantidad de memoria del programa en ejecucion 
+        self.cantmemoria=cantidMemo
+    """
+
+    def setLeer(self, leer): # introduce todas las lineas del archivo .ch
+        self.leer = leer
+    
+    """
+    def setProgEjec(self, progEjec): # introduce el programa en ejecucion 
+        self.proEjec = progEjec
+    """
+    #####################################################################################
+    
+
+
     
     ################################################
     #metodo para hacer puebas de cada funcion
@@ -173,7 +220,7 @@ class sintax:
         #print(self.leer)
 
         if varRetorne >=0:
-            self.pantalla = "Error, no tiene instrucción retorne al final "
+            self.pantalla.append("Error, no tiene instrucción retorne al final ")
             varCantRetorne +=1
         else:
             for i in range(len(self.leer)-1):
@@ -234,21 +281,22 @@ class sintax:
 
                 # muestra en que lienea se encuentra el error 
                 if varInstrucciones >=0:
-                    self.pantalla = "error en la linea " + str(varInstrucciones + 1)
+                    
+                    self.pantalla.append("error en la linea " + str(varInstrucciones + 1) + " " +"("+ " ".join(palabras)+")")
                     break
                 elif varCantRetorne > 1:
-                    self.pantalla = "se tienen más instrucciones retorne de lo necesario "
+                    self.pantalla.append("se tienen más instrucciones retorne de lo necesario ")
                     
                     break
                 else:
-                    self.pantalla= "Todo-ok " + str(i + 1) 
+                    self.pantalla.append("Todo-ok " + str(i + 1))
                     #print(self.pantalla, 'esto es la pantalla')
     
 
     #metodo para verificar si existe un error al finalizar la revision del archivo
     def hayError(self):
         ultimaLinea = len(self.leer)-1
-        paraVerificar = self.pantalla.split()
+        paraVerificar = self.pantalla[len(self.pantalla)-1].split()
         if paraVerificar[0]== 'Todo-ok' and int(paraVerificar[1]) == ultimaLinea:
             return False
         else:

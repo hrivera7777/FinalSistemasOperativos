@@ -7,6 +7,9 @@ from .models import  EjecArchCh #ArchivosCh,
 from django.shortcuts import get_object_or_404
 from .comprobar import sintax
 from .ejecucion import ejecucion
+from django.core.files import File # se hace necesario para la apertura del archivo
+
+from django.http import HttpResponse
 
 
 
@@ -84,6 +87,7 @@ class HomePageView2(CreateView):
     def get(self, request, *args, **kwargs):
         #ruta=request.FILES.get('archivo')
         #nombre = ruta.name
+        """
         tup = EjecArchCh.objects.all()
         nombre=""
         for tp in tup:
@@ -104,24 +108,172 @@ class HomePageView2(CreateView):
         
         for i in range (kernelFinal): #aqui se llena la lista con los valores de la posicion de memoria que ocupa el kernel
             cantidadKernel.append(i+1) 
+        """
+        
+        """
+        while(request.method == 'POST'):
+            tup = EjecArchCh.objects.all()
+        """
+        tup = EjecArchCh.objects.all()
+        if not(tup):
+            print('supestamente vacio')
+            return render(request, self.template_name,{'title': "Ch Máquina",'pantallaBack':['presione abir y cargue un archivo .ch, así también cargará el tamaño de la memoria y el tamaño del kernel'],'modo':'Modo kernel'}) # })#,   
+           
+        else:
+            if request.method == 'GET':
+                nombre=""
+                tup = EjecArchCh.objects.all()
+                print(tup, 'tup')
+                ruta=[]
+                for tp in tup: 
+                    nombres=tp.archivo # aquí se toman todas la rutas de los archivos cargados en la bd
+                    ruta.append(str(nombres))
+                    memorias= tp.memoria # aquí se toman las cantidades de memoria guardadas en la bd
+                    kernels=tp.kernel # aquí se toman las cantidades de kernel guardadas en la bd
+                    tempo2= str(nombres).split('/')
+                    nombre=tempo2[1]
+                    memoriaTotal=int(memorias) # con esto sabemos cuanto es la memoria final entregado por el usuario
+                    kernelFinal=int(kernels) # con esto sabemos cuanto es el kernel final entregado por el usuario
+                
+                    tamMemoriaDisp = memoriaTotal- kernelFinal -1 # aquí se verifica cuanta memoria disponible hay (kernel - acumulador - total memoria)
+                    cantidadKernel=[] # se utilizan listas para mostrar las posiciones de memoria en el kernel 
+                    cantidMemoriaDisp=[] # se utulizan listas para mostrar las posiciones de memoria disponible  
 
-        instanciaSintaxis= sintax() # se crea una instancia de la clase sintax para poder llamar el método que prueba toda la sintaxis de un archivo .ch
-        #print(sintax.abrirArchivo(self))
-        instanciaSintaxis.errSintax() # con esto se llama la funcion donde se verifica cada linea y se entrega en que linea se encuentra el error si lo hay
+                ##################################################################
+                proEjec=len(tup)-1
+                print(proEjec)
+                f=""
+                myfile =""
+                leer=[]
+                try:
+                    f = open("media/" + ruta[proEjec], "r")
+                    myfile = File(f)
+                    print(myfile)
+                    leer = myfile.readlines() #para leer linea a linea #print(leer)
+                    f.close()
+                    myfile.close()
+                except:
+                    print('no se puede abrir el archivo solicitado')  
 
+                leerLimp=[]
+                for w in range(len(leer)):
+                    leerLimp.append(leer[w].rstrip()) #se deja el archivo sin el salto de linea que agrega python
+                #print(leerLimp, 'limp')
+                ####################################################################
+                #print(leer, 'leer')
+
+                print(request.method)
+                instanciaArch = cargArchivo(tup, nombres, memoriaTotal, kernelFinal, ruta, leer, proEjec)
+
+                instanciaSintaxis= sintax() # se crea una instancia de la clase sintax para poder llamar el método que prueba toda la sintaxis de un archivo .ch
+                
+                instanciaSintaxis.setLeer(leerLimp) 
+
+                
+                #print(sintax.abrirArchivo(self))
+                instanciaEjec = ejecucion() # se crea una instancia de la clase ejecucion para poder llamar los metodos necesarios para la ejecucion
+                
+                instanciaEjec.setCantMemo(int(instanciaArch.getMemoriaDB()))
+                instanciaEjec.setKernel(int(instanciaArch.getKernelBD()))
+                instanciaEjec.setLeer(leerLimp)
+                instanciaEjec.setProgEjec(int(instanciaArch.getProgEjecBD()))
+                instanciaEjec.setRuta(instanciaArch.getRutaBD())
+
+
+                #print(kernelFinal,'es el supuesto kernel-----',memoriaTotal, 'es la supesta memoria' )   
+
+                if not(instanciaEjec.puedeEjecKernel()):
+                    for i in range (tamMemoriaDisp): #aqui se llena la lista con los valores de la posicion de memoria disponible
+                        cantidMemoriaDisp.append(i+1) #NO PUEDE AGREGAR KERNEL se pone la memoria total disponible
+                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':['no hay suficiente espacio para el kernel con respecto al tamaño de la memoria'],'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal, 'modo':'Modo kernel'}) # })#,   
+                
+                else:
+                    instanciaEjec.agregarKernelMemoria()
+                    for i in range (tamMemoriaDisp): #aqui se llena la lista con los valores de la posicion de memoria disponible
+                        cantidMemoriaDisp.append(i+kernelFinal+1) # PUEDE AGREGAR KERNEL PERO NO PUEDE EJECUTAR
+                    for i in range (kernelFinal): #aqui se llena la lista con los valores de la posicion de memoria que ocupa el kernel
+                        cantidadKernel.append(i+1) 
+                    """
+                    instanciaSintaxis.errSintax() # con esto se llama la funcion donde se verifica cada linea y se entrega en que linea se encuentra el error si lo hay
+                    if instanciaSintaxis.hayError():  
+                        ## se mostraría el error que tiene el programa .ch
+                        return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':instanciaSintaxis.getPantalla(),'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memKer':cantidadKernel,'memoriaTotal':memoriaTotal, 'modo':'Modo kernel',}) # })#, cantidadKernel (lista con las posiciones de kernel)
+                    """
+                    if not(instanciaEjec.puedeEjecProg()) and request.method == 'GET':
+                            return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':['no hay suficiente espacio para el programa con respecto al tamaño de la memoria'],'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memKer':cantidadKernel, 'memoriaTotal':memoriaTotal,'modo':'Modo kernel'}) # })#,
+
+                    else:
+                        instanciaSintaxis.errSintax() # con esto se llama la funcion donde se verifica cada linea y se entrega en que linea se encuentra el error si lo hay
+                        if instanciaSintaxis.hayError():  
+                            ## se mostraría el error que tiene el programa .ch
+                            return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':instanciaSintaxis.getPantalla(),'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memKer':cantidadKernel,'memoriaTotal':memoriaTotal, 'modo':'Modo kernel',}) # })#, cantidadKernel (lista con las posiciones de kernel)
+
+                        else:
+                            instanciaEjec.agregarInstrMemoria()
+                            instanciaEjec.agregarEtiquetas()
+                            instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                            #se con el llamado de todos los metodos para mostrar todos los datos en el frontend
+                            pant = instanciaEjec.getPantalla() # (str) datos pantalla en el frontend
+                            impre = instanciaEjec.getImpresora() # (str) datos impresora en el frontend
+                            acum = instanciaEjec.getAcumulador() # (str) 
+                            linAct = instanciaEjec.getLineaActual() # (str) 
+                            codProAct = instanciaEjec.getCodProgActual() # (list) 
+                            #posCodProAct = instanciaEjec.getCodProgActualMod() # (list) #getCodProgActualMod
+                            varAct = instanciaEjec.getVariablesActuales()# (list) 
+                            #posVarAct = instanciaEjec.getPosVariablesActuales() # (list) 
+                            etiqAct = instanciaEjec.getEtiquetasActuales() # (list) 
+                            #posEtiqAct = instanciaEjec.getPosEtiquetasActuales() # (list) 
+                            mem = instanciaEjec.getMemoria() # (list) 
+                            #posMem = instanciaEjec.getPosMemoria() # (list) 
+                            prog = instanciaEjec.getProgramas() # (list) 
+                            #idPr = instanciaEjec.getIdProg() # (list)
+                            #cantInsProg = instanciaEjec.getCanInstProg() # int
+                            #regBas= instanciaEjec.getRegistroBase() # (list) 
+                            #regLimCod = instanciaEjec.getRegistroLimCod() # (list) 
+                            #regLimPro = instanciaEjec.getRegistroLimProg() # (list) 
+                            memDis = instanciaEjec.getMemoriaDispo() # (list) 
+                            
+                            return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                            'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                            'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,
+                                            }) # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
+                                                                        #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{
+            else:
+                return render(request, self.template_name,{'title': "Ch Máquina",'pantallaBack':['presione ejecutar para comenzar'],'modo':'Modo kernel'}) # })#,   
+
+
+
+
+
+
+
+
+
+        """
         if instanciaSintaxis.hayError():  
             ## se mostraría el error que tiene el programa .ch
             return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':instanciaSintaxis.getPantalla(),'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal, 'modo':'Modo kernel',}) # })#, cantidadKernel (lista con las posiciones de kernel)
-            
+       
+
         else:
             # se continua con la ejecucion
             instanciaEjec = ejecucion()
             if not(instanciaEjec.puedeEjecKernel()):
+                for i in range (tamMemoriaDisp): #aqui se llena la lista con los valores de la posicion de memoria disponible
+                    cantidMemoriaDisp.append(i+1) #NO PUEDE AGREGAR KERNEL
+
                 return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':'no hay suficiente espacio para el kernel con respecto al tamaño de la memoria','memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal, 'modo':'Modo kernel'}) # })#,
             else:
                 instanciaEjec.agregarKernelMemoria()
+                for i in range (tamMemoriaDisp): #aqui se llena la lista con los valores de la posicion de memoria disponible
+                    cantidMemoriaDisp.append(i+kernelFinal+1) # PUEDE AGREGAR KERNEL PERO NO PUEDE EJECUTAR
+                for i in range (kernelFinal): #aqui se llena la lista con los valores de la posicion de memoria que ocupa el kernel
+                    cantidadKernel.append(i+1) 
+
                 if not(instanciaEjec.puedeEjecProg()):
-                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':'no hay suficiente espacio para el programa con respecto al tamaño de la memoria','memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,'modo':'Modo kernel'}) # })#,
+                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':'no hay suficiente espacio para el programa con respecto al tamaño de la memoria','memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memKer':cantidadKernel, 'memoriaTotal':memoriaTotal,'modo':'Modo kernel'}) # })#,
+                
+                
                 else:
                     instanciaEjec.agregarInstrMemoria()
                     instanciaEjec.agregarEtiquetas()
@@ -155,7 +307,7 @@ class HomePageView2(CreateView):
 
             #return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':'puede continuar a la ejecución','memoriaFinal': cantidMemoriaDisp, 'kernel': cantidadKernel}) # })#,
 
-        
+         """
         #'sintax':instancia.abrirArchivo()
     """
     def get_object(self, queryset=None):
@@ -169,3 +321,81 @@ class HomePageView2(CreateView):
         return profile
     
 
+class cargArchivo():
+
+    #tup2 = EjecArchCh.objects.all()
+    tup =[]
+    ruta=[""] #aqui se agregan todos los archivos para abrir 
+    cantmemoria= 0
+    kernel= 0
+    
+    #proEjec=len(tup)-1
+    proEjec = 0
+
+    tempo=""
+    nombre2=""
+    tp =[]
+    
+    """
+    for tp in tup:
+        print()
+        ruta.append(str(nombre2))
+    """
+
+    """
+    for tp in tup:
+        nombre2=tp.archivo
+        tempo = tp.memoria
+        cantmemoria=int(tempo) # cantidad total de memoria, se va disminuyendo si se agrega el kernel o programas
+        tempo = tp.kernel
+        kernel=int(tempo)
+        ruta.append(str(nombre2))
+        tempo = tp.id 
+        #print(tempo)
+        #proEjec= int(tempo)
+    """
+    #proEjec=len(tup2)-1 #cual programa se encuentra en ejecución  
+
+    #print(ruta2)
+    """
+    f=""
+    myfile =""
+    leer=[]
+    try:
+        f = open("media/" + ruta[proEjec], "r")
+        myfile = File(f)
+        print(myfile)
+        leer = myfile.readlines() #para leer linea a linea #print(leer)
+        f.close()
+        myfile.close()
+    except:
+        print('no se puede abrir el archivo solicitado')
+    """
+
+    def __init__(self,arregloBd, nombre, cantMemoria, kernel, ruta, leer, proEjec):
+        self.tup = arregloBd # con esto recuperamos todos los datos desde la bd
+        self.cantmemoria = cantMemoria
+        self.nombre2 = nombre
+        self.kernel = kernel
+        self.ruta = ruta
+        self.leer = leer 
+
+
+
+    def getArchivoBD(self): # retorna todas las lineas del archivo .ch
+        return self.leer
+    
+    def getMemoriaDB(self): # retorna la cantidad de memoria del programa en ejecucion 
+        return self.cantmemoria
+    
+    def getKernelBD(self): # retorna cantidad de memoria del programa en ejecucion 
+        return self.kernel
+
+    def getProgEjecBD(self): # retorna el programa en ejecucion 
+        return self.proEjec
+
+    def getRutaBD(self): # retorna la lista de programas en la bd 
+        return self.ruta
+
+    
+    

@@ -39,7 +39,7 @@
 		  </form>
 		 <!---------------------------------------------->
 		 
-		  <a class="nav-item nav-link" href="#">Ejecutar</a>
+		  <a class="nav-item nav-link" href="{% url 'home' %}">Ejecutar</a>
 		  <a class="nav-item nav-link" href="#" onclick="showHidden()">Mostrar Memoria</a>
 		  <a class="nav-item nav-link" href="#">Paso a Paso</a>
 		  <a class="nav-item nav-link" href="#">Salir</a>
@@ -58,7 +58,7 @@
 							Memoria:
 							</td>
 							<td id="cajaM">
-								{%if memoriaTotal == "" %}
+								{%if memoriaTotal == NULL %}
 								<input type="number" name="memoria" id="memoria" min="2" max="100" value="100" form ="formularioprin" required>
 								{%else%}
 								<input type="number" name="memoria" id="memoria" min="2" max="100" value="{{memoriaTotal}}" form ="formularioprin" required>
@@ -71,7 +71,7 @@
 							Kernel:
 							</td>
 							<td id="cajaK">
-								{%if kernel == "" %}
+								{%if kernel == NULL %}
 								<input type="number" name="kernel" id="kernel" min="1" max="100" value="10" form="formularioprin" required> <!--kernel debe ser 69 por requerimientos-->
 								{%else%}
 								<input type="number" name="kernel" id="kernel" min="1" max="100" value="{{kernel}}" form="formularioprin" required> <!--kernel debe ser 69 por requerimientos-->
@@ -376,29 +376,47 @@
 					</tr>
 				  </thead>
 				  <tbody>
-					{% for i in memo.mem%}
-						{% if forloop.first %}
-							<tr> <!--acumulador-->
-						<td><img src="{% static 'core/img/icon_a.png' %}" alt="" height="20px" width="20px"></td>
-						<th scope="row">{{forloop.counter0}}</th>
-						<td>{{acum}}</td>
-						</tr>
-						{% elif i == "***kernel ch***" %}
-						<tr> 
-							<td><img src="{% static 'core/img/icon_os.png' %}" alt="" height="20px" width="20px"></td>
-							<th scope="row">{{forloop.counter0}}</th>
-							<td>{{i}}</td>
+				  {% if mem.items == NULL %}
+						<tr> <!--acumulador-->
+								<td><img src="{% static 'core/img/icon_a.png' %}" alt="" height="20px" width="20px"></td>
+								<th scope="row">{{forloop.counter0}}</th>
+								<td>{{acum}}</td>
 						</tr>
 
-						{% else %}
-						<tr><!--Programa-->
-							<td><img src="{% static 'core/img/icon_progr.png' %}" alt="" height="20px" width="20px"></td>
-							<td>{{forloop.counter0}}</td>
-							<!--<th scope="row">3</th>-->
-							<td>{{i}}</td>
+						{% for i in memKer%}
+						<tr> 
+							<td><img src="{% static 'core/img/icon_os.png' %}" alt="" height="20px" width="20px"></td>
+							<th scope="row">{{i}}</th>
+							<td>***kernel ch***</td>
 						</tr>
-						{% endif %}
-					{%endfor%}
+						{%endfor%}
+
+					{% else %}
+						{% for pos, cont in mem.items%}
+							{% if forloop.first %}
+								<tr> <!--acumulador-->
+									<td><img src="{% static 'core/img/icon_a.png' %}" alt="" height="20px" width="20px"></td>
+									<th scope="row">{{forloop.counter0}}</th>
+									<td>{{acum}}</td>
+								</tr>
+							{% elif cont == "***kernel ch***" %}
+							<tr> 
+								<td><img src="{% static 'core/img/icon_os.png' %}" alt="" height="20px" width="20px"></td>
+								<th scope="row">{{pos}}</th>
+								<td>{{cont}}</td>
+							</tr>
+
+							{% else %}
+							<tr><!--Programa-->
+								<td><img src="{% static 'core/img/icon_progr.png' %}" alt="" height="20px" width="20px"></td>
+								<td>{{pos}}</td>
+								<!--<th scope="row">3</th>-->
+								<td>{{cont}}</td>
+							</tr>
+							{% endif %}
+						{%endfor%}
+
+					{%endif%}
 					<!--
 					{#{% for i in kernel %}#}
 					<tr> kernel
