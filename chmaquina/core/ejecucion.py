@@ -38,6 +38,18 @@ class ejecucion:
     leer=[] # todas las lineas del codigo del programa .ch
     ruta2=[] # todos los programas que estan en la bd
 
+    # necesasario para quitar el \n que se genera en algunos archivos .ch
+    contraS =[]
+    contadorSalto=0 # contador de salto de linea
+    i=0
+    for i in range(len(leer)):
+        contraS = leer[i] # variable para verificar si hay un salto de linea
+        if contraS == str('\n'):
+            contadorSalto +=1
+    j=0
+    for j in range(contadorSalto):
+        leer.remove(str('\n'))
+
     """
     contemplado inicialmente para realizar la apertura de archivos 
     ruta =""
@@ -103,6 +115,7 @@ class ejecucion:
     ###############################################################################
     # necesasario para quitar el \n que se genera en algunos archivos .ch
     contadorSalto=0 # contador de salto de linea
+    contadorVacio =0
     i=0
     contraS=""
     w=0
@@ -110,9 +123,18 @@ class ejecucion:
         contraS = leer[w] # variable para verificar si hay un salto de linea
         if contraS == str('\n'):
             contadorSalto +=1
+        elif contraS == '' :
+            contadorVacio +=1
+            print(contadorVacio) 
+    j=0
+    for j in range(contadorVacio):
+        leer.remove('')
+    print('leer', leer)
+
     j=0
     for j in range(contadorSalto):
         leer.remove(str('\n'))
+    print('leer', leer)
     ################################################################################
 
     ########## metodos para traer los datos de la bd necesarios para la ejecucion del archivo ###################
@@ -145,8 +167,11 @@ class ejecucion:
     # metodo que comprueba si es posible realizar la ejecución (la memoria disponible debe ser mayor que el programa a cargar)
     def puedeEjecProg(self):
         posiblesVar = 0 # se utiliza para verificar cuantas variables se crean en el programa 
+
         for i in range(len(self.leer)):
+            #palabras = self.leer[i].rstrip().split()
             palabras = self.leer[i].rstrip().split()
+            print(palabras, 'esto es palabras')
             #print(palabras)
             operador = palabras[0]
             if operador == 'nueva':
@@ -187,7 +212,7 @@ class ejecucion:
             self.rlp.append(self.rlc[self.proEjec] + posiblesVar)
         ##############################
     
-    def agregarEtiquetas(self,): # se hace necesario agregar las etiquetas puesto que se pueden usar antes de ser cargadas 
+    def agregarEtiquetas(self): # se hace necesario agregar las etiquetas puesto que se pueden usar antes de ser cargadas 
         instruc=[]
         for i in range(len(self.leer)):
             palabras = self.leer[i].rstrip().split()
@@ -238,7 +263,8 @@ class ejecucion:
         if posMemEjec >=0: #si se llega a cambiar el orden de ejecucion del programa
             varEjer = posMemEjec 
         else:
-            varEjer = self.rb[self.proEjec] 
+            varEjer = self.rb[self.proEjec]
+            self.agregarEtiquetas()
 
         #print(range(varEjer,self.rlc[self.proEjec]),'en ejec cuanto cuesta varEje')
 
@@ -441,7 +467,6 @@ class ejecucion:
         tempoDic={} # se usa un diccionario para facilitar la manera de mostrar los datos en el frontend
         for i in range(len(self.etiquetas)):
             palabras = self.etiquetas[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            #print(palabras, 'p0', palabras[0])
             if palabras[0]== str(self.proEjec): 
                 tempoDic[self.posMemEtiq[i]]= self.etiquetas[i]
         return tempoDic
@@ -461,7 +486,7 @@ class ejecucion:
     #metodo para retornar lo que se encuentra en la memoria 
     def getMemoria(self):
         tempoDic ={} # se usa un diccionario para facilitar la compatibilidad con el frontend
-        for j in range(len(self.memoria)-1): # se toma el codigo del programa en ejecucion desde donde empieza en la memoria hasta donde termina 
+        for j in range(len(self.memoria)): # se toma el codigo del programa en ejecucion desde donde empieza en la memoria hasta donde termina 
             tempoDic[j] =self.memoria[j]
         return tempoDic 
         #return self.memoria

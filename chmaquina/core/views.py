@@ -9,6 +9,7 @@ from .comprobar import sintax
 from .ejecucion import ejecucion
 from django.core.files import File # se hace necesario para la apertura del archivo
 
+import json
 from django.http import HttpResponse
 
 
@@ -109,25 +110,25 @@ class HomePageView2(CreateView):
         for i in range (kernelFinal): #aqui se llena la lista con los valores de la posicion de memoria que ocupa el kernel
             cantidadKernel.append(i+1) 
         """
+
         
-        """
-        while(request.method == 'POST'):
-            tup = EjecArchCh.objects.all()
-        """
+        ejecute = request.GET.get('ejecute') # se toma lo que se envia a través de una peticion ajax 
+        #print(ejecute,'este es el valor de ejecute - ' , type(ejecute))
+
         tup = EjecArchCh.objects.all()
-        if not(tup):
-            print('supestamente vacio')
+        if not(tup): # cuando la base de datos se encuentra vacia 
             return render(request, self.template_name,{'title': "Ch Máquina",'pantallaBack':['presione abir y cargue un archivo .ch, así también cargará el tamaño de la memoria y el tamaño del kernel'],'modo':'Modo kernel'}) # })#,   
            
         else:
-            if request.method == 'GET':
+            ejecute = request.GET.get('ejecute') # se utliza este metodo para tomar la peticion ajax realizada desde el front para ejecutar un archivo .ch
+
+            if str(ejecute) == 'ejecutarOk':
                 nombre=""
-                tup = EjecArchCh.objects.all()
-                print(tup, 'tup')
+                tup = EjecArchCh.objects.all() # aquí se toman los datos desde la base de datos 
                 ruta=[]
                 for tp in tup: 
                     nombres=tp.archivo # aquí se toman todas la rutas de los archivos cargados en la bd
-                    ruta.append(str(nombres))
+                    ruta.append(str(nombres)) # se toman todo las rutas relativas de la base de datos
                     memorias= tp.memoria # aquí se toman las cantidades de memoria guardadas en la bd
                     kernels=tp.kernel # aquí se toman las cantidades de kernel guardadas en la bd
                     tempo2= str(nombres).split('/')
@@ -140,47 +141,48 @@ class HomePageView2(CreateView):
                     cantidMemoriaDisp=[] # se utulizan listas para mostrar las posiciones de memoria disponible  
 
                 ##################################################################
-                proEjec=len(tup)-1
-                print(proEjec)
-                f=""
-                myfile =""
-                leer=[]
+                proEjec=len(tup)-1 # este será el programa que se ejecutará, el ultimo programa que fue agregado a la base de datos
+                
+                f="" #se utiliza para abrir el archivo desde la ruta relativa
+                myfile ="" #se utiliza para crear una instancia de la clase file y así tener un manejo desde django
+                leer=[] # aquí se guardan todas las instrucciones del archivo .ch 
+                
+                #aqui tratamos de leer el archivo si es posible.
                 try:
                     f = open("media/" + ruta[proEjec], "r")
                     myfile = File(f)
-                    print(myfile)
+                    #print(myfile)
                     leer = myfile.readlines() #para leer linea a linea #print(leer)
                     f.close()
                     myfile.close()
+                    print(leer)
                 except:
                     print('no se puede abrir el archivo solicitado')  
 
-                leerLimp=[]
+                #aquí se retiran el \n que adiciona python cuando lee un archivo de texto
+                leerLimp=[] 
                 for w in range(len(leer)):
                     leerLimp.append(leer[w].rstrip()) #se deja el archivo sin el salto de linea que agrega python
-                #print(leerLimp, 'limp')
+                
+                #leerLimp = filter(None, leerLimp)
+                #leerLimp :[item for item in leerLimp if len(item)>0]
+                leerLimp2=[i for i in leerLimp if i != '']
+                print(leerLimp, 'limp')
                 ####################################################################
-                #print(leer, 'leer')
-
-                print(request.method)
+                
                 instanciaArch = cargArchivo(tup, nombres, memoriaTotal, kernelFinal, ruta, leer, proEjec)
 
                 instanciaSintaxis= sintax() # se crea una instancia de la clase sintax para poder llamar el método que prueba toda la sintaxis de un archivo .ch
                 
-                instanciaSintaxis.setLeer(leerLimp) 
+                instanciaSintaxis.setLeer(leerLimp2) # se envia la lista con todas la lineas a sintaxis 
 
-                
-                #print(sintax.abrirArchivo(self))
                 instanciaEjec = ejecucion() # se crea una instancia de la clase ejecucion para poder llamar los metodos necesarios para la ejecucion
                 
-                instanciaEjec.setCantMemo(int(instanciaArch.getMemoriaDB()))
-                instanciaEjec.setKernel(int(instanciaArch.getKernelBD()))
-                instanciaEjec.setLeer(leerLimp)
-                instanciaEjec.setProgEjec(int(instanciaArch.getProgEjecBD()))
-                instanciaEjec.setRuta(instanciaArch.getRutaBD())
-
-
-                #print(kernelFinal,'es el supuesto kernel-----',memoriaTotal, 'es la supesta memoria' )   
+                instanciaEjec.setCantMemo(int(instanciaArch.getMemoriaDB())) # se envia la cantidad de memoria a la ejecución
+                instanciaEjec.setKernel(int(instanciaArch.getKernelBD())) # se envia la cantidad de kernel a la ejecución
+                instanciaEjec.setLeer(leerLimp2) # se envia la lista con todas la lineas a sintaxis 
+                instanciaEjec.setProgEjec(int(instanciaArch.getProgEjecBD())) # se envia el programa a ser ejecutado a la ejecución
+                instanciaEjec.setRuta(instanciaArch.getRutaBD()) # se envia las rutas de los archivos a la ejecución
 
                 if not(instanciaEjec.puedeEjecKernel()):
                     for i in range (tamMemoriaDisp): #aqui se llena la lista con los valores de la posicion de memoria disponible
@@ -209,29 +211,33 @@ class HomePageView2(CreateView):
                             return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':instanciaSintaxis.getPantalla(),'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memKer':cantidadKernel,'memoriaTotal':memoriaTotal, 'modo':'Modo kernel',}) # })#, cantidadKernel (lista con las posiciones de kernel)
 
                         else:
-                            instanciaEjec.agregarInstrMemoria()
-                            instanciaEjec.agregarEtiquetas()
+                            instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
+                            #instanciaEjec.agregarEtiquetas() # agrega las etiquetas para poder ser referenciadas
                             instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                            
                             #se con el llamado de todos los metodos para mostrar todos los datos en el frontend
                             pant = instanciaEjec.getPantalla() # (str) datos pantalla en el frontend
                             impre = instanciaEjec.getImpresora() # (str) datos impresora en el frontend
                             acum = instanciaEjec.getAcumulador() # (str) 
                             linAct = instanciaEjec.getLineaActual() # (str) 
                             codProAct = instanciaEjec.getCodProgActual() # (list) 
-                            #posCodProAct = instanciaEjec.getCodProgActualMod() # (list) #getCodProgActualMod
                             varAct = instanciaEjec.getVariablesActuales()# (list) 
-                            #posVarAct = instanciaEjec.getPosVariablesActuales() # (list) 
                             etiqAct = instanciaEjec.getEtiquetasActuales() # (list) 
-                            #posEtiqAct = instanciaEjec.getPosEtiquetasActuales() # (list) 
                             mem = instanciaEjec.getMemoria() # (list) 
-                            #posMem = instanciaEjec.getPosMemoria() # (list) 
                             prog = instanciaEjec.getProgramas() # (list) 
+                            memDis = instanciaEjec.getMemoriaDispo() # (list) 
+
+
+                            #posCodProAct = instanciaEjec.getCodProgActualMod() # (list) #getCodProgActualMod
+                            #posVarAct = instanciaEjec.getPosVariablesActuales() # (list) 
+                            #posEtiqAct = instanciaEjec.getPosEtiquetasActuales() # (list) 
+                            #posMem = instanciaEjec.getPosMemoria() # (list) 
                             #idPr = instanciaEjec.getIdProg() # (list)
                             #cantInsProg = instanciaEjec.getCanInstProg() # int
                             #regBas= instanciaEjec.getRegistroBase() # (list) 
                             #regLimCod = instanciaEjec.getRegistroLimCod() # (list) 
                             #regLimPro = instanciaEjec.getRegistroLimProg() # (list) 
-                            memDis = instanciaEjec.getMemoriaDispo() # (list) 
+                            
                             
                             return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                             'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
@@ -321,7 +327,7 @@ class HomePageView2(CreateView):
         return profile
     
 
-class cargArchivo():
+class cargArchivo(): #clase que hace de puente para enviar los datos para la sintaxis o la ejecución 
 
     #tup2 = EjecArchCh.objects.all()
     tup =[]
@@ -354,9 +360,7 @@ class cargArchivo():
         #print(tempo)
         #proEjec= int(tempo)
     """
-    #proEjec=len(tup2)-1 #cual programa se encuentra en ejecución  
 
-    #print(ruta2)
     """
     f=""
     myfile =""

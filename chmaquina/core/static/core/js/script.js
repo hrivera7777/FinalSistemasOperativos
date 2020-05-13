@@ -51,5 +51,11 @@ $(document).ready(function () {
 
         return true;
     };
+
+    actionEjc = function () {
+        document.getElementById('ejecutar').click();
+
+        return true;
+    };
 });
 

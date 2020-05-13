@@ -13,6 +13,7 @@
 	<script src="{% static 'core/js/jquery-3.4.1.min.js' %}"></script>
 	<script src="{% static 'core/js/bootstrap.min.js' %}"></script>
 	<script src="{% static 'core/js/script.js' %}"></script>
+	<script src="{% static 'core/js/ajax.js' %}"></script>
 	
 	<!--favicon-->
 	<link rel="shortcut icon" type="image/png" href="{% static 'core/img/favicon.ico' %}"/>
@@ -39,7 +40,14 @@
 		  </form>
 		 <!---------------------------------------------->
 		 
-		  <a class="nav-item nav-link" href="{% url 'home' %}">Ejecutar</a>
+		 <form id="eject" name="eject" action="" method="get"> {#{% csrf_token %}#}
+		  <!--<a class="nav-item nav-link" href="{% url 'home' %}">Ejecutar</a>-->
+			<input type="text" value="ejecutarOk" name="ejecute" style='display: none;'>
+			<input type="hidden" class="nav-item nav-link" href="{% url 'home' %} "style='display: none;'>	
+		  <input type="submit" value="Ejecutar" id="ejecutar" class="nav-item nav-link" style='display: none;'>
+		  <a class="nav-item nav-link" id="btnEjecutar" onclick="actionEjc()" >Ejecutar</a>
+		</form>
+
 		  <a class="nav-item nav-link" href="#" onclick="showHidden()">Mostrar Memoria</a>
 		  <a class="nav-item nav-link" href="#">Paso a Paso</a>
 		  <a class="nav-item nav-link" href="#">Salir</a>
@@ -333,7 +341,8 @@
 			
 			<div class="overflow-auto" id="contPantalla">  <!--div que muestra la informacion que debe aparecer por pantalla-->
 				{% for i in pantallaBack %}
-					<th>{{i}}</th>
+					<!--<th>{{i}}</th>-->
+					<div class="panta">{{i}}</div>
 				{% endfor %}
 				
 			</div>
@@ -477,6 +486,5 @@
 		</div>
 		</div>
 	</section>	
-	
 </body>
 </html>

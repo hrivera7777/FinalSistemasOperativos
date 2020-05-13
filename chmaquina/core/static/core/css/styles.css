@@ -18,9 +18,10 @@ tr{
 }
 
 
-#btnAbrir{
+#btnAbrir, #btnEjecutar{
 	cursor: pointer;
 }
+
 
 #btnUp{
 	display: none;
@@ -65,6 +66,24 @@ tr{
 
  }
 
+.panta{
+	text-align: center;
+	margin: 1% 0 1%;
+}
+/*
+.panta1{
+	text-align: center;
+	margin: 1% 0 1%;
+}
+.panta2{
+	text-align: center;
+	margin: 1% 0 1%;
+}
+.panta3{
+	text-align: center;
+	margin: 1% 0 1%;
+}
+*/
 
 /*input[type="file"]#subirArchivoCh{
 	width: 0.1px;
