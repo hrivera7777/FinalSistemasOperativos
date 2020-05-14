@@ -141,7 +141,9 @@ class HomePageView2(CreateView):
                     cantidMemoriaDisp=[] # se utulizan listas para mostrar las posiciones de memoria disponible  
 
                 ##################################################################
-                proEjec=len(tup)-1 # este será el programa que se ejecutará, el ultimo programa que fue agregado a la base de datos
+                proEjec=len(ruta)-1 # este será el programa que se ejecutará, el ultimo programa que fue agregado a la base de datos
+                #print(proEjec, 'esto es progEje ')
+                #print(ruta,'esto es ruta')
                 
                 f="" #se utiliza para abrir el archivo desde la ruta relativa
                 myfile ="" #se utiliza para crear una instancia de la clase file y así tener un manejo desde django
@@ -155,7 +157,7 @@ class HomePageView2(CreateView):
                     leer = myfile.readlines() #para leer linea a linea #print(leer)
                     f.close()
                     myfile.close()
-                    print(leer)
+                    #print(leer)
                 except:
                     print('no se puede abrir el archivo solicitado')  
 
@@ -166,10 +168,10 @@ class HomePageView2(CreateView):
                 
                 #leerLimp = filter(None, leerLimp)
                 #leerLimp :[item for item in leerLimp if len(item)>0]
-                leerLimp2=[i for i in leerLimp if i != '']
-                print(leerLimp, 'limp')
+                leerLimp2=[i for i in leerLimp if i != ''] # se utiliza para quitar los espacios vacios que pueda tener la lista
+                #print(leerLimp, 'limp')
                 ####################################################################
-                
+
                 instanciaArch = cargArchivo(tup, nombres, memoriaTotal, kernelFinal, ruta, leer, proEjec)
 
                 instanciaSintaxis= sintax() # se crea una instancia de la clase sintax para poder llamar el método que prueba toda la sintaxis de un archivo .ch
@@ -181,7 +183,8 @@ class HomePageView2(CreateView):
                 instanciaEjec.setCantMemo(int(instanciaArch.getMemoriaDB())) # se envia la cantidad de memoria a la ejecución
                 instanciaEjec.setKernel(int(instanciaArch.getKernelBD())) # se envia la cantidad de kernel a la ejecución
                 instanciaEjec.setLeer(leerLimp2) # se envia la lista con todas la lineas a sintaxis 
-                instanciaEjec.setProgEjec(int(instanciaArch.getProgEjecBD())) # se envia el programa a ser ejecutado a la ejecución
+                #instanciaEjec.setProgEjec(int(instanciaArch.getProgEjecBD())) # se envia el programa a ser ejecutado a la ejecución
+                instanciaEjec.setProgEjec(int(proEjec)) # se envia el programa a ser ejecutado a la ejecución
                 instanciaEjec.setRuta(instanciaArch.getRutaBD()) # se envia las rutas de los archivos a la ejecución
 
                 if not(instanciaEjec.puedeEjecKernel()):

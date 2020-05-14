@@ -33,6 +33,7 @@ for tp in tup:
 class ejecucion:
 
     cantmemoria= 0 
+    cantidadFull = 0 #cantidad full de memoria
     kernel= 0
     proEjec=0 # id del programa que se ejecuta actualmente
     leer=[] # todas las lineas del codigo del programa .ch
@@ -142,7 +143,13 @@ class ejecucion:
         self.kernel=kernel
 
     def setCantMemo(self, cantidMemo):  # introduce la cantidad de memoria del programa en ejecucion 
-        self.cantmemoria=cantidMemo
+        if self.proEjec == 0:
+            self.cantmemoria=cantidMemo
+            self.cantidadFull = cantidMemo
+        else:
+            print('cantidad memoria else' + self.cantmemoria)
+        #    self.cantmemoria = self.cantmemoria#cantidMemo - len(self.memoria) - len(self.leer) - self.cantidVarixPro[self.proEjec]
+        
     
     def setLeer(self, leer): # introduce todas las lineas del archivo .ch
         self.leer = leer
@@ -171,23 +178,33 @@ class ejecucion:
         for i in range(len(self.leer)):
             #palabras = self.leer[i].rstrip().split()
             palabras = self.leer[i].rstrip().split()
-            print(palabras, 'esto es palabras')
+            #print(palabras, 'esto es palabras')
             #print(palabras)
             operador = palabras[0]
             if operador == 'nueva':
                 posiblesVar +=1
-        if self.cantmemoria >= (len(self.leer)+posiblesVar): 
-            self.cantmemoria -= (len(self.leer)+posiblesVar) #(len(self.leer))
-            return True
+        if self.proEjec == 0:
+            if self.cantmemoria >= (len(self.leer)+posiblesVar): 
+                #self.cantmemoria -= (len(self.leer)+posiblesVar) #(len(self.leer))
+                return True
+            else:
+                return False #se mostraria un error en la pantalla 
         else:
-            return False #se mostraria un error en la pantalla 
+            if (self.cantidadFull - len(self.memoria)) >= (len(self.leer)+posiblesVar):
+                return True
+            else:
+                return False #se mostraria un error en la pantalla 
+
     
 
     #aquí se llena la memoria con el "kernel"
     def agregarKernelMemoria(self):   
         i=0
-        for i in range(self.kernel):
-            self.memoria.append("***kernel ch***")
+        if(self.proEjec == 0):
+            for i in range(self.kernel):
+                self.memoria.append("***kernel ch***")
+        else:
+            print('no hay necesidad de agregar kernel')
     
 
     #metodo para agregar las instrucciones a la memoria 
@@ -211,19 +228,41 @@ class ejecucion:
         for i in range(len(self.rlc)): # se delimita el registro limite del programa 
             self.rlp.append(self.rlc[self.proEjec] + posiblesVar)
         ##############################
+        self.cantmemoria -= ((self.rlc[self.proEjec]- self.rb[self.proEjec]) + posiblesVar) # se resta el espacio que ocupa el programa con su variables 
     
     def agregarEtiquetas(self): # se hace necesario agregar las etiquetas puesto que se pueden usar antes de ser cargadas 
-        instruc=[]
-        for i in range(len(self.leer)):
-            palabras = self.leer[i].rstrip().split()
+        instruc=[] # numero de la instruccion hacia donde debe ir 
+        #for i in range(len(self.leer)):
+        for i in range(self.rb[self.proEjec],self.rlc[self.proEjec]):
+            palabras = self.memoria[i].split()
             operador = palabras[0]
             if operador == 'etiqueta':
-                self.etiquetas.append(str(self.proEjec) + '-' +str(palabras[1]) ) # guardamos el nombre de la etiqueta
-                instruc.append(self.encontrarLinea(int(palabras[2]))) # identificamos a que instruccion se refiere la etiqu   
+                self.etiquetas.append(str(self.proEjec) + '-' + str(palabras[1])) # guardamos el nombre de la etiqueta
+                instruc.append(int(palabras[2])) #se agrega a que numero de linea se debe ir con respecto a la etiqueta
+                
+       
+
+        p=0#maneja el indice de la lista instruc donde se tiene a que numero de instruccion  se debe ir ejem: etiqueta algo 8, debe ir a la linea 8 del archivo .ch
+        bandera=True # variable bandera para manterner la ejecucion del ciclo for hasta que se tengan todas las posiciones de memoria realacionadas con la linea que buscamos
+        while(bandera): 
+            k=1 # contador de lineas en el archivo  
+            for i in range(self.rb[self.proEjec],self.rlc[self.proEjec]): # posiciones de memoria del archivo
+                if p < len(instruc): # verifica que no se exceda el arreglo que tiene a que numero de instruccion se debe ir 
+                    if instruc[p] == k: 
+                        self.posMemEtiq.append(i) # se agrega la posicion de memoria correspondiente con el numero de la instruccion que se buscaba 
+                        p+=1 # se cambia a el siguiente indice de la lista instruc
+                        k+=1 # se suma 1 para evitar los conflictos a la hora de ejecutar el ciclo for
+                    else:
+                        k+=1 # se suma 1 continuar con la busqueda del numero indicado de instruccion deseada 
+                else:
+                    bandera=False
+            
         
+        #print('estas son las etiquetas', self.etiquetas)
         #posMemoriaEti = [] # variable tempora
         #i=self.rb[idProg] # con esto identificamos donde inicia el programa 
-        k=0
+        """
+                #instruc.append(self.encontrarLinea(int(palabras[2]))) # identificamos a que instruccion se refiere la etiqu   
         for w in range(len(instruc)): #len(self.etiquetas)
             #print(w, 'esto es w')
             for j in range(self.rb[self.proEjec],self.rlc[self.proEjec]): # ciclo que recorre solamente las posiciones de memoria que corresponden a las instrucciones
@@ -238,21 +277,9 @@ class ejecucion:
                         break
                             # se agrega la posicion de memoria de la instruccion a donde apunta la eti 
                 #print('esto es posMemoriaEti',self.posMemEtiq)
-                """
-                try:
-                    print(self.etiquetas,'etiquetas guardadas')
-                    print(w, 'esto es w en doble ciclo')
-                     
-                    
-                   
-                    if len(instruc) == 0:
-                        print("entre aqui")
-                    else:
-      
-                except:
-                    print('no se pudo agregar el indice ' + str(w) + "o la posMemo " +  str(j) )
-            
-                """
+
+        """
+                
 
     #metodo que realiza la ejecución del programa
     def ejecutarProg(self, posMemEjec): # posMemEjec se requerirá si se llega  a una instrucción vaya o vayasi para cambiar la ejecucion del programa
@@ -264,7 +291,7 @@ class ejecucion:
             varEjer = posMemEjec 
         else:
             varEjer = self.rb[self.proEjec]
-            self.agregarEtiquetas()
+            self.agregarEtiquetas() # se agregan las etiquetas del programa
 
         #print(range(varEjer,self.rlc[self.proEjec]),'en ejec cuanto cuesta varEje')
 
@@ -504,7 +531,7 @@ class ejecucion:
         tempoDic={} # se usa un diccionario para facilitar la manera de mostrar los datos en el frontend
         for i in range(len(self.ruta2)):
             palabras = str(self.ruta2[i]).split('/') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            tempoDic[self.proEjec]= {'prog':palabras[1], 'ins': int(self.rlc[self.proEjec] - self.rb[self.proEjec]),'rb':self.rb[self.proEjec], 'rlc':self.rlc[self.proEjec], 'rlp':self.rlp[self.proEjec]}
+            tempoDic[i]= {'prog':palabras[1], 'ins': int(self.rlc[i] - self.rb[i]),'rb':self.rb[i], 'rlc':self.rlc[i], 'rlp':self.rlp[i]}
         return tempoDic
 
     """
@@ -540,7 +567,10 @@ class ejecucion:
 
     def getMemoriaDispo(self):
         libre = []
-        for i in range(self.cantmemoria-1):
+        print(self.cantmemoria, 'esto es cantidad memoria b')
+        print(self.cantmemoria, 'esto es cantidad memoria b')
+        print('resta: ', (len(self.memoria)- self.cantidadFull))
+        for i in range(self.cantidadFull - len(self.memoria)):
             libre.append(len(self.memoria) + i) # (se resta el acumulador) ---------> se restan dos, porque se quita el acumulador y el tamaño siempre es 1 mas grande
         return libre
         
@@ -552,11 +582,12 @@ class ejecucion:
     def idenEtiq(self, nomEtiq, idProg):
         posMem = 0
         indice = 0
-        for i in range(len(self.etiquetas)-1):
+        #print(self.posMemEtiq, 'pos mem eti')
+        for i in range(len(self.etiquetas)):
             palabras = self.etiquetas[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la etiqueta
             if palabras[0]== str(idProg) and palabras[1] == nomEtiq:
                 indice=i
-
+        #print(indice, 'indice que quiere ir')
         posMem = self.posMemEtiq[indice]
         return posMem   
 
