@@ -1,4 +1,5 @@
 from django.core.files import File
+import keyboard 
 #from .models import EjecArchCh
 """
 ruta =""
@@ -132,12 +133,12 @@ class ejecucion:
     j=0
     for j in range(contadorVacio):
         leer.remove('')
-    print('leer', leer)
+    #print('leer', leer)
 
     j=0
     for j in range(contadorSalto):
         leer.remove(str('\n'))
-    print('leer', leer)
+    #print('leer', leer)
     ################################################################################
 
     ########## metodos para traer los datos de la bd necesarios para la ejecucion del archivo ###################
@@ -173,6 +174,9 @@ class ejecucion:
     #entrega en el front si se debe seguir desplegando la ventana modal de lectura
     def getActivarVentLeer(self):
         return self.activarVentLeer
+    
+    def setActivarVentLeer(self, activo):
+        self.activarVentLeer = activo
     #####################################################################################
 
 
@@ -328,7 +332,7 @@ class ejecucion:
                 #self.eEtiqueta(palabras, self.proEjec)
                 pass
             elif operador == 'lea':
-                pass #self.eLea(palabras, self.proEjec)
+                self.eLea(palabras, self.proEjec)
             elif operador == 'sume':
                 self.eSume(palabras, self.proEjec)
             elif operador == 'reste':
@@ -367,9 +371,14 @@ class ejecucion:
                 self.pantalla.append("*****************************")
                 self.pantalla.append("se finalizó la ejecución del programa: " + str(self.proEjec))
                 self.pantalla.append("*****************************")
+            
+            #elif i == (self.rlc[self.proEjec] - varEjer -1 ):
+            #    self.activarVentLeer = False
             else:
+                #self.activarVentLeer = False
                 pass
         #print('valVar:',self.memoria[33],self.memoria[34],self.memoria[35],self.memoria[36],self.memoria[37],self.memoria[38])
+        #self.activarVentLeer = False
 
     #############################################################################################################################
     #metodos para obterner los valores y mostrarlos en el frontend
@@ -581,9 +590,9 @@ class ejecucion:
 
     def getMemoriaDispo(self):
         libre = []
-        print(self.cantmemoria, 'esto es cantidad memoria b')
-        print(self.cantmemoria, 'esto es cantidad memoria b')
-        print('resta: ', (len(self.memoria)- self.cantidadFull))
+        #print(self.cantmemoria, 'esto es cantidad memoria b')
+        #print(self.cantmemoria, 'esto es cantidad memoria b')
+        #print('resta: ', (len(self.memoria)- self.cantidadFull))
         for i in range(self.cantidadFull - len(self.memoria)):
             libre.append(len(self.memoria) + i) # (se resta el acumulador) ---------> se restan dos, porque se quita el acumulador y el tamaño siempre es 1 mas grande
         return libre
@@ -1295,17 +1304,29 @@ class ejecucion:
 
         valorLeido = ""
         self.activarVentLeer = True
+        """
         while(self.continuarLeyendo):
             valorLeido = self.valoraLeer
+            if self.valoraLeer == '':
+                break
+        """
+        valorLeido = 10
+        #if self.valoraLeer == '':
+        #    keyboard.wait('esc')
+        #else:  
+        #    valorLeido = self.valoraLeer
+
+        print(self.valoraLeer, 'este es el valor leer')
+        #valorLeido = self.valoraLeer
+        #valorLeido = 10 #self.valoraLeer
 
 
-        if not(self.continuarLeyendo) and self.valoraLeer == '':
-            self.activarVentLeer = True
-            while(self.continuarLeyendo):
-                valorLeido = self.valoraLeer
-        else:
-            self.memoria[self.idenVar(linea[1],idProg)] = valorLeido
+        #self.activarVentLeer = False
+        self.memoria[self.idenVar(linea[1],idProg)] = valorLeido #guarda la posicion de memoria 
+        
 
+     
+        #    
     """
     prueba local de la cantidad de memoria disponible 
     #print(memoria)
@@ -1315,4 +1336,18 @@ class ejecucion:
     #print(variables)
     #palabras = variables[0].split('-')
     #print(palabras)
+    """
+
+
+    ##################
+
+    """
+
+    if not(self.continuarLeyendo) and self.valoraLeer == '':
+        self.activarVentLeer = True
+        while(self.continuarLeyendo):
+            valorLeido = self.valoraLeer
+    else:
+        self.activarVentLeer = False
+        self.memoria[self.idenVar(linea[1],idProg)] = valorLeido #guarda la posicion de memoria 
     """

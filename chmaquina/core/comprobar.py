@@ -48,7 +48,7 @@ class sintax:
     """
     leer=[] #donde se almacenan todas las instrucciones del archivo
     pantalla =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
-
+    listaErrores =[]
     def abrirArchivo(self):
         return str(self.leer)
 
@@ -92,7 +92,7 @@ class sintax:
                 lista2.append("Todo ok " + str(i + 1))
         return lista2 
     ###########################################################################
-
+    """
     #metodo para hacer puebas de todas las funciones juntas
     #la letra i se usará para indicar en que linea hay un error
     def pruebaTotal(self):
@@ -191,7 +191,7 @@ class sintax:
         return lista2
 
     #####################fin metodo prueba total #####################################3
-    
+    """
     ############################################################################################################
     ###########################################################################################################
     
@@ -218,16 +218,22 @@ class sintax:
         ultimaLinea = self.leer[len(self.leer)-1].rstrip().split()
         varRetorne = self.sRetorne(ultimaLinea, len(self.leer)-1) 
         #print(self.leer)
-
+        """
         if varRetorne >=0:
             self.pantalla.append("Error, no tiene instrucción retorne al final ")
             varCantRetorne +=1
         else:
-            for i in range(len(self.leer)-1):
+            -> tab
+        """ 
+        for i in range(len(self.leer)):
 
-                palabras = self.leer[i].rstrip().split()
-                operador = palabras[0]
+            palabras = self.leer[i].rstrip().split()
+            operador = palabras[0]
+            if i == len(self.leer):
+                varRetorne = self.sRetorne(ultimaLinea, len(self.leer)-1)
             
+            else:
+                    
                 if operador == 'cargue':
                     varInstrucciones = self.sCargue(palabras, i ,self.leer) 
                 elif operador == 'almacene':
@@ -274,8 +280,11 @@ class sintax:
                     varInstrucciones = self.sVayasi(palabras, i ,self.leer)
                 elif operador == '//':
                     varInstrucciones = self.sComentario(palabras, i)
-                elif operador == 'retorne'and i != len(self.leer):
+                elif operador == 'retorne':
+                    #varInstrucciones = self.sRetorne(ultimaLinea, len(self.leer)-1)
                     varCantRetorne +=1
+                #elif i < len(self.leer)-1 and operador == 'retorne':
+                    #varCantRetorne +=1
                 else:
                     varInstrucciones = -1
 
@@ -283,20 +292,29 @@ class sintax:
                 if varInstrucciones >=0:
                     
                     self.pantalla.append("error en la linea " + str(varInstrucciones + 1) + " " +"("+ " ".join(palabras)+")")
+                    self.listaErrores.append("error en la linea " + str(varInstrucciones + 1) + " " +"("+ " ".join(palabras)+")")
                     break
-                elif varCantRetorne > 1:
-                    self.pantalla.append("se tienen más instrucciones retorne de lo necesario ")
+                elif varCantRetorne > 1 and varRetorne >=0:
+                    self.pantalla.append("se tienen más instrucciones retorne de lo necesario o no tiene retorne al final ")
+                    self.listaErrores.append("se tienen más instrucciones retorne de lo necesario o no tiene retorne al final ")
                     
                     break
                 else:
-                    self.pantalla.append("Todo-ok " + str(i + 1))
-                    #print(self.pantalla, 'esto es la pantalla')
-    
+                    self.listaErrores.append("Todo-ok " + str(i + 1))
+                    print(self.pantalla, 'esto es la pantalla')
+
+        if varRetorne >=0:
+            self.pantalla.append("no tiene retorne al final ")
+            self.listaErrores.append("no tiene retorne al final ")
 
     #metodo para verificar si existe un error al finalizar la revision del archivo
     def hayError(self):
-        ultimaLinea = len(self.leer)-1
-        paraVerificar = self.pantalla[len(self.pantalla)-1].split()
+        ultimaLinea = len(self.leer)
+        paraVerificar = self.listaErrores[-1].split()
+        print(paraVerificar, 'para verificar')
+        print('ultimaLinea', ultimaLinea)
+    
+
         if paraVerificar[0]== 'Todo-ok' and int(paraVerificar[1]) == ultimaLinea:
             return False
         else:
