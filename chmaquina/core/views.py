@@ -217,7 +217,8 @@ class HomePageView2(CreateView):
                             instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
                             #instanciaEjec.agregarEtiquetas() # agrega las etiquetas para poder ser referenciadas
                             instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
-                            
+                            instanciaEjec.setValoraLeer(request.GET.get('ModalInput')) # linea nueva 
+                            print(request.GET.get('ModalInput'), 'esto  lo que está en la modal')
                             #se con el llamado de todos los metodos para mostrar todos los datos en el frontend
                             pant = instanciaEjec.getPantalla() # (str) datos pantalla en el frontend
                             impre = instanciaEjec.getImpresora() # (str) datos impresora en el frontend

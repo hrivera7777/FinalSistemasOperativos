@@ -112,7 +112,9 @@ class ejecucion:
     rlp=[] # registro limite del programa, hasta donde llega el programa, con variables incluidas, cada posicion corresponde a un programa (ejem rlp[0] es el rlp del programa 0)
     pantalla =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
     impresora =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
-    
+    valoraLeer="" #valor traido desde el front para la funcion leer
+    continuarLeyendo = True # variable para verificar si se debe seguir leyendo los datos
+    activarVentLeer = True # se enviará al front para mostrar una ventana donde se leen los datos de las var
     ###############################################################################
     # necesasario para quitar el \n que se genera en algunos archivos .ch
     contadorSalto=0 # contador de salto de linea
@@ -159,6 +161,18 @@ class ejecucion:
     
     def setRuta(self, ruta): # introduce la lista de programas en la bd 
         self.ruta2 = ruta
+
+    #introduce las variables por teclado
+    def setValoraLeer(self, valorVar):
+        self.valoraLeer = valorVar
+
+    #muestra si se continua con a con la lectura desde teclado
+    def continuarLeyendo(self, continua):
+        self.continuarLeyendo = continua
+
+    #entrega en el front si se debe seguir desplegando la ventana modal de lectura
+    def getActivarVentLeer(self):
+        return self.activarVentLeer
     #####################################################################################
 
 
@@ -314,7 +328,7 @@ class ejecucion:
                 #self.eEtiqueta(palabras, self.proEjec)
                 pass
             elif operador == 'lea':
-                pass#self.eLea(palabras, self.proEjec)
+                pass #self.eLea(palabras, self.proEjec)
             elif operador == 'sume':
                 self.eSume(palabras, self.proEjec)
             elif operador == 'reste':
@@ -1277,6 +1291,20 @@ class ejecucion:
             print('continuando con la ejecucion')
             pass
 
+    def eLea(self, linea, idProg):
+
+        valorLeido = ""
+        self.activarVentLeer = True
+        while(self.continuarLeyendo):
+            valorLeido = self.valoraLeer
+
+
+        if not(self.continuarLeyendo) and self.valoraLeer == '':
+            self.activarVentLeer = True
+            while(self.continuarLeyendo):
+                valorLeido = self.valoraLeer
+        else:
+            self.memoria[self.idenVar(linea[1],idProg)] = valorLeido
 
     """
     prueba local de la cantidad de memoria disponible 

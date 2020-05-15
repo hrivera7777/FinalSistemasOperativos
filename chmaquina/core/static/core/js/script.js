@@ -9,9 +9,11 @@ $(document).ready(function () {
         $('#btnUp').removeClass('displayNone');
     };
 
-    $('#myModal').on('shown.bs.modal', function () {
+    $('#myModal').on('shown.bs.modal', function () { /*scrip para la ventada modal */
         $('#myInput').trigger('focus')
     });
+
+
     let bandera = true;
     this.showHidden = function () {
         if (bandera) {

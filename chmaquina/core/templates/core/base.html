@@ -470,17 +470,21 @@
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<h5 class="modal-title" id="exampleModalCenterTitle">Introduzca el valor que corresponde</h5>
+				<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 				<span aria-hidden="true">&times;</span>
-				</button>
+				</button>-->
 			</div>
 			<div class="modal-body">
-				<input type="text" id="textoModal" class="form-control" placeholder="Another input placeholder" name="ModalInput">
+				<form id="modaLeer" name="modaLeer" action="" method="get"> 
+				<input type="text" id="textoModal" class="form-control" placeholder="Ingrese aquí el valor" name="ModalInput" required>
+				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary">Save changes</button>
+				<!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+				<!--<button type="button" class="btn btn-primary">Save changes</button>-->
+				 <input type="submit" value="Listo" id="btnLeer" class="btn btn-primary" form ="modaLeer">
+				<!--<button type="button" class="btn btn-primary">Listo</button>-->
 			</div>
 			</div>
 		</div>
