@@ -217,7 +217,12 @@ class HomePageView2(CreateView):
 
                         else:
                             instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
+                            instanciaEjec.setContinuarLeyendo(True)
+                            #instanciaEjec.playHppal()
                             instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                            instanciaEjec.setValoraLeer(30)
+                            instanciaEjec.setContinuarLeyendo(False)
+
                             #print('entre aqui')
                             #instanciaEjec.agregarEtiquetas() # agrega las etiquetas para poder ser referenciadas
                             
