@@ -348,4 +348,29 @@ tr{
 
 
 
+#salida{
+	background-color: #F2B84B;
+	
+	text-align: center;
+	padding: 2px;
+	width: 18%;
+	height: 10%;
+	border: none;
+	
+}
+
+#salida{
+	clear: both;
+	background-color: #F2B84B;
+	font-weight: bold;
+	font-size: larger;
+	width: 34%;
+	height: 10%;
+	margin: 18% 34%;
+	padding: 10px 15px ;
+	float: left;
+	
+	
+	
+}
 

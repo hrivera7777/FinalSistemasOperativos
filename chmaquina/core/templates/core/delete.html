@@ -12,8 +12,6 @@
 	<!--js-->
 	<script src="{% static 'core/js/jquery-3.4.1.min.js' %}"></script>
 	<script src="{% static 'core/js/bootstrap.min.js' %}"></script>
-	<script src="{% static 'core/js/script.js' %}"></script>
-	<script src="{% static 'core/js/ajax.js' %}"></script>
 	
 	<!--favicon-->
 	<link rel="shortcut icon" type="image/png" href="{% static 'core/img/favicon.ico' %}"/>
@@ -22,29 +20,11 @@
 </head>
 
 <body>
-<!--
-    <ul>
-    {% for persona in personas %}
-    <li>
-        {{ persona.nombre }}, {{ persona.edad }} años
-        <a href="/edit/{{ persona.id }}">Editar</a>
-        <a href="/delete/{{ persona.id }}" 
-          onClick="return confirm('¿Seguro que quieres borrar a {{persona.nombre}}?');">
-            Borrar
-        </a>
-    </li>
-    {% endfor %}
     
-    </ul>
-    -->
-
-    
-    <form method="post"> 
-        <div> ha salido del ch máquina, ¿desea regresar?</div>
-        <input type="text" value="sgtpaso" name="sgtpaso" style='display: none;'>
-        <!--<input type="text" id="textoModal" class="form-control" placeholder="Ingrese aquí el valor" name="ModalInput" required>-->
-        <button type="button" class="btn btn-primary">No</button>
-        <input type="submit" value="Sí" id="btnPaso" class="btn btn-primary">
+    <form method="post" id="salida"> {% csrf_token %}
+        <div style='margin: 10px 0px;'> Ha salido del ch máquina, ¿desea regresar?</div>
+        <input type="submit" value=" Sí " id="btnPaso" class="btn btn-primary">
+        <button type="button" class="btn btn-secondary">No</button>
     </form>
 
 

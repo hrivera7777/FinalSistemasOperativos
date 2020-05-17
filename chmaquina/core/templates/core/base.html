@@ -44,7 +44,7 @@
 		 <form id="eject" name="eject" action="" method="get"> {#{% csrf_token %}#}
 		  <!--<a class="nav-item nav-link" href="{% url 'home' %}">Ejecutar</a>-->
 			<input type="text" value="ejecutarOk" name="ejecute" style='display: none;'>
-			<input type="hidden" class="nav-item nav-link" href="{% url 'home' %} "style='display: none;'>	
+			<input type="hidden" class="nav-item nav-link" href="{% url 'home' %}"style='display: none;'>	
 			<input type="submit" value="Ejecutar" id="ejecutar" class="nav-item nav-link" style='display: none;'>
 			<a class="nav-item nav-link" id="btnEjecutar" onclick="actionEjc()" >Ejecutar</a>
 		  </form>
@@ -64,7 +64,7 @@
 
 		  <!--<a class="nav-item nav-link" href="#">Paso a Paso</a>-->
 
-		  <a class="nav-item nav-link" href="#">Salir</a>
+		  <a class="nav-item nav-link" href="{% url 'salir' %}">Salir</a>
 		  <!--<a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>-->
 		</div>
 	  </div>
@@ -135,7 +135,7 @@
 					</td>
 					<!--aqui se muestra lo relacionado con la linea que está activa en la ejecución-->
 					<td id="cajaPC">
-						<div id="pc">{{linAct}}</div>
+						<div id="pc" class="overflow-auto">{{linAct}}</div>
 						<!--<input type="text" name="pc" id="pc">-->
 					</td>
 				</tr>

@@ -125,7 +125,7 @@ class HomePageView2(CreateView):
 
         tup = EjecArchCh.objects.all()
         if not(tup): # cuando la base de datos se encuentra vacia 
-            return render(request, self.template_name,{'title': "Ch Máquina",'pantallaBack':['presione abir y cargue un archivo .ch, así también cargará el tamaño de la memoria y el tamaño del kernel'],'modo':'Modo kernel'}) # })#,   
+            return render(request, self.template_name,{'title': "Ch Máquina",'pantallaBack':['Presione abir y cargue un archivo .ch, así, también cargará el tamaño de la memoria y el tamaño del kernel.'],'modo':'Modo kernel'}) # })#,   
            
         else:
             ejecute = request.GET.get('ejecute') # se utliza este metodo para tomar la peticion ajax realizada desde el front para ejecutar un archivo .ch
@@ -215,7 +215,7 @@ class HomePageView2(CreateView):
             if not(instanciaEjec.puedeEjecKernel()):
                 for i in range (tamMemoriaDisp): #aqui se llena la lista con los valores de la posicion de memoria disponible
                     cantidMemoriaDisp.append(i+1) #NO PUEDE AGREGAR KERNEL se pone la memoria total disponible
-                return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':['no hay suficiente espacio para el kernel con respecto al tamaño de la memoria'],'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal, 'modo':'Modo kernel'}) # })#,   
+                return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':['No hay suficiente espacio para el kernel con respecto al tamaño de la memoria.'],'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal, 'modo':'Modo kernel'}) # })#,   
             
             else:
                 instanciaEjec.agregarKernelMemoria()
@@ -229,7 +229,7 @@ class HomePageView2(CreateView):
                     cantidadKernel.append(i+1) 
 
                 if not(instanciaEjec.puedeEjecProg()) and request.method == 'GET':
-                        return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':['no hay suficiente espacio para el programa con respecto al tamaño de la memoria'],'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memKer':cantidadKernel, 'memoriaTotal':memoriaTotal,'modo':'Modo kernel'}) # })#,
+                        return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':['No hay suficiente espacio para el programa con respecto al tamaño de la memoria.'],'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memKer':cantidadKernel, 'memoriaTotal':memoriaTotal,'modo':'Modo kernel'}) # })#,
 
                 else:
                     instanciaSintaxis.errSintax() # con esto se llama la funcion donde se verifica cada linea y se entrega en que linea se encuentra el error si lo hay
@@ -487,7 +487,7 @@ class HomePageView2(CreateView):
                             #elif request.GET.get('ModalInput') != '':
                         
                         else:
-                            return render(request, self.template_name,{'title': "Ch Máquina",'pantallaBack':['presione ejecutar o paso a paso para comenzar'],'modo':'Modo kernel'}) # })#,   
+                            return render(request, self.template_name,{'title': "Ch Máquina",'pantallaBack':['Presione ejecutar o paso a paso para comenzar.'],'modo':'Modo kernel'}) # })#,   
             
             
     def get_object(self, queryset=None):
