@@ -18,9 +18,13 @@ tr{
 }
 
 
-#btnAbrir, #btnEjecutar{
+#btnAbrir, #btnEjecutar, #btnPaP{ /* cambiar el comportamiento del mouse cuando pasa por encima de estos botones*/
 	cursor: pointer;
 }
+
+.modal-backdrop { /*para quitar el telon de fondo de los modales */
+	background-color: transparent;
+ }
 
 
 #btnUp{

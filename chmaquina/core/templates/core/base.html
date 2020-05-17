@@ -39,17 +39,31 @@
 		 	 <input type="submit" value="Subir" id="btnUp"  class="btnsubir" > <!--boton subir-->
 		  </form>
 		 <!---------------------------------------------->
-		 
+
+		 <!--boton ejecute-->
 		 <form id="eject" name="eject" action="" method="get"> {#{% csrf_token %}#}
 		  <!--<a class="nav-item nav-link" href="{% url 'home' %}">Ejecutar</a>-->
 			<input type="text" value="ejecutarOk" name="ejecute" style='display: none;'>
 			<input type="hidden" class="nav-item nav-link" href="{% url 'home' %} "style='display: none;'>	
-		  <input type="submit" value="Ejecutar" id="ejecutar" class="nav-item nav-link" style='display: none;'>
-		  <a class="nav-item nav-link" id="btnEjecutar" onclick="actionEjc()" >Ejecutar</a>
-		</form>
+			<input type="submit" value="Ejecutar" id="ejecutar" class="nav-item nav-link" style='display: none;'>
+			<a class="nav-item nav-link" id="btnEjecutar" onclick="actionEjc()" >Ejecutar</a>
+		  </form>
+			<!--------------------------------------------------->
 
 		  <a class="nav-item nav-link" href="#" onclick="showHidden()">Mostrar Memoria</a>
-		  <a class="nav-item nav-link" href="#">Paso a Paso</a>
+
+			<!------- boton paso a paso--------->
+		   	<form id="PaP" name="PaP" action="" method="get"> {#{% csrf_token %}#}
+		 	 <!--<a class="nav-item nav-link" href="{% url 'home' %}">Ejecutar</a>-->
+			<input type="text" value="pasoapaso" name="pasoapaso" style='display: none;'>
+			<input type="hidden" class="nav-item nav-link" href="{% url 'home' %} "style='display: none;'>	
+		  	<input type="submit" value="PasoAPaso" id="subPaP" class="nav-item nav-link" style='display: none;'>
+		  	<a class="nav-item nav-link" id="btnPaP" onclick="actionPaP()" >Paso a Paso</a>
+			</form>
+			<!--------------------------->
+
+		  <!--<a class="nav-item nav-link" href="#">Paso a Paso</a>-->
+
 		  <a class="nav-item nav-link" href="#">Salir</a>
 		  <!--<a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>-->
 		</div>
@@ -458,7 +472,44 @@
 	
 	</section>
 
-	<!-- modal para despues-->
+	<!-- modal para paso a paso-->
+	<section>
+			<!-- Button trigger modal -->
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalPaP">
+		paso a paso
+		</button>
+
+		<!-- Modal -->
+		<div class="modal fade" id="ModalPaP" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalCenterTitle">Paso a Paso</h5>
+				<!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>-->
+			</div>
+			<div class="modal-body">
+				<form id="formPaP" name="formPaP" action="" method="get"> 
+				<div> presione continuar, para pasar a la siguiente línea</div>
+				<input type="text" value="sgtpaso" name="sgtpaso" style='display: none;'>
+				<!--<input type="text" id="textoModal" class="form-control" placeholder="Ingrese aquí el valor" name="ModalInput" required>-->
+				</form>
+			</div>
+			<div class="modal-footer">
+				<!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+				<!--<button type="button" class="btn btn-primary">Save changes</button>-->
+				 <input type="submit" value="Continuar" id="btnPaso" class="btn btn-primary" form ="formPaP">
+				<!--<button type="button" class="btn btn-primary">Listo</button>-->
+			</div>
+			</div>
+		</div>
+		</div>
+	</section>	
+
+	<div id="continue" value="{{activMPaP}}" style='display: none;'> </div>
+
+	<!-- modal para leer-->
 	<section>
 			<!-- Button trigger modal -->
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalparaLeer">

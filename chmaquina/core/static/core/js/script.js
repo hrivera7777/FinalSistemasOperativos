@@ -59,5 +59,12 @@ $(document).ready(function () {
 
         return true;
     };
+
+
+    actionPaP = function () {
+        document.getElementById('subPaP').click();
+
+        return true;
+    };
 });
 
