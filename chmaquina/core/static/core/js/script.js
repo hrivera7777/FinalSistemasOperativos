@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    console.log('termino de cargar');
+    console.log('terminó de cargar');
     this.subir = function () {
         $('#btnAbrir').addClass('displayNone');
         console.log('here');
@@ -63,8 +63,19 @@ $(document).ready(function () {
 
     actionPaP = function () {
         document.getElementById('subPaP').click();
+        $('#btnsgtePaso').removeClass('hidden');
+        //document.getElementById('btnsgtePaso').style = 'display : block;';
 
         return true;
     };
+    actionMostrarBtnPaP = function () {
+        
+        $('#btnsgtePaso').removeClass('hidden');
+        //document.getElementById('btnsgtePaso').style = 'display : block;';
+
+        return true;
+    };
+
+
 });
 

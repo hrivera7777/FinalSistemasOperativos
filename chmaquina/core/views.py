@@ -78,7 +78,7 @@ class HomePageView(UpdateView):
 
 
 contadorPasos =0 # se utiliza para la realizar la ejecucion paso a paso
-
+cambioCurso = False
 ## con esta view permite agregar varios archivos ch a la vez 
 class HomePageView2(CreateView):
     #form_class = ArchivoForm
@@ -89,10 +89,11 @@ class HomePageView2(CreateView):
 
     success_url= reverse_lazy('home')
     template_name = "core/base.html"
-    
+    global cambioCurso
     
     def get(self, request, *args, **kwargs):
         global contadorPasos
+        global cambioCurso
         #print('contador', contadorPasos)
         #ruta=request.FILES.get('archivo')
         #nombre = ruta.name
@@ -209,6 +210,7 @@ class HomePageView2(CreateView):
             #instanciaEjec.setProgEjec(int(instanciaArch.getProgEjecBD())) # se envia el programa a ser ejecutado a la ejecución
             instanciaPaP.setProgEjec(int(proEjec)) # se envia el programa a ser ejecutado a la ejecución
             instanciaPaP.setRuta(instanciaArch.getRutaBD()) # se envia las rutas de los archivos a la ejecución
+            cambioCurso = instanciaPaP.getCambiaCurso()
             ##########################################################################
 
 
@@ -390,12 +392,36 @@ class HomePageView2(CreateView):
                             print('contador ', contadorPasos)
                             lineaParaIr= rb + contadorPasos
                             
+                            lineaCod = ""
+                            operando = ""
+                            try:
+                                lineaCod = leerLimp2[contadorPasos]
+                                operando = lineaCod[0]
+                            except :
+                                lineaCod = ""
+                                operando = ""
+                            
+                            
+                            print('cambió le curso? ', cambioCurso)
+                            print('contador pasos ', contadorPasos)
+                            
                             print(contadorPasos)
                             if contadorPasos == 0:
                                 
-                                print('este es el if')
+                                print('este es el if', ' leer en pos cont', leerLimp2[contadorPasos])
                                 instanciaPaP.ejecutarProgPaP(rb) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
-                                contadorPasos += 1
+                                
+                                
+
+                                if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
+                                    print('valor traido desde instancia',instanciaPaP.getPosaCambiar())
+                                    print('este es el valor de rb ', rb)
+                                    contadorPasos = instanciaPaP.getPosaCambiar() - rb
+                                    cambioCurso=False
+                                    instanciaPaP.setCambiaCurso(False)
+                                else:
+                                    contadorPasos += 1
+                                
                                 
                                 pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
                                 impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
@@ -416,10 +442,21 @@ class HomePageView2(CreateView):
                                             # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
                                                                         #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                                                           
 
-                            elif str(sgtPaso) == 'sgtpaso' and lineaParaIr <= rlc:
-                                print('este es el elif')
+                            elif str(sgtPaso) == 'sgtpaso' and lineaParaIr < rlc:
+                                print('este es el elif', ' leer en pos cont', leerLimp2[contadorPasos])
                                 instanciaPaP.ejecutarProgPaP(lineaParaIr) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
-                                contadorPasos += 1
+                                
+                                if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
+                                    print('valor traido desde instancia',instanciaPaP.getPosaCambiar())
+                                    print('este es el valor de rb ', rb)
+                                    
+                                    contadorPasos = instanciaPaP.getPosaCambiar() - rb
+                                    cambioCurso=False
+                                    instanciaPaP.setCambiaCurso(False)
+                                else:
+                                    contadorPasos += 1
+                                
+                                #contadorPasos += 1
 
 
                                 pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
@@ -487,7 +524,7 @@ class HomePageView2(CreateView):
                             #elif request.GET.get('ModalInput') != '':
                         
                         else:
-                            return render(request, self.template_name,{'title': "Ch Máquina",'pantallaBack':['Presione ejecutar o paso a paso para comenzar.'],'modo':'Modo kernel'}) # })#,   
+                            return render(request, self.template_name,{'title': "Ch Máquina",'pantallaBack':['Presione ejecutar o paso a paso para comenzar.'],'modo':'Modo kernel', 'activMPaP':'True'}) # })#,   
             
             
     def get_object(self, queryset=None):

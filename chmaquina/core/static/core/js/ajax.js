@@ -38,9 +38,12 @@ $(document).ready(function () {
     });
 
     var continar=document.getElementById("continue").value;
-
+    
     $('#PaP').submit(function (e) {
         e.preventDefault();
+        //console.log(window.location.href)
+        $('#btnsgtePaso').removeClass('hidden');
+        //$('#ModalPaP').modal('show');
         
         $.ajax({
             url: $(this).attr('action'),
@@ -48,16 +51,20 @@ $(document).ready(function () {
             data: $(this).serialize(),
 
             success: function(json){
-                console.log(json)
+                //console.log(json)
                 
-               if(continar == 'True'){
+               if(continar == "True"){
+                   console.log('entre aqui if')
 
-                $('#ModalPaP').modal('show');
                 document.write(json);
+                $('#btnsgtePaso').removeClass('hidden');
+               // $('#ModalPaP').modal('show');
+                $('#btnsgtePaso').removeClass('hidden');
 
                }
 
                else{
+                console.log('entre aqui else')
                 document.write(json);
 
                }
@@ -75,32 +82,111 @@ $(document).ready(function () {
         });
     });
 
-
-    
-    
-
-    $('#formPaP').submit(function (e) {
+    /*
+    $('#btnPaso').click(function (e) {
         e.preventDefault();
-        $('#modaLPaP').modal('hide');    
+        document.getElementById("formPaP").submit();
+        $('#btnsgtePaso').removeClass('hidden');
+        $('#ModalPaP').modal('hide');  
+        
+        console.log('entre aqui funcion')  
         $.ajax({
             url: $(this).attr('action'),
             type: $(this).attr('method'),
             data: $(this).serialize(),
 
             success: function(json){
-                if (continar == 'True'){
-                $('#ModalparaLeer').modal('show');
+                $('#btnsgtePaso').removeClass('hidden');
+                $('#ModalPaP').modal('show');
+                if (continar == "True"){
+                    console.log('entre aqui if formPaP')
+                    
+                   
                 document.write(json);
+                $('#btnsgtePaso').removeClass('hidden');
+                $('#ModalPaP').modal('show');
+                
+                
                }
                else{
-                $('#ModalparaLeer').modal('hide'); 
+                console.log('entre aqui else')
+                
                 document.write(json);
+                $('#ModalPaP').modal('hide'); 
                }
                
                 //console.log('hi');
             }
         });
     });
+    */
+   
+   var sgt= window.location.href;
+    MostrarBtnPaP = function () {
+    if (sgt == "http://127.0.0.1:8000/?sgtpaso=sgtpaso" ){
+        console.log("entre aqui funcion monstrar")
+        $('#btnsgtePaso').removeClass('hidden');
+
+    }
+    
+    //document.getElementById('btnsgtePaso').style = 'display : block;';
+
+    return true;
+    };
+
+    MostrarBtnPaP();
+
+
+    //window.onload=MostrarBtnPaP;
+    /*
+    var formPaP=document.getElementById("formPaP")
+
+    
+    $(formPaP).submit(function (e) { //'#formPaP'
+    //submitFormPaP = function (e){ //(e){
+        console.log('entro al metodo')
+        //e.preventDefault();
+         //podria quitarse
+        $('#btnsgtePaso').removeClass('hidden');
+        $('#ModalPaP').modal('hide');  
+        
+        console.log('entre aqui funcion')  
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: $(this).serialize(),
+
+            success: function(json){
+                $('#btnsgtePaso').removeClass('hidden');
+                $('#ModalPaP').modal('show');
+                if (continar == "True"){
+                    console.log('entre aqui if formPaP')
+                    
+                   
+                //document.write(json);
+                $('#btnsgtePaso').removeClass('hidden');
+                $('#ModalPaP').modal('show');
+                
+                
+               }
+               else{
+                console.log('entre aqui else')
+                
+                //document.write(json);
+                $('#ModalPaP').modal('hide'); 
+               }
+               $('#btnsgtePaso').removeClass('hidden');
+               //document.getElementById("formPaP").submit();
+               
+                //console.log('hi');
+            }
+        });
+    //};
+     });
+*/
+
+
+    
 
     /*
 
@@ -130,3 +216,4 @@ $(document).ready(function () {
     */
 
 });
+

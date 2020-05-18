@@ -3,8 +3,8 @@ import threading
 import time
 
 
-
-
+cambiaCurso=False
+posaCambiar =0
 class PaP: # clase paso a paso
 
     cantmemoria= 0 
@@ -45,7 +45,8 @@ class PaP: # clase paso a paso
     activarVentLeer = True # se enviará al front para mostrar una ventana donde se leen los datos de las var
     stopH=False # variable para detener ejecucion del hilo ppal
     lienaActual = ""
-
+    global cambiaCurso # se utiliza esta variable para indicar si se cambia el curso del programa con un vaya o vayasi
+    global posaCambiar # se utiliza esta variable para indicar a que posicion se cambia el curso del programa con un vaya o vayasi 
     ###############################################################################
     # necesasario para quitar el \n que se genera en algunos archivos .ch
     contadorSalto=0 # contador de salto de linea
@@ -116,6 +117,10 @@ class PaP: # clase paso a paso
 
     def stopHppal(self):
         self.stopH = True
+
+    def setCambiaCurso(self, cambia):
+        global cambiaCurso
+        cambiaCurso = cambia
     #####################################################################################
 
     ################# métodos get ##############
@@ -125,6 +130,12 @@ class PaP: # clase paso a paso
     
     def getRLC(self): #retorna el registro límite de código del programa que se está ejecutando 
         return self.rlc[self.proEjec]
+
+    def getCambiaCurso(self):
+        return cambiaCurso
+
+    def getPosaCambiar(self):
+        return posaCambiar
 
 
     ##########################################################################################
@@ -235,6 +246,7 @@ class PaP: # clase paso a paso
     
     def ejecutarProgPaP(self, posMemEjec): # posMemEjec se requerirá si se llega  a una instrucción vaya o vayasi para cambiar la ejecucion del programa
         # proEjec no se envia como parametro, porque no se conoce cuando se realice el primer llamado en views
+        global cambiaCurso
         
         #while(not(self.stopH)):
         varEjer = 0 # esta variable cambiara dependiendo si es una ejecucion normal o si se ingresa el parametro posMemEjec para cambiar la ejecucion a una linea especifica
@@ -309,7 +321,8 @@ class PaP: # clase paso a paso
         elif operador == 'absoluto':
             self.eAbsoluto(palabras, self.proEjec)
         elif operador == 'vayasi':
-            self.eVayaSi(palabras, self.proEjec)   
+            self.eVayaSi(palabras, self.proEjec)  
+            
 
         elif operador == 'retorne' :#and varEjer == self.rb[self.proEjec]: #se verifica que sea la ejecucion base para evitar que se repitan valores
             self.pantalla.append("*****************************")
@@ -321,13 +334,15 @@ class PaP: # clase paso a paso
         else:
             #self.activarVentLeer = False
             pass
+    
+        print(cambiaCurso,'cambia curso dentro de ejecProgPaP')
 
     #############################################################################################################################
     #metodos para obterner los valores y mostrarlos en el frontend
 
     #metodo para obtener lo que será mostrado en pantalla
     def getPantalla(self):
-        print('esta es la pantalla', self.pantalla)
+        #print('esta es la pantalla', self.pantalla)
         return self.pantalla
 
     #metodo para obtener lo que será mostrado en la impresora
@@ -1094,23 +1109,38 @@ class PaP: # clase paso a paso
         self.posMemEtiq.append(posMemoriaEti) # se agrega la posicion de memoria de la instruccion a donde apunta la etiq
 
     def eVaya(self, linea, idProg):
+        global cambiaCurso
+        global posaCambiar
         posMemEti = self.idenEtiq(linea[1], idProg)
+        cambiaCurso = True
+        posaCambiar = posMemEti
         self.ejecutarProgPaP(posMemEti)#aquí se llama el metodo donde cambiará el flujo del programa con la posicion de memoria de la etiqueta
-    
+
     def eVayaSi(self, linea, idProg):
         posMemEti1 = self.idenEtiq(linea[1], idProg)
         posMemEti2 = self.idenEtiq(linea[2], idProg)
+        global cambiaCurso
+        global posaCambiar
 
         #print(self.memoria[0], 'acum en el vaya')
         if int(self.memoria[0]) > 0 or float(self.memoria[0])> 0.0:
             #print('aqui if', 'posMemo ',self.idenEtiq(linea[1], idProg), 'de eti corres', linea[1])
+            cambiaCurso = True
+            print('entre al if del vayasi, valor cambiacurso', cambiaCurso)
+            posaCambiar = posMemEti1
             self.ejecutarProgPaP(posMemEti1) # #aquí se llama el metodo donde cambia el flujo del programa con la posicion que entregue (posMemEti1)
-            
+            #cambiaCurso =False 
         elif int(self.memoria[0]) < 0 or float(self.memoria[0])< 0.0:
            # print('aqui elif')
+            print('entre al elif del vayasi, valor cambiacurso', cambiaCurso)
+            cambiaCurso = True
+            posaCambiar = posMemEti2
             self.ejecutarProgPaP(posMemEti2) # #aquí se llama el metodo donde cambia el flujo del programa con la posicion que entregue (posMemEti2)
             
         else:
+            print('entre al else del vayasi, valor cambiacurso', cambiaCurso)
+            cambiaCurso = False
+            #self.posaCambiar = posMemEti
             print('continuando con la ejecucion')
             pass
 
