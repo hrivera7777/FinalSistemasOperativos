@@ -232,7 +232,13 @@ class ejecucion:
     #aquí se llena la memoria con el "kernel"
     def agregarKernelMemoria(self):   
         i=0
-        if(self.proEjec == 0):
+        memVacia = ""
+        try:
+            memVacia = self.memoria[1]
+        except:
+            memVacia =""
+
+        if(self.proEjec == 0) and memVacia == "":
             for i in range(self.kernel):
                 self.memoria.append("***kernel ch***")
         else:

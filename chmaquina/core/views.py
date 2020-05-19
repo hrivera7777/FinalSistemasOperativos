@@ -222,7 +222,7 @@ class HomePageView2(CreateView):
             else:
                 instanciaEjec.agregarKernelMemoria()
 
-                if contadorPasos ==0 and proEjec == 0 :
+                if contadorPasos ==0 and proEjec == 0 and not(cambioCurso):
                     instanciaPaP.agregarKernelMemoria()
 
                 for i in range (tamMemoriaDisp): #aqui se llena la lista con los valores de la posicion de memoria disponible
@@ -380,7 +380,7 @@ class HomePageView2(CreateView):
                                             # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
                                                                         #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                                                           
                         
-                        elif str(pasoaPaso) == 'pasoapaso' or str(sgtPaso) == 'sgtpaso':
+                        elif str(pasoaPaso) == 'pasoapaso' or str(sgtPaso) == 'sgtpaso' or str(sgtPaso) == 'fin' :
    
                                  # agrega las instrucciones a la memoria
                             #instanciaPaP.setContinuarLeyendo(True)
@@ -438,7 +438,7 @@ class HomePageView2(CreateView):
 
                                 return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                                 'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
-                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'True'}) 
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'True', 'sgtpaso':'sgtpaso'}) 
                                             # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
                                                                         #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                                                           
 
@@ -474,7 +474,7 @@ class HomePageView2(CreateView):
 
                                 return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                                 'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
-                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'True'}) 
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'True', 'sgtpaso':'sgtpaso'}) 
                                             # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
                                                                         #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                                                           
                             else:
@@ -494,7 +494,7 @@ class HomePageView2(CreateView):
 
                                 return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                                 'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
-                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'False'}) 
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'False', 'sgtpaso':'fin'}) 
                                             # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
                                                                         #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                              
 
