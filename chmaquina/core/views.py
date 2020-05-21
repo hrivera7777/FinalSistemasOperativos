@@ -79,6 +79,11 @@ class HomePageView(UpdateView):
 
 contadorPasos =0 # se utiliza para la realizar la ejecucion paso a paso
 cambioCurso = False
+ActivarVentLeer = False
+varALeer = []
+cuantosLea = 0
+cuantosLeaFaltan = -1
+listaValoresVariTeclado = []
 ## con esta view permite agregar varios archivos ch a la vez 
 class HomePageView2(CreateView):
     #form_class = ArchivoForm
@@ -90,6 +95,10 @@ class HomePageView2(CreateView):
     success_url= reverse_lazy('home')
     template_name = "core/base.html"
     global cambioCurso
+    global ActivarVentLeer
+    global varALeer
+    global cuantosLea
+    global cuantosLeaFaltan
     
     def get(self, request, *args, **kwargs):
         global contadorPasos
@@ -132,7 +141,7 @@ class HomePageView2(CreateView):
             ejecute = request.GET.get('ejecute') # se utliza este metodo para tomar la peticion ajax realizada desde el front para ejecutar un archivo .ch
             pasoaPaso = request.GET.get('pasoapaso')
             sgtPaso = request.GET.get('sgtpaso')
-          
+            variablePorTeclado = request.GET.get('leaTeclado')
            # if str(ejecute) == 'ejecutarOk':
             nombre=""
             tup = EjecArchCh.objects.all() # aquí se toman los datos desde la base de datos 
@@ -240,14 +249,202 @@ class HomePageView2(CreateView):
                         return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':instanciaSintaxis.getPantalla(),'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memKer':cantidadKernel,'memoriaTotal':memoriaTotal, 'modo':'Modo kernel',}) # })#, cantidadKernel (lista con las posiciones de kernel)
 
                     else:
-                        if str(ejecute) == 'ejecutarOk':
+                        #print(request.GET.get('leaTeclado') !='', request.GET.get('leaTeclado'))
+                       
+                        if request.GET.get('leaTeclado') == None:
+                            varPrev = ""
+                           # print('entré aquí if varpre')
+                        else:
+                            varPrev = request.GET.get('leaTeclado')
+                           # print('entré aquí else varpre')
+
+                        #print(varPrev !='', varPrev)
+                        if str(ejecute) == 'ejecutarOk' or varPrev !='': #request.GET.get('leaTeclado') !='': 
+
+                            global varALeer
+                            global cuantosLea
+                            global cuantosLeaFaltan
+                            global listaValoresVariTeclado
+                            lineaCod = ""
+                            operando = ""
+                            """
+                            try:
+                                lineaCod = leerLimp2[contadorPasos]
+                                operando = lineaCod[0]
+                            except :
+                                lineaCod = ""
+                                operando = ""
+                            """
+                            for i in range(len(leerLimp2)):
+                                
+                                try:
+                                    lineaCod = leerLimp2[i].split()
+                                    operando = lineaCod[0]
+                                except :
+                                    lineaCod = ""
+                                    operando = ""
+                                #print(operando, 'esto es operando')
+                                #print(leerLimp2, 'esto es leer')
+                                if operando == 'lea': 
+                                    varALeer.append(lineaCod[1])
+                                    cuantosLea +=1 
+                                   # print(lineaCod[1],cuantosLea, 'if del for' )
+                            varALeer.reverse()
+                            global ActivarVentLeer 
+                            #print(cuantosLeaFaltan)
+
+
+                            if cuantosLeaFaltan == -1 :
+                                print('entré primer if')
+                                cuantosLeaFaltan = cuantosLea
+                                print('entré if',cuantosLeaFaltan)
+                                ActivarVentLeer = True 
+                                cuantosLeaFaltan -=1
+
+                                
+                                pant = instanciaEjec.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                impre = instanciaEjec.getImpresora() # (str) datos impresora en el frontend
+                                acum = instanciaEjec.getAcumulador() # (str) 
+                                linAct = instanciaEjec.getLineaActual() # (str) 
+                                codProAct = instanciaEjec.getCodProgActual() # (list) 
+                                varAct = instanciaEjec.getVariablesActuales()# (list) 
+                                etiqAct = instanciaEjec.getEtiquetasActuales() # (list) 
+                                mem = instanciaEjec.getMemoria() # (list) 
+                                prog = instanciaEjec.getProgramas() # (list) 
+                                memDis = instanciaEjec.getMemoriaDispo() # (list) 
+                                
+                                return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer, 'varALeer':varALeer.pop()}) 
+                                
+
+                            #instanciaEjec.setcantLeer(cuantosLea)
+                            elif varPrev !='' and cuantosLeaFaltan > 0:
+                                print('entré elif 2',cuantosLeaFaltan)
+                                variablePorTeclado = request.GET.get('leaTeclado')
+                                listaValoresVariTeclado.append(variablePorTeclado)
+                                
+                                print(cuantosLeaFaltan, 'esto falta')
+                                
+                                if cuantosLeaFaltan > 0:
+                                    ActivarVentLeer = True
+                                    print('se volvio True')
+                                else :
+                                    print('se volvio false')
+                                    ActivarVentLeer = False
+                                cuantosLeaFaltan -=1
+
+                                pant = instanciaEjec.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                impre = instanciaEjec.getImpresora() # (str) datos impresora en el frontend
+                                acum = instanciaEjec.getAcumulador() # (str) 
+                                linAct = instanciaEjec.getLineaActual() # (str) 
+                                codProAct = instanciaEjec.getCodProgActual() # (list) 
+                                varAct = instanciaEjec.getVariablesActuales()# (list) 
+                                etiqAct = instanciaEjec.getEtiquetasActuales() # (list) 
+                                mem = instanciaEjec.getMemoria() # (list) 
+                                prog = instanciaEjec.getProgramas() # (list) 
+                                memDis = instanciaEjec.getMemoriaDispo() # (list) 
+                                
+                                return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer, 'varALeer':varALeer.pop()}) 
+                            
+                            elif cuantosLeaFaltan == 0 :
+                                print('entré elif',cuantosLeaFaltan)
+                                ActivarVentLeer = False 
+                                
+                                variablePorTeclado = request.GET.get('leaTeclado')
+                                listaValoresVariTeclado.append(variablePorTeclado)
+
+                                instanciaEjec.setValoraLeer(listaValoresVariTeclado) ##despues de leer todos los valores
+                                instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
+                                instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+
+                                pant = instanciaEjec.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                impre = instanciaEjec.getImpresora() # (str) datos impresora en el frontend
+                                acum = instanciaEjec.getAcumulador() # (str) 
+                                linAct = instanciaEjec.getLineaActual() # (str) 
+                                codProAct = instanciaEjec.getCodProgActual() # (list) 
+                                varAct = instanciaEjec.getVariablesActuales()# (list) 
+                                etiqAct = instanciaEjec.getEtiquetasActuales() # (list) 
+                                mem = instanciaEjec.getMemoria() # (list) 
+                                prog = instanciaEjec.getProgramas() # (list) 
+                                memDis = instanciaEjec.getMemoriaDispo() # (list) 
+
+                                return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer, }) 
+
+                            else:
+                                print('entré else',cuantosLeaFaltan)
+                                instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
+                                instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+
+                                pant = instanciaEjec.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                impre = instanciaEjec.getImpresora() # (str) datos impresora en el frontend
+                                acum = instanciaEjec.getAcumulador() # (str) 
+                                linAct = instanciaEjec.getLineaActual() # (str) 
+                                codProAct = instanciaEjec.getCodProgActual() # (list) 
+                                varAct = instanciaEjec.getVariablesActuales()# (list) 
+                                etiqAct = instanciaEjec.getEtiquetasActuales() # (list) 
+                                mem = instanciaEjec.getMemoria() # (list) 
+                                prog = instanciaEjec.getProgramas() # (list) 
+                                memDis = instanciaEjec.getMemoriaDispo() # (list) 
+
+                                return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, }) 
+                            
+
+                            """
+                            elif cuantosLeaFaltan > 0 :
+                                print('entré elif 1, faltan ',cuantosLeaFaltan)
+                                ActivarVentLeer = True
+                                cuantosLeaFaltan -=1
+                                
+                                pant = instanciaEjec.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                impre = instanciaEjec.getImpresora() # (str) datos impresora en el frontend
+                                acum = instanciaEjec.getAcumulador() # (str) 
+                                linAct = instanciaEjec.getLineaActual() # (str) 
+                                codProAct = instanciaEjec.getCodProgActual() # (list) 
+                                varAct = instanciaEjec.getVariablesActuales()# (list) 
+                                etiqAct = instanciaEjec.getEtiquetasActuales() # (list) 
+                                mem = instanciaEjec.getMemoria() # (list) 
+                                prog = instanciaEjec.getProgramas() # (list) 
+                                memDis = instanciaEjec.getMemoriaDispo() # (list) 
+                                
+                                return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer, 'varALeer':varALeer.pop()}) 
+
+
+                            
+                                #instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
+                                #instanciaEjec.setContinuarLeyendo(True)
+                                
+                                
+                                
+                                #instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                                
+                               # instanciaEjec.setContinuarLeyendo(False)
+                            """
+                                
+                            
+                            
+
+                            """20-05-2020
+                            global ActivarVentLeer
+                            ActivarVentLeer = instanciaEjec.getActivarVentLeer()
 
                             instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
                             instanciaEjec.setContinuarLeyendo(True)
                             #instanciaEjec.playHppal()
-                            instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+
                             instanciaEjec.setValoraLeer(30)
+                            instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                            
                             instanciaEjec.setContinuarLeyendo(False)
+                            """
 
                             #print('entre aqui')
                             #instanciaEjec.agregarEtiquetas() # agrega las etiquetas para poder ser referenciadas
@@ -351,6 +548,7 @@ class HomePageView2(CreateView):
                             #se con el llamado de todos los metodos para mostrar todos los datos en el frontend
                             
                             #pant = instanciaEjec.getPantalla() # (str) datos pantalla en el frontend
+                            """20-05-2020
                             pant = instanciaEjec.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
                             impre = instanciaEjec.getImpresora() # (str) datos impresora en el frontend
                             acum = instanciaEjec.getAcumulador() # (str) 
@@ -361,7 +559,7 @@ class HomePageView2(CreateView):
                             mem = instanciaEjec.getMemoria() # (list) 
                             prog = instanciaEjec.getProgramas() # (list) 
                             memDis = instanciaEjec.getMemoriaDispo() # (list) 
-
+                            """
 
                             #posCodProAct = instanciaEjec.getCodProgActualMod() # (list) #getCodProgActualMod
                             #posVarAct = instanciaEjec.getPosVariablesActuales() # (list) 
@@ -373,13 +571,16 @@ class HomePageView2(CreateView):
                             #regLimCod = instanciaEjec.getRegistroLimCod() # (list) 
                             #regLimPro = instanciaEjec.getRegistroLimProg() # (list) 
                             
-                            
+                            """20-05-2020
                             return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                                 'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
-                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,}) 
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer}) 
                                             # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
                                                                         #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                                                           
+                            """
                         
+                        
+                        #aquí comienza el paso a paso
                         elif str(pasoaPaso) == 'pasoapaso' or str(sgtPaso) == 'sgtpaso' or str(sgtPaso) == 'fin' :
    
                                  # agrega las instrucciones a la memoria
@@ -392,6 +593,7 @@ class HomePageView2(CreateView):
                             print('contador ', contadorPasos)
                             lineaParaIr= rb + contadorPasos
                             
+                            """
                             lineaCod = ""
                             operando = ""
                             try:
@@ -400,7 +602,7 @@ class HomePageView2(CreateView):
                             except :
                                 lineaCod = ""
                                 operando = ""
-                            
+                            """
                             
                             print('cambió le curso? ', cambioCurso)
                             print('contador pasos ', contadorPasos)
@@ -438,7 +640,7 @@ class HomePageView2(CreateView):
 
                                 return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                                 'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
-                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'True', 'sgtpaso':'sgtpaso'}) 
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'True', 'sgtpaso':'sgtpaso', 'contadorPasos':contadorPasos}) 
                                             # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
                                                                         #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                                                           
 
@@ -474,7 +676,7 @@ class HomePageView2(CreateView):
 
                                 return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                                 'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
-                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'True', 'sgtpaso':'sgtpaso'}) 
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'True', 'sgtpaso':'sgtpaso', 'contadorPasos':contadorPasos}) 
                                             # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
                                                                         #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                                                           
                             else:
@@ -494,7 +696,7 @@ class HomePageView2(CreateView):
 
                                 return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                                 'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
-                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'False', 'sgtpaso':'fin'}) 
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'False', 'sgtpaso':'fin', 'contadorPasos':contadorPasos}) 
                                             # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
                                                                         #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                              
 

@@ -18,7 +18,7 @@ tr{
 }
 
 
-#btnAbrir, #btnEjecutar, #btnPaP{ /* cambiar el comportamiento del mouse cuando pasa por encima de estos botones*/
+#btnAbrir, #btnEjecutar, #btnPaP, #btnMemoria{ /* cambiar el comportamiento del mouse cuando pasa por encima de estos botones*/
 	cursor: pointer;
 }
 
@@ -372,5 +372,14 @@ tr{
 	
 	
 	
+}
+
+#ingresarValorTeclado{
+	position: absolute;
+    position: absolute;
+    width: 24.5%;
+    height: 19%;
+    left: 44.5%;
+    top: 34%;
 }
 

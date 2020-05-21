@@ -32,7 +32,10 @@ for tp in tup:
     nombre=tp.archivo
     ruta = str(nombre)
 """
-
+activarVentLeer = True # se enviará al front para mostrar una ventana donde se leen los datos de las var
+#continuarLeyendo = True # variable para verificar si se debe seguir leyendo los datos
+valoresLeidos=[] #valor traido desde el front para la funcion leer
+#cantLeer = 0
 class ejecucion:
 
     cantmemoria= 0 
@@ -115,11 +118,12 @@ class ejecucion:
     rlp=[] # registro limite del programa, hasta donde llega el programa, con variables incluidas, cada posicion corresponde a un programa (ejem rlp[0] es el rlp del programa 0)
     pantalla =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
     impresora =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
-    valoraLeer="" #valor traido desde el front para la funcion leer
-    continuarLeyendo = True # variable para verificar si se debe seguir leyendo los datos
-    activarVentLeer = True # se enviará al front para mostrar una ventana donde se leen los datos de las var
+    
+    global valoresLeidos
+    #global continuarLeyendo
+    
     stopH=False # variable para detener ejecucion del hilo ppal
-
+    global activarVentLeer
 
     ###############################################################################
     # necesasario para quitar el \n que se genera en algunos archivos .ch
@@ -169,19 +173,29 @@ class ejecucion:
         self.ruta2 = ruta
 
     #introduce las variables por teclado
-    def setValoraLeer(self, valorVar):
-        self.valoraLeer = valorVar
+    def setValoraLeer(self, valorVariables):
+        global valoresLeidos
+        valoresLeidos = valorVariables
 
+    """
     #muestra si se continua con a con la lectura desde teclado
     def setContinuarLeyendo(self, continua):
-        self.continuarLeyendo = continua
-
+        global continuarLeyendo
+        continuarLeyendo = continua
+    """
     #entrega en el front si se debe seguir desplegando la ventana modal de lectura
     def getActivarVentLeer(self):
-        return self.activarVentLeer
+        global activarVentLeer
+        return activarVentLeer
     
     def setActivarVentLeer(self, activo):
-        self.activarVentLeer = activo
+        global activarVentLeer
+        activarVentLeer = activo
+
+    #def setcantLeer(self, numerodeLeer):
+    #    global cantLeer
+    #    cantLeer = numerodeLeer
+    
 
 
     def playHppal(self):#inicia el hilo principal de ejecucion
@@ -322,7 +336,8 @@ class ejecucion:
     #metodo que realiza la ejecución del programa
     def ejecutarProg(self, posMemEjec): # posMemEjec se requerirá si se llega  a una instrucción vaya o vayasi para cambiar la ejecucion del programa
         # proEjec no se envia como parametro, porque no se conoce cuando se realice el primer llamado en views
-        
+        #global cantLeer
+        numlea =0
         #while(not(self.stopH)):
         varEjer = 0 # esta variable cambiara dependiendo si es una ejecucion normal o si se ingresa el parametro posMemEjec para cambiar la ejecucion a una linea especifica
         
@@ -353,10 +368,12 @@ class ejecucion:
                 #self.eEtiqueta(palabras, self.proEjec)
                 pass
             elif operador == 'lea':
+                self.eLea(palabras,self.proEjec, numlea) 
+                numlea +=1
                 #hilo = threading.Thread(target=self.eLea(palabras,self.proEjec))
-                hilo = threading.Thread(target=self.eLea, args=(palabras,self.proEjec))
-                hilo.start()
-                time.sleep(10) 
+                #hilo = threading.Thread(target=self.eLea, args=(palabras,self.proEjec))
+                #hilo.start()
+                #time.sleep(10) 
             # self.eLea(palabras, self.proEjec)
             elif operador == 'sume':
                 self.eSume(palabras, self.proEjec)
@@ -519,16 +536,25 @@ class ejecucion:
     
     #metodo para obtener la linea que se esta ejecutando (pc en el frontend)
     def getLineaActual(self):
-        i= self.rb[self.proEjec]
-        for i in range(self.rlc[self.proEjec]):
-            tempoVar = self.memoria[i]
+        tempoVar="" 
+        try:
+            i= self.rb[self.proEjec]
+            for i in range(self.rlc[self.proEjec]):
+                tempoVar = self.memoria[i]
+
+        except:
+            tempoVar=""
+        
         return str(tempoVar)
 
     #metodo para mostrar el codigo y las posiciones de memoria que ocupa
     def getCodProgActual(self): # metodo definitivo pendiente actualizar los demas
         tempoDic ={} # se usa un diccionario para facilitar la compatibilidad con el frontend
-        for j in range(self.rb[self.proEjec], self.rlc[self.proEjec]): # se toma el codigo del programa en ejecucion desde donde empieza en la memoria hasta donde termina 
-            tempoDic[j] =self.memoria[j]
+        try: 
+            for j in range(self.rb[self.proEjec], self.rlc[self.proEjec]): # se toma el codigo del programa en ejecucion desde donde empieza en la memoria hasta donde termina 
+                tempoDic[j] =self.memoria[j]
+        except:
+            tempoDic ={}
         return tempoDic 
 
    
@@ -565,9 +591,12 @@ class ejecucion:
     def getProgramas(self):
         i= 0
         tempoDic={} # se usa un diccionario para facilitar la manera de mostrar los datos en el frontend
-        for i in range(len(self.ruta2)):
-            palabras = str(self.ruta2[i]).split('/') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            tempoDic[i]= {'prog':palabras[1], 'ins': int(self.rlc[i] - self.rb[i]),'rb':self.rb[i], 'rlc':self.rlc[i], 'rlp':self.rlp[i]}
+        try:
+            for i in range(len(self.ruta2)):
+                palabras = str(self.ruta2[i]).split('/') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
+                tempoDic[i]= {'prog':palabras[1], 'ins': int(self.rlc[i] - self.rb[i]),'rb':self.rb[i], 'rlc':self.rlc[i], 'rlp':self.rlp[i]}
+        except:
+            tempoDic={}
         return tempoDic
     
     def getMemoriaDispo(self):
@@ -1427,35 +1456,47 @@ class ejecucion:
             print('continuando con la ejecucion')
             pass
 
-    def eLea(self, linea, idProg):
-
+    def eLea(self, linea, idProg, enQueLeerVa):
+        #global activarVentLeer
         valorLeido = ""
-        self.activarVentLeer = True
+        #activarVentLeer = True
+        #global continuarLeyendo
+        global valoresLeidos
+
+        try:
+            valorLeido = valoresLeidos[enQueLeerVa]
+        except :
+            valorLeido = -1
+
+        self.memoria[self.idenVar(linea[1],idProg)] = valorLeido #guarda la posicion de memoria 
         """
         while(self.continuarLeyendo):
             valorLeido = self.valoraLeer
             if self.valoraLeer == '':
                 break
         """
-        while(self.continuarLeyendo):
-            valorLeido = self.valoraLeer
+        """
+        while(continuarLeyendo):
+            valorLeido = valoraLeer
             time.sleep(2)
+        """
 
-        valorLeido = 10
+        #valorLeido = 10
         #if self.valoraLeer == '':
         #    keyboard.wait('esc')
         #else:  
         #    valorLeido = self.valoraLeer
 
-        print(self.valoraLeer, 'este es el valor leer')
+        #print(valoraLeer, 'este es el valor leer')
         print('esto se guarda en la vari:', valorLeido)
         #valorLeido = self.valoraLeer
         #valorLeido = 10 #self.valoraLeer
 
 
-        #self.activarVentLeer = False
+        #activarVentLeer = False
+        
         #self.playHppal()
-        self.memoria[self.idenVar(linea[1],idProg)] = valorLeido #guarda la posicion de memoria 
+        
         
 
      

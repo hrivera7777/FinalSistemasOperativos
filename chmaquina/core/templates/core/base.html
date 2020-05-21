@@ -50,7 +50,7 @@
 		  </form>
 			<!--------------------------------------------------->
 
-		  <a class="nav-item nav-link" href="#" onclick="showHidden()">Mostrar Memoria</a>
+		  <a id="btnMemoria" class="nav-item nav-link" onclick="showHidden()">Mostrar Memoria</a>
 
 			<!------- boton paso a paso--------->
 		   	<form id="PaP" name="PaP" action="" method="get"> {#{% csrf_token %}#}
@@ -66,10 +66,10 @@
 
 		  <a class="nav-item nav-link" href="{% url 'salir' %}">Salir</a>
 		  <!--<a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>-->
-
-		 	<button type="button" id="btnsgtePaso" class="btn btn-primary hidden" data-toggle="modal" data-target="#ModalPaP"><!-- style='display: none;'>-->
+			<input type="submit" value="Siguiente Paso" id="btnPaso" class="btn btn-primary" form ="formPaP" >
+		 	<!--<button type="button" id="btnsgtePaso" class="btn btn-primary hidden" data-toggle="modal" data-target="#ModalPaP">       style='display: none;'>
 			Siguiente paso
-			</button>
+			</button>-->
 		</div>
 	  </div>
 	</nav>
@@ -476,15 +476,27 @@
 	
 	</section>
 
+
+	<form id="formPaP" name="formPaP" action="" method="get" style='display: none;' >
+					<!--<div> presione continuar, para pasar a la siguiente línea</div>-->
+					<input type="text" value="{{sgtpaso}}" name="sgtpaso" id="sgtpaso" style='display: none;'>
+					
+					<!--<input type="hidden" class="nav-item nav-link" href="{% url 'home' %} "style='display: none;' >-->
+					<!--<input type="text" id="textoModal" class="form-control" placeholder="Ingrese aquí el valor" name="ModalInput" required>-->
+				
+	</form>	
+
 	<!-- modal para paso a paso-->
+	
 	<section>
 			<!-- Button trigger modal -->
-		<!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalPaP">
+		<button id="btnSgte" type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalPaP" style="display:none;">
 		Siguiente paso
-		</button>-->
+		</button>
 
 		<!-- Modal -->
-		<div class="modal fade" id="ModalPaP" tabindex="-1" role="dialog" aria-labelledby="tituloModalPaP" aria-hidden="false" data-backdrop="static" data-keyboard="false">
+		
+		<div  id="ModalPaP" class="modal fade" tabindex="-1" role="document" aria-labelledby="tituloModalPaP" aria-hidden="false" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog modal-dialog-centered modal-sm" role="document">
 			<div class="modal-content">
 			<div class="modal-header">
@@ -494,23 +506,37 @@
 				</button>-->
 			</div>
 			<div class="modal-body">
-				<form id="formPaP" name="formPaP" action="" method="get"> 
+				
+				<!--
+				<form id="formPaP" name="formPaP" action="" method="get">
+					<div> presione continuar, para pasar a la siguiente línea</div>
+					<input type="text" value="{{sgtpaso}}" name="sgtpaso" id="sgtpaso" style='display: none;'>
+					
+					<input type="hidden" class="nav-item nav-link" href="{% url 'home' %} "style='display: none;' >
+					<input type="text" id="textoModal" class="form-control" placeholder="Ingrese aquí el valor" name="ModalInput" required>
+				
+				</form>-->
+				<button type="submit"  id="btnOK" style="display:block;" form ="formPaP">OK</button> <!--onclick="modalparaPaP()" -->
+
+				<!--<form id="formPaP" name="formPaP" action="" method="get">
 				<div> presione continuar, para pasar a la siguiente línea</div>
-				<input type="text" value="{{sgtpaso}}" name="sgtpaso" id="sgtpaso" style='display: none;'>
+				<input type="text" value="{{sgtpaso}}" name="sgtpaso" id="sgtpaso" style='display: none;'> -->
 				<!--<input type="hidden" class="nav-item nav-link" href="{% url 'home' %} "style='display: none;' >-->
 				<!--<input type="text" id="textoModal" class="form-control" placeholder="Ingrese aquí el valor" name="ModalInput" required>-->
-				</form>
+				<!--</form>-->
 			</div>
 			<div class="modal-footer">
 				<!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
 				<!--<button type="button" class="btn btn-primary">Save changes</button>-->
-				 <input type="submit" value="Continuar" id="btnPaso" class="btn btn-primary" form ="formPaP" > <!--onclick="actionMostrarBtnPaP()">-->
+				 <!--<input type="submit" value="Continuar" id="btnPaso" class="btn btn-primary" form ="formPaP" >--> <!--onclick="actionMostrarBtnPaP()">-->
 				<!--<button type="button" class="btn btn-primary" onclick="submitFormPaP()">Listo</button>-->
 			</div>
 			</div>
 		</div>
 		</div>
 	</section>
+	
+	
 	<input type="text" id="continue" value="{{activMPaP}}" style='display: none;'>
 		<!--<script>
 			var continar=document.getElementById("continue").value;
@@ -586,6 +612,53 @@
 			</div>
 		</div>
 		</div>
-	</section>	
+	</section>
+
+
+	{%if actiModal == NULL %}
+		<input type="text" id="activarLeer" value="False" style='display: none;'> <!--variable enviada desde el back mostrar o quitar el formulario para leer-->
+	{%else%}
+		<input type="text" id="activarLeer" value="{{actiModal}}" style='display: none;'> <!--variable enviada desde el back mostrar o quitar el formulario para leer-->
+	{%endif%}
+	
+	{%if contadorPasos == NULL %}
+
+		<input type="text" id="contadorPasos" value="0" style='display: none;'> <!--variable enviada desde el back mostrar o quitar el boton sgte paso-->
+	{%else%}
+		<input type="text" id="contadorPasos" value="{{contadorPasos}}" style='display: none;'> <!--variable enviada desde el back mostrar o quitar el boton sgte paso-->
+	{%endif%}
+
+
+
+
+	<div id="instrSgtPaso" class="text" style="    position: absolute;
+    position: absolute;
+    width: 24.5%;
+    height: 19%;
+    left: 44.5%;
+    top: 34%;
+	text-align: center;">
+		Presione el botón Siguiente Paso para continuar 
+			<!--<div class="text" style="text-align: center;">Presione el botón Siguiente Paso para continuar </div>-->
+			
+	
+	</div>
+	
+	<div id="ingresarValorTeclado" style="    position: absolute;
+    position: absolute;
+    width: 24.5%;
+    height: 19%;
+    left: 44.5%;
+    top: 34%;">
+
+		<form id="leerTeclado" name="leerTeclado" class="form-group"  action="" method="get"> {#{% csrf_token %}#}
+			<div class="text" style="text-align: center;">Variable {{varALeer}} </div>
+			<input id="leaTeclado" name="leaTeclado" type="text" class="form-control"  placeholder="agregue el valor de la variable" name="leerValor" required>
+		  	<input type="submit" value="Continuar" id="btnTeclado" class="btn btn-primary btn-block">
+		  	<!--no<a class="nav-item nav-link" id="btnPaP" onclick="actionPaP()" >Paso a Paso</a>-->
+			</form>
+	
+	</div>
+
 </body>
 </html>

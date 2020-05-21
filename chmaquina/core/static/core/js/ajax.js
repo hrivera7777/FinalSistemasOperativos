@@ -1,15 +1,17 @@
 $(document).ready(function () {
 
+    //funciones para ejecución normal 
+
     $('#eject').submit(function (e) {
         e.preventDefault();
-        
+
         $.ajax({
             url: $(this).attr('action'),
             type: $(this).attr('method'),
             data: $(this).serialize(),
 
-            success: function(json){
-                console.log(json)
+            success: function (json) {
+                //console.log(json);
                 /*
                if(json.actiModal){
 
@@ -23,59 +25,79 @@ $(document).ready(function () {
                 document.write(json);
 
                }*/
-               document.write(json);
+                document.write(json);
+                //$('#ingresarValorTeclado').addClass('hidden');
+                $('#btnPaso').addClass('hidden');
+                $('#instrSgtPaso').addClass('hidden');
 
-               console.log(json.actiModal)
-              
-               
-               //if(json.){
+                //console.log(json.actiModal);
 
-               //}
+
+                //if(json.){
+
+                //}
 
                 //console.log('hi');
             }
         });
     });
 
-    var continar=document.getElementById("continue").value;
-    
+
+
+    //funciones para paso a paso
+
+
     $('#PaP').submit(function (e) {
         e.preventDefault();
         //console.log(window.location.href)
-        $('#btnsgtePaso').removeClass('hidden');
+        // mientras $('#btnsgtePaso').removeClass('hidden');
         //$('#ModalPaP').modal('show');
-        
+
         $.ajax({
             url: $(this).attr('action'),
             type: $(this).attr('method'),
             data: $(this).serialize(),
 
-            success: function(json){
+            success: function (json) {
                 //console.log(json)
-                
-               if(continar == "True"){
-                   console.log('entre aqui if')
+                var continar = document.getElementById("continue").value;
+                console.log(continar);
+                if (continar === "True") {
+                    console.log('entre aqui if');
+                    document.write(json);
+                    $('#btnPaso').removeClass('hidden');
+                    $('#instrSgtPaso').removeClass('hidden');
 
-                document.write(json);
-                $('#btnsgtePaso').removeClass('hidden');
-               // $('#ModalPaP').modal('show');
-                $('#btnsgtePaso').removeClass('hidden');
 
-               }
 
-               else{
-                console.log('entre aqui else')
-                document.write(json);
+                    
+                    //$('#btnsgtePaso').removeClass('hidden');
+                    //$('#ModalPaP').modal('show');
+                    //$('#myModal').on('shown.bs.modal', function () { /*scrip para la ventada modal */
+                        //$('#myInput').trigger('focus')
+                        
+                            //$('#ModalPaP').modal('show');
+                      
+                        //document.getElementById('btnSgte').click();
+                    //});
 
-               }
-               /*document.write(json);
+                    //$('#btnsgtePaso').removeClass('hidden');
 
-               console.log(json.actiModal)*/
-              
-               
-               //if(json.){
+                }
 
-               //}
+                else {
+                    console.log('entre aqui else');
+                    document.write(json);
+
+                }
+                /*document.write(json);
+ 
+                console.log(json.actiModal)*/
+
+
+                //if(json.){
+
+                //}
 
                 //console.log('hi');
             }
@@ -120,62 +142,148 @@ $(document).ready(function () {
         });
     });
     */
-   
-   var sgt= window.location.href;
-    MostrarBtnPaP = function () {
-    if (sgt == "http://127.0.0.1:8000/?sgtpaso=sgtpaso" ){
-        console.log("entre aqui funcion monstrar")
-        $('#btnsgtePaso').removeClass('hidden');
 
-    }
-    
-    //document.getElementById('btnsgtePaso').style = 'display : block;';
-
-    return true;
-    };
-
-    MostrarBtnPaP();
-
+    /*20-05-2020
+    var sgt= window.location.href;
+     MostrarBtnPaP = function () {
+     if (sgt == "http://127.0.0.1:8000/?sgtpaso=sgtpaso" ){
+         console.log("entre aqui funcion monstrar")
+         $('#btnsgtePaso').removeClass('hidden');
+ 
+     }
+     
+     //document.getElementById('btnsgtePaso').style = 'display : block;';
+ 
+     return true;
+     };
+ 
+     MostrarBtnPaP();
+     20-05-2020
+     */
 
     //window.onload=MostrarBtnPaP;
-    /*
-    var formPaP=document.getElementById("formPaP")
+
+
+    //var formPaP=document.getElementById("formPaP")
 
     
-    $(formPaP).submit(function (e) { //'#formPaP'
+     nombreFuncion = function () { //'#formPaP' //formPaP
+     //submitFormPaP = function (e){ //(e){
+         $('#ModalPaP').modal('hide'); 
+         console.log('entro al metodo');
+         //e.preventDefault();
+         console.log('entre aqui funcion');
+          //podria quitarse
+        // $('#btnsgtePaso').removeClass('hidden');
+         //$('#ModalPaP').modal('hide');  
+         /*
+         var continar = document.getElementById("continue").value;
+                 if (continar == "True"){
+                     console.log('entre aqui if formPaP');
+                     
+                    
+                 //document.write(json);
+                 //$('#btnsgtePaso').removeClass('hidden');
+                 $('#ModalPaP').modal('show');
+                 //nombreFuncion();
+                 setTimeout(() => {
+                //    nombreFuncion();
+                 }, 2000);
+                
+                 
+                 
+                }
+                else{
+                 console.log('entre aqui else');
+                 
+                 //document.write(json);
+                 $('#ModalPaP').modal('hide'); 
+                }
+                */
+ 
+ 
+ 
+ 
+         
+         $.ajax({
+             url: $(this).attr('action'),
+             type: $(this).attr('method'),
+             data: $(this).serialize(),
+ 
+             success: function(json){
+                 //$('#btnsgtePaso').removeClass('hidden');
+                 //$('#ModalPaP').modal('show'); 
+                 var continar = document.getElementById("continue").value;
+                 //
+                 //document.getElementById('cual').innerHTML = json;
+                 
+                 //$('#ModalPaP').modal('show');
+                 //setTimeout(() => {
+                   //  document.write(json);
+                     
+                 //}, 500);
+                 
+                 if (continar == "True"){
+                     console.log('entre aqui if formPaP');
+                     
+                    
+                 //$('#btnsgtePaso').removeClass('hidden');
+                 
+                 
+                 
+                }
+                else{
+                 console.log('entre aqui else');
+                 
+                
+                // $('#ModalPaP').modal('hide'); 
+                }
+                
+                //$('#btnsgtePaso').removeClass('hidden');
+                //document.getElementById("formPaP").submit();
+                
+                 //console.log('hi');
+             }
+         });
+     //};
+      };
+
+ /////////////////////////////////////////////////////estamos aquí ///////////////////
+
+    $('#formPaP').submit(function (e) { //'#formPaP' //formPaP
     //submitFormPaP = function (e){ //(e){
-        console.log('entro al metodo')
-        //e.preventDefault();
-         //podria quitarse
-        $('#btnsgtePaso').removeClass('hidden');
-        $('#ModalPaP').modal('hide');  
-        
-        console.log('entre aqui funcion')  
+       // $('#ModalPaP').modal('hide'); 
+        console.log('entro al metodo');
+        e.preventDefault();
+        console.log('entre aqui funcion');
+       
         $.ajax({
             url: $(this).attr('action'),
             type: $(this).attr('method'),
             data: $(this).serialize(),
 
             success: function(json){
-                $('#btnsgtePaso').removeClass('hidden');
-                $('#ModalPaP').modal('show');
+                var continar = document.getElementById("continue").value;
+                document.write(json);
+
                 if (continar == "True"){
-                    console.log('entre aqui if formPaP')
+                    console.log('entre aqui if formPaP');
+                    
                     
                    
-                //document.write(json);
-                $('#btnsgtePaso').removeClass('hidden');
-                $('#ModalPaP').modal('show');
+                //$('#btnsgtePaso').removeClass('hidden');
+                
                 
                 
                }
                else{
-                console.log('entre aqui else')
+                console.log('entre aqui else');
                 
-                //document.write(json);
-                $('#ModalPaP').modal('hide'); 
+               
+                //$('#ModalPaP').modal('hide'); 
                }
-               $('#btnsgtePaso').removeClass('hidden');
+               
+               //$('#btnsgtePaso').removeClass('hidden');
                //document.getElementById("formPaP").submit();
                
                 //console.log('hi');
@@ -183,10 +291,54 @@ $(document).ready(function () {
         });
     //};
      });
-*/
 
 
-    
+     
+     /*
+     $('#leerTeclado').submit(function (e) { 
+    //submitFormPaP = function (e){ //(e){
+       // $('#ModalPaP').modal('hide'); 
+        console.log('entro al metodo');
+        e.preventDefault();
+        console.log('entre aqui funcion');
+
+        let l = document.getElementById('activarLeer').value;
+                if (l == "True") {
+                    console.log(l + "esto es L en if")
+                    $('#ingresarValorTeclado').removeClass('hidden');
+                // i++;
+                }else if (l=="False"){
+                    console.log(l + "esto es L en elif")
+                    $('#ingresarValorTeclado').addClass('hidden');
+                }
+                else{
+                    console.log(l + "esto es L en else")
+                    $('#ingresarValorTeclado').removeClass('hidden');
+                }
+
+
+        
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: $(this).serialize(),
+
+            success: function(json){
+                var continar = document.getElementById("continue").value;
+                document.write(json);
+
+                
+               
+               //$('#btnsgtePaso').removeClass('hidden');
+               //document.getElementById("formPaP").submit();
+               
+                //console.log('hi');
+            }
+        });
+    //};
+     });
+     */
+     
 
     /*
 

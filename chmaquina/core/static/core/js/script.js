@@ -12,7 +12,28 @@ $(document).ready(function () {
     $('#myModal').on('shown.bs.modal', function () { /*scrip para la ventada modal */
         $('#myInput').trigger('focus')
     });
+    let i = document.getElementById('contadorPasos').value; // se trae el contador de pasos para saber si está en la primera linea del programa con paso a paso
+    if (i == 0) {
+        console.log(i)
+        let a = document.getElementById('sgtpaso');
+        a.value = 'sgtpaso';
+        $('#btnPaso').addClass('hidden');
+        $('#instrSgtPaso').addClass('hidden');
+    }
 
+    let l = document.getElementById('activarLeer').value;
+    if (l == "True") {
+        console.log(l + "esto es L en if")
+        $('#ingresarValorTeclado').removeClass('hidden');
+       // i++;
+    }else if (l=="False"){
+        console.log(l + "esto es L en elif")
+        $('#ingresarValorTeclado').addClass('hidden');
+    }
+    else{
+        console.log(l + "esto es L en else")
+        $('#ingresarValorTeclado').removeClass('hidden');
+    }
 
     let bandera = true;
     this.showHidden = function () {
@@ -32,7 +53,7 @@ $(document).ready(function () {
             let archivo = $('#subirArchivoCh').val();
             //console.log(archivo);
             if (archivo !== '') {
-                
+
                 //console.log('entro al if' + document.getElementById('subirArchivoCh').value);
                 a.style = 'display : none;';
                 document.getElementById('btnUp').style = 'display : block;'; /*este es el que envia el formulario*/
@@ -43,13 +64,13 @@ $(document).ready(function () {
                 a.style = 'display : block;';
             }
         });
-        
+
 
         //a.style = 'display : none;'; 
 
-    
-        
-        
+
+
+
 
         return true;
     };
@@ -63,16 +84,34 @@ $(document).ready(function () {
 
     actionPaP = function () {
         document.getElementById('subPaP').click();
-        $('#btnsgtePaso').removeClass('hidden');
+        //$('#btnsgtePaso').removeClass('hidden');
         //document.getElementById('btnsgtePaso').style = 'display : block;';
 
         return true;
     };
     actionMostrarBtnPaP = function () {
-        
+
         $('#btnsgtePaso').removeClass('hidden');
         //document.getElementById('btnsgtePaso').style = 'display : block;';
 
+        return true;
+    };
+
+
+
+    modalparaPaP = function () {
+        console.log('entro a la funcion');
+        var continar = document.getElementById("continue").value;
+        if (continar == "True") {
+            console.log('entre aqui if modalparaPaP');
+            $('#ModalPaP').modal('show');
+
+
+        }
+        else {
+            console.log('entre aqui else');
+            $('#ModalPaP').modal('hide');
+        }
         return true;
     };
 
