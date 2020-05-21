@@ -80,10 +80,14 @@ class HomePageView(UpdateView):
 contadorPasos =0 # se utiliza para la realizar la ejecucion paso a paso
 cambioCurso = False
 ActivarVentLeer = False
+ActivarVentLeerPaP = False
 varALeer = []
+varALeerPaP =[]
 cuantosLea = 0
 cuantosLeaFaltan = -1
 listaValoresVariTeclado = []
+listaValoresVariTecladoPaP = []
+tieneQueLeerPaP= -2
 ## con esta view permite agregar varios archivos ch a la vez 
 class HomePageView2(CreateView):
     #form_class = ArchivoForm
@@ -96,9 +100,12 @@ class HomePageView2(CreateView):
     template_name = "core/base.html"
     global cambioCurso
     global ActivarVentLeer
+    global ActivarVentLeerPaP
     global varALeer
+    global varALeerPaP
     global cuantosLea
     global cuantosLeaFaltan
+    global tieneQueLeerPaP
     
     def get(self, request, *args, **kwargs):
         global contadorPasos
@@ -142,6 +149,7 @@ class HomePageView2(CreateView):
             pasoaPaso = request.GET.get('pasoapaso')
             sgtPaso = request.GET.get('sgtpaso')
             variablePorTeclado = request.GET.get('leaTeclado')
+            variablePorTecladoPaP = request.GET.get('leaTecladoPaP')
            # if str(ejecute) == 'ejecutarOk':
             nombre=""
             tup = EjecArchCh.objects.all() # aquí se toman los datos desde la base de datos 
@@ -251,20 +259,32 @@ class HomePageView2(CreateView):
                     else:
                         #print(request.GET.get('leaTeclado') !='', request.GET.get('leaTeclado'))
                        
+                        ######################################################
                         if request.GET.get('leaTeclado') == None:
                             varPrev = ""
                            # print('entré aquí if varpre')
                         else:
                             varPrev = request.GET.get('leaTeclado')
                            # print('entré aquí else varpre')
+                        
+                        if request.GET.get('leaTecladoPaP') == None:
+                            varPrevPaP = ""
+                            print('entré aquí if varpre')
+                        else:
+                            varPrevPaP = request.GET.get('leaTeclado')
+                            print('entré aquí else varpre')
+                        print(varPrevPaP, ' esto es varPrevPap')
+                        ##############################################3
 
                         #print(varPrev !='', varPrev)
                         if str(ejecute) == 'ejecutarOk' or varPrev !='': #request.GET.get('leaTeclado') !='': 
 
                             global varALeer
+                            global varALeerPaP
                             global cuantosLea
                             global cuantosLeaFaltan
                             global listaValoresVariTeclado
+                            global listaValoresVariTecladoPaP
                             lineaCod = ""
                             operando = ""
                             """
@@ -295,9 +315,9 @@ class HomePageView2(CreateView):
 
 
                             if cuantosLeaFaltan == -1 :
-                                print('entré primer if')
+                                #print('entré primer if')
                                 cuantosLeaFaltan = cuantosLea
-                                print('entré if',cuantosLeaFaltan)
+                                #print('entré if',cuantosLeaFaltan)
                                 ActivarVentLeer = True 
                                 cuantosLeaFaltan -=1
 
@@ -320,11 +340,11 @@ class HomePageView2(CreateView):
 
                             #instanciaEjec.setcantLeer(cuantosLea)
                             elif varPrev !='' and cuantosLeaFaltan > 0:
-                                print('entré elif 2',cuantosLeaFaltan)
+                                #print('entré elif 2',cuantosLeaFaltan)
                                 variablePorTeclado = request.GET.get('leaTeclado')
                                 listaValoresVariTeclado.append(variablePorTeclado)
                                 
-                                print(cuantosLeaFaltan, 'esto falta')
+                                #print(cuantosLeaFaltan, 'esto falta')
                                 
                                 if cuantosLeaFaltan > 0:
                                     ActivarVentLeer = True
@@ -350,7 +370,7 @@ class HomePageView2(CreateView):
                                                 'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer, 'varALeer':varALeer.pop()}) 
                             
                             elif cuantosLeaFaltan == 0 :
-                                print('entré elif',cuantosLeaFaltan)
+                                #print('entré elif',cuantosLeaFaltan)
                                 ActivarVentLeer = False 
                                 
                                 variablePorTeclado = request.GET.get('leaTeclado')
@@ -376,7 +396,7 @@ class HomePageView2(CreateView):
                                                 'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer, }) 
 
                             else:
-                                print('entré else',cuantosLeaFaltan)
+                                #print('entré else',cuantosLeaFaltan)
                                 instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
                                 instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
 
@@ -579,10 +599,9 @@ class HomePageView2(CreateView):
                                                                         #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                                                           
                             """
                         
-                        
                         #aquí comienza el paso a paso
-                        elif str(pasoaPaso) == 'pasoapaso' or str(sgtPaso) == 'sgtpaso' or str(sgtPaso) == 'fin' :
-   
+                        elif str(pasoaPaso) == 'pasoapaso' or str(sgtPaso) == 'sgtpaso' or str(sgtPaso) == 'fin' or varPrevPaP !='':
+                            
                                  # agrega las instrucciones a la memoria
                             #instanciaPaP.setContinuarLeyendo(True)
                             #instanciaEjec.playHppal()
@@ -590,115 +609,431 @@ class HomePageView2(CreateView):
                             rb = instanciaPaP.getRB() #se trae el registro base del programa en ejecución
                             rlc = instanciaPaP.getRLC() #se trae el registro límite de código del programa en ejecución
                             #global contadorPasos
-                            print('contador ', contadorPasos)
+                            #print('contador ', contadorPasos)
                             lineaParaIr= rb + contadorPasos
                             
-                            """
-                            lineaCod = ""
-                            operando = ""
+                            global tieneQueLeerPaP
+                            ###########################################
                             try:
-                                lineaCod = leerLimp2[contadorPasos]
+                                lineaCod = leerLimp2[contadorPasos+1].split()
                                 operando = lineaCod[0]
                             except :
                                 lineaCod = ""
                                 operando = ""
-                            """
-                            
-                            print('cambió le curso? ', cambioCurso)
-                            print('contador pasos ', contadorPasos)
-                            
-                            print(contadorPasos)
-                            if contadorPasos == 0:
-                                
-                                print('este es el if', ' leer en pos cont', leerLimp2[contadorPasos])
-                                instanciaPaP.ejecutarProgPaP(rb) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
-                                
-                                
+                            #print(operando, 'esto es operando')
+                            #print(leerLimp2, 'esto es leer')
+                            if operando == 'lea': 
+                                varALeerPaP.append(lineaCod[1])
+                                tieneQueLeerPaP = 1
+                                print('entré aqui lea ', lineaCod[1])
+                            ###########################################3
 
-                                if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
-                                    print('valor traido desde instancia',instanciaPaP.getPosaCambiar())
-                                    print('este es el valor de rb ', rb)
-                                    contadorPasos = instanciaPaP.getPosaCambiar() - rb
-                                    cambioCurso=False
-                                    instanciaPaP.setCambiaCurso(False)
-                                else:
-                                    contadorPasos += 1
+                            #tiene que leer tendra 3 estados, el primero activa ventana, el segundo toma los datos y el tercero envia los datos a pap
+                            global ActivarVentLeerPaP
+
+                            if tieneQueLeerPaP == 1: # tiene un lea para ingresar datos por teclado, activa la ventana donde se ingresan los datos
+                                ActivarVentLeerPaP = True
+                                tieneQueLeerPaP = 2
+                                print('entré tiene que leer # 1')
                                 
-                                
-                                pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
-                                impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
-                                acum = instanciaPaP.getAcumulador() # (str) 
-                                linAct = instanciaPaP.getLineaActual() # (str) 
-                                codProAct = instanciaPaP.getCodProgActual() # (list) 
-                                varAct = instanciaPaP.getVariablesActuales()# (list) 
-                                etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
-                                mem = instanciaPaP.getMemoria() # (list) 
-                                prog = instanciaPaP.getProgramas() # (list) 
-                                memDis = instanciaPaP.getMemoriaDispo() # (list)     
-
-
-
-                                return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
-                                                'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
-                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'True', 'sgtpaso':'sgtpaso', 'contadorPasos':contadorPasos}) 
-                                            # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
-                                                                        #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                                                           
-
-                            elif str(sgtPaso) == 'sgtpaso' and lineaParaIr < rlc:
-                                print('este es el elif', ' leer en pos cont', leerLimp2[contadorPasos])
-                                instanciaPaP.ejecutarProgPaP(lineaParaIr) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
-                                
-                                if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
-                                    print('valor traido desde instancia',instanciaPaP.getPosaCambiar())
-                                    print('este es el valor de rb ', rb)
+                                if contadorPasos == 0: #activa la ventana para poder ingresar los datos por teclado 
                                     
-                                    contadorPasos = instanciaPaP.getPosaCambiar() - rb
-                                    cambioCurso=False
-                                    instanciaPaP.setCambiaCurso(False)
+                                    print('este es el if', ' leer en pos cont en if 1.1', leerLimp2[contadorPasos])
+                                    instanciaPaP.ejecutarProgPaP(rb) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                                    
+                                    
+
+                                    if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
+                                        #print('valor traido desde instancia',instanciaPaP.getPosaCambiar())
+                                        #print('este es el valor de rb ', rb)
+                                        contadorPasos = instanciaPaP.getPosaCambiar() - rb
+                                        cambioCurso=False
+                                        instanciaPaP.setCambiaCurso(False)
+                                    else:
+                                        contadorPasos += 1
+                                    
+                                    
+                                    pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                    impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
+                                    acum = instanciaPaP.getAcumulador() # (str) 
+                                    linAct = instanciaPaP.getLineaActual() # (str) 
+                                    codProAct = instanciaPaP.getCodProgActual() # (list) 
+                                    varAct = instanciaPaP.getVariablesActuales()# (list) 
+                                    etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
+                                    mem = instanciaPaP.getMemoria() # (list) 
+                                    prog = instanciaPaP.getProgramas() # (list) 
+                                    memDis = instanciaPaP.getMemoriaDispo() # (list)     
+
+                                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                    'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'continuarPaP':'True', 'sgtpaso':'sgtpaso', 'contadorPasos':contadorPasos, 'actiModalPaP': ActivarVentLeerPaP}) 
+
+
+
+                                elif (str(sgtPaso) == 'sgtpaso' and lineaParaIr < rlc) or (varPrevPaP != '' and lineaParaIr < rlc):
+                                    print('este es el elif 1.1', ' leer en pos cont', leerLimp2[contadorPasos])
+                                    instanciaPaP.ejecutarProgPaP(lineaParaIr) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                                    
+                                    if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
+                                    # print('valor traido desde instancia',instanciaPaP.getPosaCambiar())
+                                        #print('este es el valor de rb ', rb)
+                                        
+                                        contadorPasos = instanciaPaP.getPosaCambiar() - rb
+                                        cambioCurso=False
+                                        instanciaPaP.setCambiaCurso(False)
+                                    
+                                    else:
+                                        contadorPasos += 1
+                                    
+                                    #contadorPasos += 1
+
+
+                                    pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                    impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
+                                    acum = instanciaPaP.getAcumulador() # (str) 
+                                    linAct = instanciaPaP.getLineaActual() # (str) 
+                                    codProAct = instanciaPaP.getCodProgActual() # (list) 
+                                    varAct = instanciaPaP.getVariablesActuales()# (list) 
+                                    etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
+                                    mem = instanciaPaP.getMemoria() # (list) 
+                                    prog = instanciaPaP.getProgramas() # (list) 
+                                    memDis = instanciaPaP.getMemoriaDispo() # (list)     
+
+                                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                    'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'continuarPaP':'True', 'sgtpaso':'sgtpaso', 'contadorPasos':contadorPasos, 'actiModalPaP': ActivarVentLeerPaP}) 
+
+
+
                                 else:
-                                    contadorPasos += 1
+                                    print('este es el else 1.1', ' leer en pos cont', leerLimp2[contadorPasos])
+                                # print('este es el else')
+                                    pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                    impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
+                                    acum = instanciaPaP.getAcumulador() # (str) 
+                                    linAct = instanciaPaP.getLineaActual() # (str) 
+                                    codProAct = instanciaPaP.getCodProgActual() # (list) 
+                                    varAct = instanciaPaP.getVariablesActuales()# (list) 
+                                    etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
+                                    mem = instanciaPaP.getMemoria() # (list) 
+                                    prog = instanciaPaP.getProgramas() # (list) 
+                                    memDis = instanciaPaP.getMemoriaDispo() # (list)     
+
+                                    #contadorPasos=0
+
+                                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                    'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'continuarPaP':'False', 'sgtpaso':'fin', 'contadorPasos':contadorPasos, 'actiModalPaP': ActivarVentLeerPaP}) 
+                                               
+
+                            elif tieneQueLeerPaP ==2 : #lee lo que se está ingresando por teclado 
+
+                                ActivarVentLeerPaP = False
+                                tieneQueLeerPaP = 3
+                                instanciaPaP.setContinuarLeyendo(True)
+                                print('entré tiene que leer # 2')
+
+                                variablePorTecladoPaP = request.GET.get('leaTecladoPaP')
+                                listaValoresVariTecladoPaP.append(variablePorTecladoPaP)
+                                """
+                                if contadorPasos == 0:
+                                    print('este es el if 2.2', ' leer en pos cont', leerLimp2[contadorPasos])
+                                    #print('este es el if', ' leer en pos cont', leerLimp2[contadorPasos])
+                                    instanciaPaP.ejecutarProgPaP(rb) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                                    
+                                    
+
+                                    if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
+                                        #print('valor traido desde instancia',instanciaPaP.getPosaCambiar())
+                                        #print('este es el valor de rb ', rb)
+                                        contadorPasos = instanciaPaP.getPosaCambiar() - rb
+                                        cambioCurso=False
+                                        instanciaPaP.setCambiaCurso(False)
+                                    else:
+                                        contadorPasos += 1
+                                    
+                                    
+                                    pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                    impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
+                                    acum = instanciaPaP.getAcumulador() # (str) 
+                                    linAct = instanciaPaP.getLineaActual() # (str) 
+                                    codProAct = instanciaPaP.getCodProgActual() # (list) 
+                                    varAct = instanciaPaP.getVariablesActuales()# (list) 
+                                    etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
+                                    mem = instanciaPaP.getMemoria() # (list) 
+                                    prog = instanciaPaP.getProgramas() # (list) 
+                                    memDis = instanciaPaP.getMemoriaDispo() # (list)     
+
+                                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                    'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'continuarPaP':'True', 'sgtpaso':'sgtpaso', 'contadorPasos':contadorPasos, 'actiModalPaP': ActivarVentLeerPaP}) 
+
+                                """
+
+                                if (str(sgtPaso) == 'sgtpaso' and lineaParaIr < rlc) or (varPrevPaP != '' and lineaParaIr < rlc):
+                                    print('este es el elif 2.2', ' leer en pos cont', leerLimp2[contadorPasos])
+                                # print('este es el elif', ' leer en pos cont', leerLimp2[contadorPasos])
+                                    instanciaPaP.ejecutarProgPaP(lineaParaIr) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                                    
+                                    if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
+                                    # print('valor traido desde instancia',instanciaPaP.getPosaCambiar())
+                                        #print('este es el valor de rb ', rb)
+                                        
+                                        contadorPasos = instanciaPaP.getPosaCambiar() - rb
+                                        cambioCurso=False
+                                        instanciaPaP.setCambiaCurso(False)
+                                    else:
+                                        contadorPasos += 1
+                                    
+                                    #contadorPasos += 1
+
+
+                                    pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                    impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
+                                    acum = instanciaPaP.getAcumulador() # (str) 
+                                    linAct = instanciaPaP.getLineaActual() # (str) 
+                                    codProAct = instanciaPaP.getCodProgActual() # (list) 
+                                    varAct = instanciaPaP.getVariablesActuales()# (list) 
+                                    etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
+                                    mem = instanciaPaP.getMemoria() # (list) 
+                                    prog = instanciaPaP.getProgramas() # (list) 
+                                    memDis = instanciaPaP.getMemoriaDispo() # (list)     
+
+                                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                    'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'continuarPaP':'True', 'sgtpaso':'sgtpaso', 'contadorPasos':contadorPasos, 'actiModalPaP': ActivarVentLeerPaP, 'varALeerPaP':varALeerPaP.pop()}) 
+
+
+
+                                else:
+                                # print('este es el else')
+                                    print('este es el else 2.2', ' leer en pos cont', leerLimp2[contadorPasos])
+                                    pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                    impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
+                                    acum = instanciaPaP.getAcumulador() # (str) 
+                                    linAct = instanciaPaP.getLineaActual() # (str) 
+                                    codProAct = instanciaPaP.getCodProgActual() # (list) 
+                                    varAct = instanciaPaP.getVariablesActuales()# (list) 
+                                    etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
+                                    mem = instanciaPaP.getMemoria() # (list) 
+                                    prog = instanciaPaP.getProgramas() # (list) 
+                                    memDis = instanciaPaP.getMemoriaDispo() # (list)     
+
+                                    contadorPasos+=1
+
+                                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                    'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'continuarPaP':'False', 'sgtpaso':'fin', 'contadorPasos':contadorPasos, 'actiModalPaP': ActivarVentLeerPaP, 'varALeerPaP':varALeerPaP.pop()}) 
+                                               
+
+
+ 
+
+                            elif tieneQueLeerPaP ==3 : #se agregan los datos ingresando por teclado a el programa
+
+                                ActivarVentLeerPaP = False
+                                tieneQueLeerPaP = -2
+                                print('entré tiene que leer # 3')
+
+                            
+                                variablePorTecladoPaP = request.GET.get('leaTecladoPaP')
+                                listaValoresVariTecladoPaP.append(variablePorTecladoPaP)
+                                print(listaValoresVariTecladoPaP, 'supuestas variables de teclado')
+                                instanciaPaP.setValoraLeer(listaValoresVariTecladoPaP)
+                                instanciaPaP.setContinuarLeyendo(True)
+                                """
+                                if contadorPasos == 0:
+                                    print('este es el if 3.0', ' leer en pos cont', leerLimp2[contadorPasos])
+                                    #print('este es el if', ' leer en pos cont', leerLimp2[contadorPasos])
+                                    instanciaPaP.ejecutarProgPaP(rb) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                                    
+                                    
+
+                                    if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
+                                        #print('valor traido desde instancia',instanciaPaP.getPosaCambiar())
+                                        #print('este es el valor de rb ', rb)
+                                        contadorPasos = instanciaPaP.getPosaCambiar() - rb
+                                        cambioCurso=False
+                                        instanciaPaP.setCambiaCurso(False)
+                                    else:
+                                        contadorPasos += 1
+                                    
+                                    
+                                    pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                    impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
+                                    acum = instanciaPaP.getAcumulador() # (str) 
+                                    linAct = instanciaPaP.getLineaActual() # (str) 
+                                    codProAct = instanciaPaP.getCodProgActual() # (list) 
+                                    varAct = instanciaPaP.getVariablesActuales()# (list) 
+                                    etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
+                                    mem = instanciaPaP.getMemoria() # (list) 
+                                    prog = instanciaPaP.getProgramas() # (list) 
+                                    memDis = instanciaPaP.getMemoriaDispo() # (list)     
+
+                                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                    'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'continuarPaP':'True', 'sgtpaso':'sgtpaso', 'contadorPasos':contadorPasos, 'actiModalPaP': ActivarVentLeerPaP}) 
+
+                                """
+                                #elif
+                                if (str(sgtPaso) == 'sgtpaso' and lineaParaIr < rlc) or (varPrevPaP != '' and lineaParaIr < rlc):
+                                    print('este es el else 3.2', ' leer en pos cont', leerLimp2[contadorPasos])
+                                # print('este es el elif', ' leer en pos cont', leerLimp2[contadorPasos])
+                                    instanciaPaP.ejecutarProgPaP(lineaParaIr) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                                    
+                                    if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
+                                    # print('valor traido desde instancia',instanciaPaP.getPosaCambiar())
+                                        #print('este es el valor de rb ', rb)
+                                        
+                                        contadorPasos = instanciaPaP.getPosaCambiar() - rb
+                                        cambioCurso=False
+                                        instanciaPaP.setCambiaCurso(False)
+                                    else:
+                                        contadorPasos += 1
+                                    
+                                    #contadorPasos += 1
+
+
+                                    pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                    impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
+                                    acum = instanciaPaP.getAcumulador() # (str) 
+                                    linAct = instanciaPaP.getLineaActual() # (str) 
+                                    codProAct = instanciaPaP.getCodProgActual() # (list) 
+                                    varAct = instanciaPaP.getVariablesActuales()# (list) 
+                                    etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
+                                    mem = instanciaPaP.getMemoria() # (list) 
+                                    prog = instanciaPaP.getProgramas() # (list) 
+                                    memDis = instanciaPaP.getMemoriaDispo() # (list)     
+
+                                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                    'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'continuarPaP':'True', 'sgtpaso':'sgtpaso', 'contadorPasos':contadorPasos, 'actiModalPaP': ActivarVentLeerPaP}) 
+
+
+
+                                else:
+                                    print('este es el else 3.2', ' leer en pos cont', leerLimp2[contadorPasos])
+                                # print('este es el else')
+                                    pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                    impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
+                                    acum = instanciaPaP.getAcumulador() # (str) 
+                                    linAct = instanciaPaP.getLineaActual() # (str) 
+                                    codProAct = instanciaPaP.getCodProgActual() # (list) 
+                                    varAct = instanciaPaP.getVariablesActuales()# (list) 
+                                    etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
+                                    mem = instanciaPaP.getMemoria() # (list) 
+                                    prog = instanciaPaP.getProgramas() # (list) 
+                                    memDis = instanciaPaP.getMemoriaDispo() # (list)     
+
+                                    contadorPasos+=1
+
+                                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                    'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'continuarPaP':'False', 'sgtpaso':'fin', 'contadorPasos':contadorPasos, 'actiModalPaP': ActivarVentLeerPaP}) 
+
+
+######################################################################################################################
+                            else: # no tiene ningun lea para ingresar datos por teclado
+                                instanciaPaP.setContinuarLeyendo(False)
+                                print('este es el else sin llamar leer', ' leer en pos cont', leerLimp2[contadorPasos])
+                            # <-
+                                #print('cambió le curso? ', cambioCurso)
+                                #print('contador pasos ', contadorPasos)
                                 
-                                #contadorPasos += 1
+                                #print(contadorPasos)
+                                if contadorPasos == 0:
+                                    print('este es el if sin llamar leer 1.1', ' leer en pos cont', leerLimp2[contadorPasos])
+                                    #print('este es el if', ' leer en pos cont', leerLimp2[contadorPasos])
+                                    instanciaPaP.ejecutarProgPaP(rb) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                                    
+                                    
+
+                                    if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
+                                        #print('valor traido desde instancia',instanciaPaP.getPosaCambiar())
+                                        #print('este es el valor de rb ', rb)
+                                        contadorPasos = instanciaPaP.getPosaCambiar() - rb
+                                        cambioCurso=False
+                                        instanciaPaP.setCambiaCurso(False)
+                                    else:
+                                        contadorPasos += 1
+                                    
+                                    
+                                    pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                    impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
+                                    acum = instanciaPaP.getAcumulador() # (str) 
+                                    linAct = instanciaPaP.getLineaActual() # (str) 
+                                    codProAct = instanciaPaP.getCodProgActual() # (list) 
+                                    varAct = instanciaPaP.getVariablesActuales()# (list) 
+                                    etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
+                                    mem = instanciaPaP.getMemoria() # (list) 
+                                    prog = instanciaPaP.getProgramas() # (list) 
+                                    memDis = instanciaPaP.getMemoriaDispo() # (list)     
 
 
-                                pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
-                                impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
-                                acum = instanciaPaP.getAcumulador() # (str) 
-                                linAct = instanciaPaP.getLineaActual() # (str) 
-                                codProAct = instanciaPaP.getCodProgActual() # (list) 
-                                varAct = instanciaPaP.getVariablesActuales()# (list) 
-                                etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
-                                mem = instanciaPaP.getMemoria() # (list) 
-                                prog = instanciaPaP.getProgramas() # (list) 
-                                memDis = instanciaPaP.getMemoriaDispo() # (list)     
+
+                                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                    'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'continuarPaP':'True', 'sgtpaso':'sgtpaso', 'contadorPasos':contadorPasos}) 
+                                                # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
+                                                                            #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                                                           
+
+                                elif str(sgtPaso) == 'sgtpaso' and lineaParaIr < rlc:
+                                    print('este es el elif sin llamar leer 1.2', ' leer en pos cont', leerLimp2[contadorPasos])
+                                # print('este es el elif', ' leer en pos cont', leerLimp2[contadorPasos])
+                                    instanciaPaP.ejecutarProgPaP(lineaParaIr) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
+                                    
+                                    if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
+                                    # print('valor traido desde instancia',instanciaPaP.getPosaCambiar())
+                                        #print('este es el valor de rb ', rb)
+                                        
+                                        contadorPasos = instanciaPaP.getPosaCambiar() - rb
+                                        cambioCurso=False
+                                        instanciaPaP.setCambiaCurso(False)
+                                    else:
+                                        contadorPasos += 1
+                                    
+                                    #contadorPasos += 1
+
+
+                                    pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                    impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
+                                    acum = instanciaPaP.getAcumulador() # (str) 
+                                    linAct = instanciaPaP.getLineaActual() # (str) 
+                                    codProAct = instanciaPaP.getCodProgActual() # (list) 
+                                    varAct = instanciaPaP.getVariablesActuales()# (list) 
+                                    etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
+                                    mem = instanciaPaP.getMemoria() # (list) 
+                                    prog = instanciaPaP.getProgramas() # (list) 
+                                    memDis = instanciaPaP.getMemoriaDispo() # (list)     
 
 
 
-                                return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
-                                                'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
-                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'True', 'sgtpaso':'sgtpaso', 'contadorPasos':contadorPasos}) 
-                                            # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
-                                                                        #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                                                           
-                            else:
-                                print('este es el else')
-                                pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
-                                impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
-                                acum = instanciaPaP.getAcumulador() # (str) 
-                                linAct = instanciaPaP.getLineaActual() # (str) 
-                                codProAct = instanciaPaP.getCodProgActual() # (list) 
-                                varAct = instanciaPaP.getVariablesActuales()# (list) 
-                                etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
-                                mem = instanciaPaP.getMemoria() # (list) 
-                                prog = instanciaPaP.getProgramas() # (list) 
-                                memDis = instanciaPaP.getMemoriaDispo() # (list)     
+                                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                    'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'continuarPaP':'True', 'sgtpaso':'sgtpaso', 'contadorPasos':contadorPasos}) 
+                                                # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
+                                                                            #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                                                           
+                                else:
+                                # print('este es el else')
+                                    print('este es el else sin llamar leer 1.3', ' leer en pos cont', leerLimp2[contadorPasos])
+                                    pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
+                                    impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
+                                    acum = instanciaPaP.getAcumulador() # (str) 
+                                    linAct = instanciaPaP.getLineaActual() # (str) 
+                                    codProAct = instanciaPaP.getCodProgActual() # (list) 
+                                    varAct = instanciaPaP.getVariablesActuales()# (list) 
+                                    etiqAct = instanciaPaP.getEtiquetasActuales() # (list) 
+                                    mem = instanciaPaP.getMemoria() # (list) 
+                                    prog = instanciaPaP.getProgramas() # (list) 
+                                    memDis = instanciaPaP.getMemoriaDispo() # (list)     
 
-                                contadorPasos=0
+                                    contadorPasos=0
 
-                                return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
-                                                'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
-                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'activMPaP':'False', 'sgtpaso':'fin', 'contadorPasos':contadorPasos}) 
-                                            # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
-                                                                        #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                              
+                                    return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
+                                                    'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
+                                                    'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'continuarPaP':'False', 'sgtpaso':'fin', 'contadorPasos':contadorPasos}) 
+                                                # })#,  'posMem':posMem,}, #'codProActi': {'codProAct': codProAct,"posCodProAct": posCodProAct}, 'varActi':{'posVarAct':posVarAct}, 'etiqActi':{'posEtiqAct': posEtiqAct},
+                                                                            #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                              
 
 
 
@@ -726,7 +1061,7 @@ class HomePageView2(CreateView):
                             #elif request.GET.get('ModalInput') != '':
                         
                         else:
-                            return render(request, self.template_name,{'title': "Ch Máquina",'pantallaBack':['Presione ejecutar o paso a paso para comenzar.'],'modo':'Modo kernel', 'activMPaP':'True'}) # })#,   
+                            return render(request, self.template_name,{'title': "Ch Máquina",'pantallaBack':['Presione ejecutar o paso a paso para comenzar.'],'modo':'Modo kernel', 'continuarPaP':'True'}) # })#,   
             
             
     def get_object(self, queryset=None):

@@ -5,6 +5,8 @@ import time
 
 cambiaCurso=False
 posaCambiar =0
+valoresLeidos =[]
+continuarLeyendo = True # variable para verificar si se debe seguir leyendo los datos
 class PaP: # clase paso a paso
 
     cantmemoria= 0 
@@ -41,12 +43,14 @@ class PaP: # clase paso a paso
     pantalla =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
     impresora =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
     valoraLeer="" #valor traido desde el front para la funcion leer
-    continuarLeyendo = True # variable para verificar si se debe seguir leyendo los datos
+    
     activarVentLeer = True # se enviará al front para mostrar una ventana donde se leen los datos de las var
     stopH=False # variable para detener ejecucion del hilo ppal
     lienaActual = ""
     global cambiaCurso # se utiliza esta variable para indicar si se cambia el curso del programa con un vaya o vayasi
     global posaCambiar # se utiliza esta variable para indicar a que posicion se cambia el curso del programa con un vaya o vayasi 
+    global valoresLeidos
+    global continuarLeyendo
     ###############################################################################
     # necesasario para quitar el \n que se genera en algunos archivos .ch
     contadorSalto=0 # contador de salto de linea
@@ -93,14 +97,15 @@ class PaP: # clase paso a paso
     
     def setRuta(self, ruta): # introduce la lista de programas en la bd 
         self.ruta2 = ruta
-
+    """
     #introduce las variables por teclado
     def setValoraLeer(self, valorVar):
         self.valoraLeer = valorVar
-
+    """
     #muestra si se continua con a con la lectura desde teclado
     def setContinuarLeyendo(self, continua):
-        self.continuarLeyendo = continua
+        global continuarLeyendo
+        continuarLeyendo = continua
 
     #entrega en el front si se debe seguir desplegando la ventana modal de lectura
     def getActivarVentLeer(self):
@@ -121,6 +126,12 @@ class PaP: # clase paso a paso
     def setCambiaCurso(self, cambia):
         global cambiaCurso
         cambiaCurso = cambia
+
+
+    #introduce las variables por teclado
+    def setValoraLeer(self, valorVariables):
+        global valoresLeidos
+        valoresLeidos = valorVariables
     #####################################################################################
 
     ################# métodos get ##############
@@ -293,7 +304,7 @@ class PaP: # clase paso a paso
             #hilo = threading.Thread(target=self.eLea(palabras,self.proEjec))
             hilo = threading.Thread(target=self.eLea, args=(palabras,self.proEjec))
             hilo.start()
-            time.sleep(10) 
+            #time.sleep(10) 
         # self.eLea(palabras, self.proEjec)
         elif operador == 'sume':
             self.eSume(palabras, self.proEjec)
@@ -1153,31 +1164,29 @@ class PaP: # clase paso a paso
     def eLea(self, linea, idProg):
 
         valorLeido = ""
-        self.activarVentLeer = True
-        """
-        while(self.continuarLeyendo):
-            valorLeido = self.valoraLeer
+        global valoresLeidos
+        global continuarLeyendo
+        
+        while(continuarLeyendo):
+            try:
+                valorLeido = valoresLeidos[0]
+            except :
+                valorLeido = -1
+            """
             if self.valoraLeer == '':
                 break
+            """
+
         """
-        while(self.continuarLeyendo):
-            valorLeido = self.valoraLeer
-            time.sleep(2)
+        try:
+            valorLeido = valoresLeidos.pop()
+        except :
+            valorLeido = -1
+        """
 
-        valorLeido = 10
-        #if self.valoraLeer == '':
-        #    keyboard.wait('esc')
-        #else:  
-        #    valorLeido = self.valoraLeer
 
-        print(self.valoraLeer, 'este es el valor leer')
         print('esto se guarda en la vari:', valorLeido)
-        #valorLeido = self.valoraLeer
-        #valorLeido = 10 #self.valoraLeer
 
-
-        #self.activarVentLeer = False
-        #self.playHppal()
         self.memoria[self.idenVar(linea[1],idProg)] = valorLeido #guarda la posicion de memoria 
         
 

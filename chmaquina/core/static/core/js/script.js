@@ -12,28 +12,76 @@ $(document).ready(function () {
     $('#myModal').on('shown.bs.modal', function () { /*scrip para la ventada modal */
         $('#myInput').trigger('focus')
     });
+    //$('#ingresarValorTecladoPaP').addClass('hidden');
+    ///////////////////////////////////////////////////
+    //activar la ventana para leer en ejecución normal
+    let l = document.getElementById('activarLeer').value;
+    if (l == "True") {
+        //console.log(l + "esto es L en if")
+        $('#ingresarValorTeclado').removeClass('hidden');
+        $('#ingresarValorTecladoPaP').addClass('hidden');
+
+    }else if (l=="False"){
+        //console.log(l + "esto es L en elif")
+        $('#ingresarValorTeclado').addClass('hidden');
+        $('#ingresarValorTecladoPaP').addClass('hidden');
+
+    }
+
+    else{
+        //console.log(l + "esto es L en else")
+        $('#ingresarValorTeclado').removeClass('hidden');
+        $('#ingresarValorTecladoPaP').addClass('hidden');
+    }
+    ///////////////////////////////////////////////////////// 
+    ///////////////////////////////////////////////////////////////////////
+
+
     let i = document.getElementById('contadorPasos').value; // se trae el contador de pasos para saber si está en la primera linea del programa con paso a paso
     if (i == 0) {
-        console.log(i)
+        //console.log(i)
         let a = document.getElementById('sgtpaso');
         a.value = 'sgtpaso';
         $('#btnPaso').addClass('hidden');
         $('#instrSgtPaso').addClass('hidden');
+        $('#ingresarValorTecladoPaP').addClass('hidden');
     }
 
-    let l = document.getElementById('activarLeer').value;
-    if (l == "True") {
-        console.log(l + "esto es L en if")
-        $('#ingresarValorTeclado').removeClass('hidden');
-       // i++;
-    }else if (l=="False"){
-        console.log(l + "esto es L en elif")
-        $('#ingresarValorTeclado').addClass('hidden');
+    
+
+    ///////////////////////////////////////////////////
+    //activar la ventana para leer en ejecución Paso a Paso
+    let l2 = document.getElementById('activarLeerPaP').value;
+    if (l2 == "True") {
+        console.log(l + "esto es L2 en if")
+        $('#ingresarValorTecladoPaP').removeClass('hidden');
+        $('#btnPaso').removeClass('hidden');
+       // $('#instrSgtPaso').addClass('hidden');
+
+    }else if (l2=="False" && i > 0 ){
+        console.log(l + " - esto es L2 en elif")
+        $('#ingresarValorTecladoPaP').addClass('hidden');
+        
+        let a = document.getElementById('sgtpaso');
+        a.value = 'sgtpaso';
+        $('#btnPaso').removeClass('hidden');
+        $('#instrSgtPaso').removeClass('hidden');
+        //$('#instrSgtPaso').removeClass('hidden');
+    }
+    else if (l2=="False"){
+        console.log(l + " - esto es L2 en elif")
+        $('#ingresarValorTecladoPaP').addClass('hidden');
+     
+        //$('#instrSgtPaso').removeClass('hidden');
     }
     else{
-        console.log(l + "esto es L en else")
-        $('#ingresarValorTeclado').removeClass('hidden');
+        console.log(l + " - esto es L2 en else")
+        $('#ingresarValorTecladoPaP').addClass('hidden');
+        $('#ingresarValorTecladoPaP').addClass('hidden');
     }
+
+
+
 
     let bandera = true;
     this.showHidden = function () {

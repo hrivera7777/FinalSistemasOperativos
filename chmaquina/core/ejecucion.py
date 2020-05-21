@@ -1488,7 +1488,7 @@ class ejecucion:
         #    valorLeido = self.valoraLeer
 
         #print(valoraLeer, 'este es el valor leer')
-        print('esto se guarda en la vari:', valorLeido)
+        #print('esto se guarda en la vari:', valorLeido)
         #valorLeido = self.valoraLeer
         #valorLeido = 10 #self.valoraLeer
 

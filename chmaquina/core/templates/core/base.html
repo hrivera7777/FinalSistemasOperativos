@@ -537,7 +537,7 @@
 	</section>
 	
 	
-	<input type="text" id="continue" value="{{activMPaP}}" style='display: none;'>
+	<input type="text" id="continue" value="{{continuarPaP}}" style='display: none;'>
 		<!--<script>
 			var continar=document.getElementById("continue").value;
 			$('#formPaP').submit(function (e) {
@@ -620,6 +620,12 @@
 	{%else%}
 		<input type="text" id="activarLeer" value="{{actiModal}}" style='display: none;'> <!--variable enviada desde el back mostrar o quitar el formulario para leer-->
 	{%endif%}
+
+	{%if actiModalPaP == NULL %}
+		<input type="text" id="activarLeerPaP" value="False" style='display: none;'> <!--variable enviada desde el back mostrar o quitar el formulario para leer-->
+	{%else%}
+		<input type="text" id="activarLeerPaP" value="{{actiModalPaP}}" style='display: none;'> <!--variable enviada desde el back mostrar o quitar el formulario para leer-->
+	{%endif%}
 	
 	{%if contadorPasos == NULL %}
 
@@ -637,28 +643,50 @@
     height: 19%;
     left: 44.5%;
     top: 34%;
-	text-align: center;">
+	text-align: center;
+	background-color: white;">
 		Presione el botón Siguiente Paso para continuar 
 			<!--<div class="text" style="text-align: center;">Presione el botón Siguiente Paso para continuar </div>-->
 			
 	
 	</div>
-	
+	<!--INGRESO DE VALORES POR TECLADO EN ejecución normal-->
 	<div id="ingresarValorTeclado" style="    position: absolute;
     position: absolute;
     width: 24.5%;
     height: 19%;
     left: 44.5%;
-    top: 34%;">
+    top: 34%;
+	background-color: white;">
 
 		<form id="leerTeclado" name="leerTeclado" class="form-group"  action="" method="get"> {#{% csrf_token %}#}
 			<div class="text" style="text-align: center;">Variable {{varALeer}} </div>
-			<input id="leaTeclado" name="leaTeclado" type="text" class="form-control"  placeholder="agregue el valor de la variable" name="leerValor" required>
+			<input id="leaTeclado" name="leaTeclado" type="text" class="form-control"  placeholder="agregue el valor de la variable" required>
 		  	<input type="submit" value="Continuar" id="btnTeclado" class="btn btn-primary btn-block">
 		  	<!--no<a class="nav-item nav-link" id="btnPaP" onclick="actionPaP()" >Paso a Paso</a>-->
 			</form>
 	
 	</div>
+
+	<!--INGRESO DE VALORES POR TECLADO EN PASO A PASO-->
+	<div id="ingresarValorTecladoPaP" style="    position: absolute;
+    position: absolute;
+    width: 24.5%;
+    height: 19%;
+    left: 44.5%;
+    top: 34%;
+	background-color: white;">
+
+		<form id="leerTecladoPaP" name="leerTecladoPaP" class="form-group"  action="" method="get"> {#{% csrf_token %}#}
+			<div class="text" style="text-align: center;">Variable {{varALeerPaP}}(paso a paso) </div>
+			<input id="leaTecladoPaP" name="leaTecladoPaP" type="text" class="form-control"  placeholder="agregue el valor de la variable" required>
+		  	<input type="submit" value="Continuar" id="btnTecladoPaP" class="btn btn-primary btn-block">
+		  	<!--no<a class="nav-item nav-link" id="btnPaP" onclick="actionPaP()" >Paso a Paso</a>-->
+			</form>
+	
+	</div>
+
+
 
 </body>
 </html>
