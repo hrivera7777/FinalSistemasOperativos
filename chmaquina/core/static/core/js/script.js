@@ -16,20 +16,22 @@ $(document).ready(function () {
     ///////////////////////////////////////////////////
     //activar la ventana para leer en ejecución normal
     let l = document.getElementById('activarLeer').value;
+    //let k = document.getElementById()
     if (l == "True") {
-        //console.log(l + "esto es L en if")
+        console.log(l + "esto es L en if")
         $('#ingresarValorTeclado').removeClass('hidden');
         $('#ingresarValorTecladoPaP').addClass('hidden');
 
     }else if (l=="False"){
-        //console.log(l + "esto es L en elif")
+        console.log(l + "esto es L en elif")
+        console.log(l=="True")
         $('#ingresarValorTeclado').addClass('hidden');
         $('#ingresarValorTecladoPaP').addClass('hidden');
 
     }
 
     else{
-        //console.log(l + "esto es L en else")
+        console.log(l + "esto es L en else")
         $('#ingresarValorTeclado').removeClass('hidden');
         $('#ingresarValorTecladoPaP').addClass('hidden');
     }
@@ -70,6 +72,9 @@ $(document).ready(function () {
     }
     else if (l2=="False"){
         console.log(l + " - esto es L2 en elif")
+        $('#ingresarValorTecladoPaP').addClass('hidden');
+        $('#btnPaso').addClass('hidden');
+        $('#instrSgtPaso').addClass('hidden');
         $('#ingresarValorTecladoPaP').addClass('hidden');
      
         //$('#instrSgtPaso').removeClass('hidden');

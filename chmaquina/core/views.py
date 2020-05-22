@@ -276,8 +276,8 @@ class HomePageView2(CreateView):
                         print(varPrevPaP, ' esto es varPrevPap')
                         ##############################################3
 
-                        #print(varPrev !='', varPrev)
-                        if str(ejecute) == 'ejecutarOk' or varPrev !='': #request.GET.get('leaTeclado') !='': 
+                       
+                        if str(ejecute) == 'ejecutarOk' or varPrev !='': 
 
                             global varALeer
                             global varALeerPaP
@@ -287,14 +287,7 @@ class HomePageView2(CreateView):
                             global listaValoresVariTecladoPaP
                             lineaCod = ""
                             operando = ""
-                            """
-                            try:
-                                lineaCod = leerLimp2[contadorPasos]
-                                operando = lineaCod[0]
-                            except :
-                                lineaCod = ""
-                                operando = ""
-                            """
+
                             for i in range(len(leerLimp2)):
                                 
                                 try:
@@ -303,19 +296,18 @@ class HomePageView2(CreateView):
                                 except :
                                     lineaCod = ""
                                     operando = ""
-                                #print(operando, 'esto es operando')
-                                #print(leerLimp2, 'esto es leer')
+                                
                                 if operando == 'lea': 
                                     varALeer.append(lineaCod[1])
                                     cuantosLea +=1 
-                                   # print(lineaCod[1],cuantosLea, 'if del for' )
+                                
                             varALeer.reverse()
                             global ActivarVentLeer 
-                            #print(cuantosLeaFaltan)
+                         
 
 
-                            if cuantosLeaFaltan == -1 :
-                                #print('entré primer if')
+                            if cuantosLeaFaltan == -1 and cuantosLea > 0 :
+                                print('entré primer if')
                                 cuantosLeaFaltan = cuantosLea
                                 #print('entré if',cuantosLeaFaltan)
                                 ActivarVentLeer = True 
@@ -364,10 +356,13 @@ class HomePageView2(CreateView):
                                 mem = instanciaEjec.getMemoria() # (list) 
                                 prog = instanciaEjec.getProgramas() # (list) 
                                 memDis = instanciaEjec.getMemoriaDispo() # (list) 
-                                
+                                try:
+                                    variable =varALeer.pop()
+                                except:
+                                    variable = "" 
                                 return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                                 'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
-                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer, 'varALeer':varALeer.pop()}) 
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer, 'varALeer':variable}) 
                             
                             elif cuantosLeaFaltan == 0 :
                                 #print('entré elif',cuantosLeaFaltan)
@@ -396,6 +391,7 @@ class HomePageView2(CreateView):
                                                 'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer, }) 
 
                             else:
+                                ActivarVentLeer = False
                                 #print('entré else',cuantosLeaFaltan)
                                 instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
                                 instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
@@ -413,7 +409,7 @@ class HomePageView2(CreateView):
 
                                 return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                                 'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
-                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, }) 
+                                                'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer, }) 
                             
 
                             """
@@ -935,12 +931,12 @@ class HomePageView2(CreateView):
 ######################################################################################################################
                             else: # no tiene ningun lea para ingresar datos por teclado
                                 instanciaPaP.setContinuarLeyendo(False)
-                                print('este es el else sin llamar leer', ' leer en pos cont', leerLimp2[contadorPasos])
+                                #print('este es el else sin llamar leer', ' leer en pos cont', leerLimp2[contadorPasos])
                             # <-
                                 #print('cambió le curso? ', cambioCurso)
                                 #print('contador pasos ', contadorPasos)
                                 
-                                #print(contadorPasos)
+                                
                                 if contadorPasos == 0:
                                     print('este es el if sin llamar leer 1.1', ' leer en pos cont', leerLimp2[contadorPasos])
                                     #print('este es el if', ' leer en pos cont', leerLimp2[contadorPasos])
@@ -1015,7 +1011,7 @@ class HomePageView2(CreateView):
                                                                             #'proga':{'prog':prog , 'idPr':idPr,'cantInsProg':cantInsProg, 'regBas':regBas, 'regLimCod':regLimCod, 'regLimPro':regLimPro}, 'memo':{                                                           
                                 else:
                                 # print('este es el else')
-                                    print('este es el else sin llamar leer 1.3', ' leer en pos cont', leerLimp2[contadorPasos])
+                                   # print('este es el else sin llamar leer 1.3', ' leer en pos cont', leerLimp2[contadorPasos])
                                     pant = instanciaPaP.getPantalla() #datos enviados para mostrar en la pantalla desde ejecucion
                                     impre = instanciaPaP.getImpresora() # (str) datos impresora en el frontend
                                     acum = instanciaPaP.getAcumulador() # (str) 

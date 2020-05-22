@@ -2,17 +2,7 @@ $(document).ready(function () {
 
     //funciones para ejecución normal 
 
-    $('#eject').submit(function (e) {
-        e.preventDefault();
-
-        $.ajax({
-            url: $(this).attr('action'),
-            type: $(this).attr('method'),
-            data: $(this).serialize(),
-
-            success: function (json) {
-                //console.log(json);
-                /*
+     /*
                if(json.actiModal){
 
                 $('#ModalparaLeer').modal('show');
@@ -25,11 +15,25 @@ $(document).ready(function () {
                 document.write(json);
 
                }*/
+
+/*
+    $('#eject').submit(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: $(this).serialize(),
+
+            success: function (json) {
+                //console.log(json);
+               
                 document.write(json);
                 //$('#ingresarValorTeclado').addClass('hidden');
                 $('#btnPaso').addClass('hidden');
                 $('#instrSgtPaso').addClass('hidden');
                 $('#ingresarValorTecladoPaP').addClass('hidden');
+                $('#ingresarValorTeclado').addClass('hidden');
 
                 //console.log(json.actiModal);
 
@@ -41,7 +45,7 @@ $(document).ready(function () {
                 //console.log('hi');
             }
         });
-    });
+    });*/
 
 
 

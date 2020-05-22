@@ -9,11 +9,7 @@
 	<link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
 	
 	
-	<!--js-->
-	<script src="{% static 'core/js/jquery-3.4.1.min.js' %}"></script>
-	<script src="{% static 'core/js/bootstrap.min.js' %}"></script>
-	<script src="{% static 'core/js/script.js' %}"></script>
-	<script src="{% static 'core/js/ajax.js' %}"></script>
+	
 	
 	<!--favicon-->
 	<link rel="shortcut icon" type="image/png" href="{% static 'core/img/favicon.ico' %}"/>
@@ -85,9 +81,9 @@
 							</td>
 							<td id="cajaM">
 								{%if memoriaTotal == NULL %}
-								<input type="number" name="memoria" id="memoria" min="2" max="100" value="100" form ="formularioprin" required>
+								<input type="number" name="memoria" id="memoria" min="2" max="1000" value="100" form ="formularioprin" required>
 								{%else%}
-								<input type="number" name="memoria" id="memoria" min="2" max="100" value="{{memoriaTotal}}" form ="formularioprin" required>
+								<input type="number" name="memoria" id="memoria" min="2" max="1000" value="{{memoriaTotal}}" form ="formularioprin" required>
 								{%endif%}
 							</td>
 					</tr>
@@ -98,9 +94,9 @@
 							</td>
 							<td id="cajaK">
 								{%if kernel == NULL %}
-								<input type="number" name="kernel" id="kernel" min="1" max="100" value="10" form="formularioprin" required> <!--kernel debe ser 69 por requerimientos-->
+								<input type="number" name="kernel" id="kernel" min="1" max="500" value="69" form="formularioprin" required> <!--kernel debe ser 69 por requerimientos-->
 								{%else%}
-								<input type="number" name="kernel" id="kernel" min="1" max="100" value="{{kernel}}" form="formularioprin" required> <!--kernel debe ser 69 por requerimientos-->
+								<input type="number" name="kernel" id="kernel" min="1" max="500" value="{{kernel}}" form="formularioprin" required> <!--kernel debe ser 69 por requerimientos-->
 								{%endif%}
 							</td>
 					</tr>
@@ -617,8 +613,10 @@
 
 	{%if actiModal == NULL %}
 		<input type="text" id="activarLeer" value="False" style='display: none;'> <!--variable enviada desde el back mostrar o quitar el formulario para leer-->
+		
 	{%else%}
 		<input type="text" id="activarLeer" value="{{actiModal}}" style='display: none;'> <!--variable enviada desde el back mostrar o quitar el formulario para leer-->
+		
 	{%endif%}
 
 	{%if actiModalPaP == NULL %}
@@ -689,4 +687,9 @@
 
 
 </body>
+<!--js-->
+	<script src="{% static 'core/js/jquery-3.4.1.min.js' %}"></script>
+	<script src="{% static 'core/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'core/js/script.js' %}"></script>
+	<script src="{% static 'core/js/ajax.js' %}"></script>
 </html>
