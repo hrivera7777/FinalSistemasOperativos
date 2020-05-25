@@ -115,8 +115,12 @@ class sintax:
             self.leer.remove(str('\n'))
 
         # se resta otra posición para estar en el rango de la lista creada para dividir
-        ultimaLinea = self.leer[len(self.leer)-1].rstrip().split()
-        varRetorne = self.sRetorne(ultimaLinea, len(self.leer)-1) 
+        try:
+            ultimaLinea = self.leer[len(self.leer)-1].rstrip().split()
+            varRetorne = self.sRetorne(ultimaLinea, len(self.leer)-1)   
+        except:
+            ultimaLinea = ""
+            varRetorne = 0
         #print(self.leer)
         """
         if varRetorne >=0:
@@ -210,13 +214,16 @@ class sintax:
     #metodo para verificar si existe un error al finalizar la revision del archivo
     def hayError(self):
         ultimaLinea = len(self.leer)
-        paraVerificar = self.listaErrores[-1].split()
-        #print(paraVerificar, 'para verificar')
-        #print('ultimaLinea', ultimaLinea)
+        try:
+            paraVerificar = self.listaErrores[-1].split()
+            #print(paraVerificar, 'para verificar')
+            #print('ultimaLinea', ultimaLinea)
 
-        if paraVerificar[0]== 'Todo-ok' and int(paraVerificar[1]) == ultimaLinea:
-            return False
-        else:
+            if paraVerificar[0]== 'Todo-ok' and int(paraVerificar[1]) == ultimaLinea:
+                return False
+            else:
+                return True
+        except:
             return True
 
     """
