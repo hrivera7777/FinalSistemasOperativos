@@ -1,4 +1,3 @@
-#from django.core.files import File
 import threading
 import time
 
@@ -68,12 +67,10 @@ class PaP: # clase paso a paso
     j=0
     for j in range(contadorVacio):
         leer.remove('')
-    #print('leer', leer)
 
     j=0
     for j in range(contadorSalto):
         leer.remove(str('\n'))
-    #print('leer', leer)
     ################################################################################
 
     ########## metodos para traer los datos de la bd necesarios para la ejecucion del archivo ###################
@@ -86,7 +83,6 @@ class PaP: # clase paso a paso
             self.cantidadFull = cantidMemo
         else:
             print('cantidad memoria else' + self.cantmemoria)
-        #    self.cantmemoria = self.cantmemoria#cantidMemo - len(self.memoria) - len(self.leer) - self.cantidVarixPro[self.proEjec]
         
     
     def setLeer(self, leer): # introduce todas las lineas del archivo .ch
@@ -97,11 +93,7 @@ class PaP: # clase paso a paso
     
     def setRuta(self, ruta): # introduce la lista de programas en la bd 
         self.ruta2 = ruta
-    """
-    #introduce las variables por teclado
-    def setValoraLeer(self, valorVar):
-        self.valoraLeer = valorVar
-    """
+    
     #muestra si se continua con a con la lectura desde teclado
     def setContinuarLeyendo(self, continua):
         global continuarLeyendo
@@ -164,10 +156,7 @@ class PaP: # clase paso a paso
         posiblesVar = 0 # se utiliza para verificar cuantas variables se crean en el programa 
 
         for i in range(len(self.leer)):
-            #palabras = self.leer[i].rstrip().split()
             palabras = self.leer[i].rstrip().split()
-            #print(palabras, 'esto es palabras')
-            #print(palabras)
             operador = palabras[0]
             if operador == 'nueva':
                 posiblesVar +=1
@@ -236,7 +225,6 @@ class PaP: # clase paso a paso
     
     def agregarEtiquetas(self): # se hace necesario agregar las etiquetas puesto que se pueden usar antes de ser cargadas 
         instruc=[] # numero de la instruccion hacia donde debe ir 
-        #for i in range(len(self.leer)):
         for i in range(self.rb[self.proEjec],self.rlc[self.proEjec]):
             palabras = self.memoria[i].split()
             operador = palabras[0]
@@ -265,7 +253,6 @@ class PaP: # clase paso a paso
         # proEjec no se envia como parametro, porque no se conoce cuando se realice el primer llamado en views
         global cambiaCurso
         
-        #while(not(self.stopH)):
         varEjer = 0 # esta variable cambiara dependiendo si es una ejecucion normal o si se ingresa el parametro posMemEjec para cambiar la ejecucion a una linea especifica
         
         if int(posMemEjec) == self.rb[self.proEjec]:
@@ -278,15 +265,9 @@ class PaP: # clase paso a paso
         else:
             varEjer = self.rb[self.proEjec]
             
-
-        #print(range(varEjer,self.rlc[self.proEjec]),'en ejec cuanto cuesta varEje')
-
-        #for i in range(varEjer,self.rlc[self.proEjec]):
-        #print('acumul',self.memoria[0])
-        #print('varInter',i) 
-        palabras = self.memoria[varEjer].rstrip().split() # palabras = self.memoria[i+1].rstrip().split()
+        palabras = self.memoria[varEjer].rstrip().split() 
         self.lienaActual = palabras 
-        #print(palabras)
+
         operador = palabras[0]
     
         if operador == 'cargue':
@@ -298,18 +279,13 @@ class PaP: # clase paso a paso
         elif operador == 'nueva':
             self.eNueva(palabras, self.proEjec)
         elif operador == 'etiqueta':
-            #self.eEtiqueta(palabras, self.proEjec)
             pass
         elif operador == 'lea':
-            #hilo = threading.Thread(target=self.eLea(palabras,self.proEjec))
             hilo = threading.Thread(target=self.eLea, args=(palabras,self.proEjec))
             hilo.start()
-            #time.sleep(10) 
-        # self.eLea(palabras, self.proEjec)
         elif operador == 'sume':
             self.eSume(palabras, self.proEjec)
         elif operador == 'reste':
-            #print('este es el valor de unidad', self.memoria[33]) 
             self.eReste(palabras, self.proEjec)
         elif operador == 'multiplique':
             self.eMultiplique(palabras, self.proEjec)
@@ -331,25 +307,19 @@ class PaP: # clase paso a paso
             self.eO(palabras, self.proEjec)
         elif operador == 'NO':
             self.eNo(palabras, self.proEjec)
-        elif operador == 'muestre' :#and varEjer == self.rb[self.proEjec]: #se verifica que sea la ejecucion base para evitar que se repitan valores
+        elif operador == 'muestre' :
             self.eMuestre(palabras, self.proEjec)
-        elif operador == 'imprima' :#and varEjer == self.rb[self.proEjec]: #se verifica que sea la ejecucion base para evitar que se repitan valores
+        elif operador == 'imprima' :
             self.eImprima(palabras, self.proEjec)
         elif operador == 'absoluto':
             self.eAbsoluto(palabras, self.proEjec)
         elif operador == 'vayasi':
             self.eVayaSi(palabras, self.proEjec)  
-            
-
-        elif operador == 'retorne' :#and varEjer == self.rb[self.proEjec]: #se verifica que sea la ejecucion base para evitar que se repitan valores
+        elif operador == 'retorne' :
             self.pantalla.append("*****************************")
             self.pantalla.append("se finalizó la ejecución del programa: " + str(self.proEjec))
             self.pantalla.append("*****************************")
-        
-        #elif i == (self.rlc[self.proEjec] - varEjer -1 ):
-        #    self.activarVentLeer = False
         else:
-            #self.activarVentLeer = False
             pass
     
         print(cambiaCurso,'cambia curso dentro de ejecProgPaP')
@@ -359,7 +329,6 @@ class PaP: # clase paso a paso
 
     #metodo para obtener lo que será mostrado en pantalla
     def getPantalla(self):
-        #print('esta es la pantalla', self.pantalla)
         return self.pantalla
 
     #metodo para obtener lo que será mostrado en la impresora
@@ -377,14 +346,6 @@ class PaP: # clase paso a paso
     def getLineaActual(self):
         
         return " ".join(self.lienaActual)
-    """
-    #metodo para obtener la linea que se esta ejecutando (pc en el frontend)
-    def getLineaActual(self):
-        i= self.rb[self.proEjec]
-        for i in range(self.rlc[self.proEjec]):
-            tempoVar = self.memoria[i]
-        return str(tempoVar)
-    """
 
 
     #metodo para mostrar el codigo y las posiciones de memoria que ocupa
@@ -401,7 +362,6 @@ class PaP: # clase paso a paso
         tempoDic={} # se usa un diccionario para facilitar la manera de mostrar los datos en el frontend
         for i in range(len(self.variables)):
             palabras = self.variables[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            #print(palabras, 'p0', palabras[0])
             if palabras[0]== str(self.proEjec): 
                 tempoDic[self.posMemVar[i]]= self.variables[i]
         return tempoDic
@@ -422,7 +382,6 @@ class PaP: # clase paso a paso
         for j in range(len(self.memoria)): # se toma el codigo del programa en ejecucion desde donde empieza en la memoria hasta donde termina 
             tempoDic[j] =self.memoria[j]
         return tempoDic 
-        #return self.memoria
     
     #metodo para obtener cada etiqueta que esta memoria del programa que se esta ejecutando (etiquetas en el frontend)
     def getProgramas(self):
@@ -435,9 +394,6 @@ class PaP: # clase paso a paso
     
     def getMemoriaDispo(self):
         libre = []
-        #print(self.cantmemoria, 'esto es cantidad memoria b')
-        #print(self.cantmemoria, 'esto es cantidad memoria b')
-        #print('resta: ', (len(self.memoria)- self.cantidadFull))
         for i in range(self.cantidadFull - len(self.memoria)):
             libre.append(len(self.memoria) + i) # (se resta el acumulador) ---------> se restan dos, porque se quita el acumulador y el tamaño siempre es 1 mas grande
         return libre
@@ -451,12 +407,10 @@ class PaP: # clase paso a paso
     def idenEtiq(self, nomEtiq, idProg):
         posMem = 0
         indice = 0
-        #print(self.posMemEtiq, 'pos mem eti')
         for i in range(len(self.etiquetas)):
             palabras = self.etiquetas[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la etiqueta
             if palabras[0]== str(idProg) and palabras[1] == nomEtiq:
                 indice=i
-        #print(indice, 'indice que quiere ir')
         posMem = self.posMemEtiq[indice]
         return posMem   
 
@@ -471,7 +425,6 @@ class PaP: # clase paso a paso
     #metodo para identificar una linea especifica dentro de la memoria, se usará para las etiquetas 
 
     def encontrarLinea(self, i):
-       # return self.leer[i-1].rstrip()
         return self.leer[int(i)-1].rstrip()
     
 
@@ -482,15 +435,9 @@ class PaP: # clase paso a paso
         indice = 0
         for i in range(len(self.variables)):
             palabras = self.variables[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            #print(palabras, 'palabras en idenVar')
             if palabras[0] == str(idProg) and str(palabras[1]) == nomVar:
-                #print(palabras, 'palabras en idenVar  dentro del if')
-                #print(nomVar, 'nombre variable que busca')
                 indice=i
-                #print(i, 'supuesta pos posMemVar') 
-        #print(self.posMemVar,'supuestas pos de mem')
         posMem = self.posMemVar[indice]
-        #print(posMem)
         return posMem
     ############################################################################################################################################
   
@@ -499,7 +446,6 @@ class PaP: # clase paso a paso
     def eNueva(self, linea, idProg):
         if(len(linea)==4) :
             if linea[2] == 'I':
-                #print('entre aqui con valor', linea[3])
                 #con este segmento convierto a int la variable y el acumulador si es posible 
                 #####################################
                 anumeroIntVar = 0
@@ -590,11 +536,9 @@ class PaP: # clase paso a paso
     #fin funcion sNueva
 
     def eCargue(self, linea, idProg):
-        #print('estoy cargando el valVar',self.memoria[self.idenVar(linea[1],idProg)], 'con', 'la posMem', self.idenVar(linea[1],idProg),'al acum')
         self.memoria[0] = self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
        
     def eAlmacene(self, linea, idProg):
-        #print('estoy almacenando el valAcum: ', self.memoria[0], 'a', 'la posMem', self.idenVar(linea[1],idProg))
         self.memoria[self.idenVar(linea[1],idProg)] = self.memoria[0] # se identifica la posicion de memoria y se trae el valor del acumulador
 
     def eSume(self, linea, idProg):
@@ -703,8 +647,6 @@ class PaP: # clase paso a paso
 
         if varInt and acumInt: #(varInt or varFloat) and (acumInt or acumFloat):
             oper=int(self.memoria[0])
-            #print("supuesto contenido",self.memoria[self.idenVar(linea[1],idProg)], 'supesta dir:',self.idenVar(linea[1],idProg) ) 
-            #print(self.memoria)
             oper -= int(self.memoria[self.idenVar(linea[1],idProg)]) # se identifica la posicion de memoria y se trae el valor al acumulador
             self.memoria[0] = oper
 
@@ -1139,16 +1081,12 @@ class PaP: # clase paso a paso
         global cambiaCurso
         global posaCambiar
 
-        #print(self.memoria[0], 'acum en el vaya')
         if int(self.memoria[0]) > 0 or float(self.memoria[0])> 0.0:
-            #print('aqui if', 'posMemo ',self.idenEtiq(linea[1], idProg), 'de eti corres', linea[1])
             cambiaCurso = True
             print('entre al if del vayasi, valor cambiacurso', cambiaCurso)
             posaCambiar = posMemEti1
             self.ejecutarProgPaP(posMemEti1) # #aquí se llama el metodo donde cambia el flujo del programa con la posicion que entregue (posMemEti1)
-            #cambiaCurso =False 
         elif int(self.memoria[0]) < 0 or float(self.memoria[0])< 0.0:
-           # print('aqui elif')
             print('entre al elif del vayasi, valor cambiacurso', cambiaCurso)
             cambiaCurso = True
             posaCambiar = posMemEti2
@@ -1157,7 +1095,6 @@ class PaP: # clase paso a paso
         else:
             print('entre al else del vayasi, valor cambiacurso', cambiaCurso)
             cambiaCurso = False
-            #self.posaCambiar = posMemEti
             print('continuando con la ejecucion')
             pass
 
@@ -1172,18 +1109,6 @@ class PaP: # clase paso a paso
                 valorLeido = valoresLeidos[0]
             except :
                 valorLeido = -1
-            """
-            if self.valoraLeer == '':
-                break
-            """
-
-        """
-        try:
-            valorLeido = valoresLeidos.pop()
-        except :
-            valorLeido = -1
-        """
-
 
         print('esto se guarda en la vari:', valorLeido)
 

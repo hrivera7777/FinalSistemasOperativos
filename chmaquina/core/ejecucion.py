@@ -2,40 +2,8 @@ from django.core.files import File
 import threading
 import time
 
-#from .models import EjecArchCh
-"""
-ruta =""
-#tup = ArchivosCh.objects.all()
-tup2 = EjecArchCh.objects.all()
-#aqui se agregan todos los archivos para abrir 
-ruta2=[]
-w=0
-cantmemoria=-2
-kernel=-3
-
-
-for tp in tup2:
-    nombre2=tp.archivo
-    tempo = tp.memoria
-    cantmemoria=int(tempo) # cantidad total de memoria, se va disminuyendo si se agrega el kernel o programas
-    tempo = tp.kernel
-    kernel=int(tempo)
-    ruta2.append(str(nombre2))
-
-proEjec=len(tup2)-1 #cual programa se encuentra en ejecución  
-
-print(ruta2)
-"""
-
-"""
-for tp in tup:
-    nombre=tp.archivo
-    ruta = str(nombre)
-"""
 activarVentLeer = True # se enviará al front para mostrar una ventana donde se leen los datos de las var
-#continuarLeyendo = True # variable para verificar si se debe seguir leyendo los datos
 valoresLeidos=[] #valor traido desde el front para la funcion leer
-#cantLeer = 0
 class ejecucion:
 
     cantmemoria= 0 
@@ -57,52 +25,6 @@ class ejecucion:
     for j in range(contadorSalto):
         leer.remove(str('\n'))
 
-    """
-    contemplado inicialmente para realizar la apertura de archivos 
-    ruta =""
-    #tup = ArchivosCh.objects.all()
-   
-    tup2 = EjecArchCh.objects.all()
-    #aqui se agregan todos los archivos para abrir 
-    ruta2=[] #ok
-    w=0
-    cantmemoria=-2
-    kernel=-3
-
-    tp =[]
-    tempo=""
-    nombre2=""
-    proEjec=0
-    for tp in tup2:
-        nombre2=tp.archivo
-        tempo = tp.memoria
-        cantmemoria=int(tempo) # cantidad total de memoria, se va disminuyendo si se agrega el kernel o programas
-        tempo = tp.kernel
-        kernel=int(tempo)
-        ruta2.append(str(nombre2))
-        tempo = tp.id
-        #print(tempo)
-        #proEjec= int(tempo)
-
-    #proEjec=len(tup2)-1 #cual programa se encuentra en ejecución  
-
-    #print(ruta2)
-    f=""
-    myfile =""
-    leer=[]
-    try:
-
-        f = open("media/" + ruta2[proEjec], "r")
-        myfile = File(f)
-        print(myfile)
-        leer = myfile.readlines() #para leer linea a linea #print(leer)
-        f.close()
-        myfile.close()
-    except:
-        print('no se puede abrir el archivo solicitado')
-    
-    """
-
     
     #estructuras de datos necesarias (se contempla leer[] y ruta2[]=>que es la lista de programas(los nombres)).
     memoria =[] # memoria donde se guarda el kernel, los programas y el acumulador
@@ -120,7 +42,6 @@ class ejecucion:
     impresora =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
     
     global valoresLeidos
-    #global continuarLeyendo
     
     stopH=False # variable para detener ejecucion del hilo ppal
     global activarVentLeer
@@ -142,12 +63,10 @@ class ejecucion:
     j=0
     for j in range(contadorVacio):
         leer.remove('')
-    #print('leer', leer)
 
     j=0
     for j in range(contadorSalto):
         leer.remove(str('\n'))
-    #print('leer', leer)
     ################################################################################
 
     ########## metodos para traer los datos de la bd necesarios para la ejecucion del archivo ###################
@@ -160,9 +79,7 @@ class ejecucion:
             self.cantidadFull = cantidMemo
         else:
             print('cantidad memoria else' + self.cantmemoria)
-        #    self.cantmemoria = self.cantmemoria#cantidMemo - len(self.memoria) - len(self.leer) - self.cantidVarixPro[self.proEjec]
-        
-    
+ 
     def setLeer(self, leer): # introduce todas las lineas del archivo .ch
         self.leer = leer
     
@@ -177,12 +94,6 @@ class ejecucion:
         global valoresLeidos
         valoresLeidos = valorVariables
 
-    """
-    #muestra si se continua con a con la lectura desde teclado
-    def setContinuarLeyendo(self, continua):
-        global continuarLeyendo
-        continuarLeyendo = continua
-    """
     #entrega en el front si se debe seguir desplegando la ventana modal de lectura
     def getActivarVentLeer(self):
         global activarVentLeer
@@ -191,12 +102,6 @@ class ejecucion:
     def setActivarVentLeer(self, activo):
         global activarVentLeer
         activarVentLeer = activo
-
-    #def setcantLeer(self, numerodeLeer):
-    #    global cantLeer
-    #    cantLeer = numerodeLeer
-    
-
 
     def playHppal(self):#inicia el hilo principal de ejecucion
         vlrIni = "-2"
@@ -222,16 +127,12 @@ class ejecucion:
         posiblesVar = 0 # se utiliza para verificar cuantas variables se crean en el programa 
 
         for i in range(len(self.leer)):
-            #palabras = self.leer[i].rstrip().split()
             palabras = self.leer[i].rstrip().split()
-            #print(palabras, 'esto es palabras')
-            #print(palabras)
             operador = palabras[0]
             if operador == 'nueva':
                 posiblesVar +=1
         if self.proEjec == 0:
             if self.cantmemoria >= (len(self.leer)+posiblesVar): 
-                #self.cantmemoria -= (len(self.leer)+posiblesVar) #(len(self.leer))
                 return True
             else:
                 return False #se mostraria un error en la pantalla 
@@ -241,9 +142,6 @@ class ejecucion:
             else:
                 return False #se mostraria un error en la pantalla 
 
-    
-
-    #aquí se llena la memoria con el "kernel"
     def agregarKernelMemoria(self):   
         i=0
         memVacia = ""
@@ -308,37 +206,11 @@ class ejecucion:
                         k+=1 # se suma 1 continuar con la busqueda del numero indicado de instruccion deseada 
                 else:
                     bandera=False
-            
-        
-        #print('estas son las etiquetas', self.etiquetas)
-        #posMemoriaEti = [] # variable tempora
-        #i=self.rb[idProg] # con esto identificamos donde inicia el programa 
-        """
-                #instruc.append(self.encontrarLinea(int(palabras[2]))) # identificamos a que instruccion se refiere la etiqu   
-        for w in range(len(instruc)): #len(self.etiquetas)
-            #print(w, 'esto es w')
-            for j in range(self.rb[self.proEjec],self.rlc[self.proEjec]): # ciclo que recorre solamente las posiciones de memoria que corresponden a las instrucciones
-                #indic = len(self.etiquetas) 
-                #print('esta es la inst que busca', instruc[w]) 
-                #print('esta es la inst que debe encontrar', self.memoria[j])
-                if str(instruc[w]) == str(self.memoria[j]):
-                        k = j
-                        #print('esto es j', j) 
-                        #print(self.posMemEtiq.append(int(j)))
-                        self.posMemEtiq.append(j) 
-                        break
-                            # se agrega la posicion de memoria de la instruccion a donde apunta la eti 
-                #print('esto es posMemoriaEti',self.posMemEtiq)
-
-        """
-                
 
     #metodo que realiza la ejecución del programa
     def ejecutarProg(self, posMemEjec): # posMemEjec se requerirá si se llega  a una instrucción vaya o vayasi para cambiar la ejecucion del programa
         # proEjec no se envia como parametro, porque no se conoce cuando se realice el primer llamado en views
-        #global cantLeer
         numlea =0
-        #while(not(self.stopH)):
         varEjer = 0 # esta variable cambiara dependiendo si es una ejecucion normal o si se ingresa el parametro posMemEjec para cambiar la ejecucion a una linea especifica
         
         if int(posMemEjec) >=0: #si se llega a cambiar el orden de ejecucion del programa
@@ -347,13 +219,8 @@ class ejecucion:
             varEjer = self.rb[self.proEjec]
             self.agregarEtiquetas() # se agregan las etiquetas del programa
 
-        #print(range(varEjer,self.rlc[self.proEjec]),'en ejec cuanto cuesta varEje')
-
         for i in range(varEjer,self.rlc[self.proEjec]):
-            #print('acumul',self.memoria[0])
-            #print('varInter',i) 
-            palabras = self.memoria[i].rstrip().split() # palabras = self.memoria[i+1].rstrip().split()
-            #print(palabras)
+            palabras = self.memoria[i].rstrip().split()
             operador = palabras[0]
         
             if operador == 'cargue':
@@ -365,20 +232,13 @@ class ejecucion:
             elif operador == 'nueva':
                 self.eNueva(palabras, self.proEjec)
             elif operador == 'etiqueta':
-                #self.eEtiqueta(palabras, self.proEjec)
                 pass
             elif operador == 'lea':
                 self.eLea(palabras,self.proEjec, numlea) 
                 numlea +=1
-                #hilo = threading.Thread(target=self.eLea(palabras,self.proEjec))
-                #hilo = threading.Thread(target=self.eLea, args=(palabras,self.proEjec))
-                #hilo.start()
-                #time.sleep(10) 
-            # self.eLea(palabras, self.proEjec)
             elif operador == 'sume':
                 self.eSume(palabras, self.proEjec)
             elif operador == 'reste':
-                #print('este es el valor de unidad', self.memoria[33]) 
                 self.eReste(palabras, self.proEjec)
             elif operador == 'multiplique':
                 self.eMultiplique(palabras, self.proEjec)
@@ -413,110 +273,9 @@ class ejecucion:
                 self.pantalla.append("*****************************")
                 self.pantalla.append("se finalizó la ejecución del programa: " + str(self.proEjec))
                 self.pantalla.append("*****************************")
-            
-            #elif i == (self.rlc[self.proEjec] - varEjer -1 ):
-            #    self.activarVentLeer = False
             else:
-                #self.activarVentLeer = False
                 pass
-        #print('valVar:',self.memoria[33],self.memoria[34],self.memoria[35],self.memoria[36],self.memoria[37],self.memoria[38])
-        #self.activarVentLeer = False
-            #time.sleep(2)
-
-
-
-
-    """
-    
-    #metodo que realiza la ejecución del programa
-    def ejecutarProg(self, posMemEjec): # posMemEjec se requerirá si se llega  a una instrucción vaya o vayasi para cambiar la ejecucion del programa
-        # proEjec no se envia como parametro, porque no se conoce cuando se realice el primer llamado en views
-        
-        varEjer = 0 # esta variable cambiara dependiendo si es una ejecucion normal o si se ingresa el parametro posMemEjec para cambiar la ejecucion a una linea especifica
-        
-        if posMemEjec >=0: #si se llega a cambiar el orden de ejecucion del programa
-            varEjer = posMemEjec 
-        else:
-            varEjer = self.rb[self.proEjec]
-            self.agregarEtiquetas() # se agregan las etiquetas del programa
-
-        #print(range(varEjer,self.rlc[self.proEjec]),'en ejec cuanto cuesta varEje')
-
-        for i in range(varEjer,self.rlc[self.proEjec]):
-            #print('acumul',self.memoria[0])
-            #print('varInter',i) 
-            palabras = self.memoria[i].rstrip().split() # palabras = self.memoria[i+1].rstrip().split()
-            #print(palabras)
-            operador = palabras[0]
-        
-            if operador == 'cargue':
-                self.eCargue(palabras, self.proEjec) 
-            elif operador == 'almacene':
-                self.eAlmacene(palabras, self.proEjec)
-            elif operador == 'vaya':
-                self.eVaya(palabras, self.proEjec)
-            elif operador == 'nueva':
-                self.eNueva(palabras, self.proEjec)
-            elif operador == 'etiqueta':
-                #self.eEtiqueta(palabras, self.proEjec)
-                pass
-            elif operador == 'lea':
-                #hilo = threading.Thread(target=self.eLea(palabras,self.proEjec))
-                hilo = threading.Thread(target=self.eLea, args=(palabras,self.proEjec))
-                hilo.start()
-               # self.eLea(palabras, self.proEjec)
-            elif operador == 'sume':
-                self.eSume(palabras, self.proEjec)
-            elif operador == 'reste':
-                #print('este es el valor de unidad', self.memoria[33]) 
-                self.eReste(palabras, self.proEjec)
-            elif operador == 'multiplique':
-                self.eMultiplique(palabras, self.proEjec)
-            elif operador == 'divida':
-                self.eDivida(palabras, self.proEjec)
-            elif operador == 'potencia':
-                self.ePotencia(palabras, self.proEjec)
-            elif operador == 'modulo':
-                self.eModulo(palabras, self.proEjec)
-            elif operador == 'concatene':
-                self.eConcatene(palabras, self.proEjec)
-            elif operador == 'elimine':
-                self.eElimine(palabras, self.proEjec)
-            elif operador == 'extraiga':
-                self.eExtraiga(palabras, self.proEjec)
-            elif operador == 'Y':
-                self.eY(palabras, self.proEjec)
-            elif operador == 'O':
-                self.eO(palabras, self.proEjec)
-            elif operador == 'NO':
-                self.eNo(palabras, self.proEjec)
-            elif operador == 'muestre' and varEjer == self.rb[self.proEjec]: #se verifica que sea la ejecucion base para evitar que se repitan valores
-                self.eMuestre(palabras, self.proEjec)
-            elif operador == 'imprima' and varEjer == self.rb[self.proEjec]: #se verifica que sea la ejecucion base para evitar que se repitan valores
-                self.eImprima(palabras, self.proEjec)
-            elif operador == 'absoluto':
-                self.eAbsoluto(palabras, self.proEjec)
-            elif operador == 'vayasi':
-                self.eVayaSi(palabras, self.proEjec)   
-
-            elif operador == 'retorne' and varEjer == self.rb[self.proEjec]: #se verifica que sea la ejecucion base para evitar que se repitan valores
-                self.pantalla.append("*****************************")
-                self.pantalla.append("se finalizó la ejecución del programa: " + str(self.proEjec))
-                self.pantalla.append("*****************************")
-            
-            #elif i == (self.rlc[self.proEjec] - varEjer -1 ):
-            #    self.activarVentLeer = False
-            else:
-                #self.activarVentLeer = False
-                pass
-        #print('valVar:',self.memoria[33],self.memoria[34],self.memoria[35],self.memoria[36],self.memoria[37],self.memoria[38])
-        #self.activarVentLeer = False
-
-    """
-
-
-
-
+       
     #############################################################################################################################
     #metodos para obterner los valores y mostrarlos en el frontend
 
@@ -564,7 +323,6 @@ class ejecucion:
         tempoDic={} # se usa un diccionario para facilitar la manera de mostrar los datos en el frontend
         for i in range(len(self.variables)):
             palabras = self.variables[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            #print(palabras, 'p0', palabras[0])
             if palabras[0]== str(self.proEjec): 
                 tempoDic[self.posMemVar[i]]= self.variables[i]
         return tempoDic
@@ -585,7 +343,6 @@ class ejecucion:
         for j in range(len(self.memoria)): # se toma el codigo del programa en ejecucion desde donde empieza en la memoria hasta donde termina 
             tempoDic[j] =self.memoria[j]
         return tempoDic 
-        #return self.memoria
     
     #metodo para obtener cada etiqueta que esta memoria del programa que se esta ejecutando (etiquetas en el frontend)
     def getProgramas(self):
@@ -601,157 +358,9 @@ class ejecucion:
     
     def getMemoriaDispo(self):
         libre = []
-        #print(self.cantmemoria, 'esto es cantidad memoria b')
-        #print(self.cantmemoria, 'esto es cantidad memoria b')
-        #print('resta: ', (len(self.memoria)- self.cantidadFull))
         for i in range(self.cantidadFull - len(self.memoria)):
             libre.append(len(self.memoria) + i) # (se resta el acumulador) ---------> se restan dos, porque se quita el acumulador y el tamaño siempre es 1 mas grande
         return libre
-
-
-    """(METODOS ORIGINALES, PARA LLAMAR CADA LISTA) metodo original para cargar las posiciones de memoria de las variables
-    #metodo para obtener cada posicion de memoria de la variable que esta memoria del programa que se esta ejecutando (pos al la izq de variables en el frontend)
-    def getPosVariablesActuales(self):
-        i= 0
-        tempoList=[]
-        j=0
-        for i in range(len(self.variables)-1):
-            palabras = self.variables[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            if palabras[0]== self.proEjec:
-                tempoList[j]= self.posMemVar[i]
-                j +=1
-        return tempoList
-    """
-    """
-    metodo original para mostrar la variables
-    #metodo para obtener cada variable que esta memoria del programa que se esta ejecutando (variables en el frontend)
-    def getVariablesActuales(self):
-        i= 0
-        tempoList=[]
-        j=0
-        for i in range(len(self.variables)-1):
-            palabras = self.variables[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            if palabras[0]== self.proEjec: 
-                tempoList[j]= self.variables[i]
-                j +=1
-        return tempoList
-    """
-    """
-    #metodo para obtener cada etiqueta que esta memoria del programa que se esta ejecutando (etiquetas en el frontend)
-    def getEtiquetasActuales(self):
-        i= 0
-        tempoList=[]
-        j=0
-        for i in range(len(self.etiquetas)-1):
-            palabras = self.etiquetas[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            if palabras[0]== self.proEjec:
-                tempoList[j]= self.etiquetas[i]
-                j +=1
-        return tempoList
-    """
-
-    """
-    def getCodProgActualMod(self): primera pueba con listas de listas
-
-        i= self.rb[self.proEjec]
-        print(i)
-        tempoList =[[],[]]
-        for j in range(i, self.rlc[self.proEjec]):
-            tempoList[0].append(j) 
-            tempoList[1].append(self.memoria[j])
-        print(type(tempoList))
-        return tempoList 
-    """
-
-    """
-    #metodo para obtener cada linea que se esta ejecutando (instruccion en el frontend)
-    def getPosCodProgActual(self):
-        i= self.rb[self.proEjec]
-        print(i)
-        tempoList =[]
-        for j in range(i, self.rlc[self.proEjec]):
-            print(i,'dentro')
-            tempoList.append(j) 
-        return tempoList 
-    """
-
-    """ puede que ya no sea usado
-    #metodo para obtener cada linea que se esta ejecutando (instruccion en el frontend)
-    def getCodProgActual(self):
-        return self.leer 
-    """
-
-    """
-    def getCodProgActual(self):
-        i= self.rb[self.proEjec] 
-        tempoList=[]
-        for k in range(i, self.rlc[self.proEjec]):
-            tempoList.append(self.memoria[k])
-        return tempoList
-    """
-    """
-    primer metodo usado pendiente borrar
-    #metodo para obtener cada posicion de memoria de cada linea que se esta ejecutando (memoria (al lado izq instruccion) en el frontend)
-    def getProgActual(self):
-        i= self.rb[self.proEjec]
-        tempoList=[]
-        for i in range(self.rlc[self.proEjec]):
-             tempoList[i] = i
-        return  tempoList
-    """
-    """
-    #metodo para obtener cada posicion de memoria de la variable que esta memoria del programa que se esta ejecutando (pos al la izq de variables en el frontend)
-    def getPosEtiquetasActuales(self):
-        i= 0
-        tempoList=[]
-        j=0
-        for i in range(len(self.etiquetas)-1):
-            palabras = self.etiquetas[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            if palabras[0]== self.proEjec:
-                tempoList[j]= self.posMemEtiq[i]
-                j +=1
-        return tempoList
-    """
-
-    """
-    #metodo para retornar lo las posiciones en la memoria 
-    def getPosMemoria(self):
-        tempoList = []
-        for i in range(len(self.memoria)-1):
-            tempoList.append(i) 
-        return tempoList 
-    """
-
-    """
-    def getProgramas(self):
-        progList =[]
-        for i in range(len(self.ruta2)):
-            tempo2= str(self.ruta2[i]).split('/')
-            progList.append(tempo2[1])
-        return progList
-    """
-    """ metodos anteriores
-    def getIdProg(self): #ya
-        return self.proEjec
-    
-    def getCanInstProg(self):#ya
-        #return len(self.leer)
-        return int(self.rlc[self.proEjec] - self.rb[self.proEjec])
-    
-    #metodo para retornar los registros bases de los programas 
-    def getRegistroBase(self):
-        return self.rb   
-
-    #metodo para retornar los registros limites del codigo relacionado con los programas 
-    def getRegistroLimCod(self):
-        return self.rlc
-
-    #metodo para retornar los registros limites del programa que incluye las variables relacionado con los programas
-    def getRegistroLimProg(self): # hay que arreglar
-        for i in range(len(self.rlc)):
-            self.rlp.append(self.rlc[self.proEjec] + self.cantidVarixPro[self.proEjec])
-        return self.rlp
-    """
     
     ###########################################################################################################################################################
 
@@ -761,12 +370,10 @@ class ejecucion:
     def idenEtiq(self, nomEtiq, idProg):
         posMem = 0
         indice = 0
-        #print(self.posMemEtiq, 'pos mem eti')
         for i in range(len(self.etiquetas)):
             palabras = self.etiquetas[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la etiqueta
             if palabras[0]== str(idProg) and palabras[1] == nomEtiq:
                 indice=i
-        #print(indice, 'indice que quiere ir')
         posMem = self.posMemEtiq[indice]
         return posMem   
 
@@ -792,15 +399,9 @@ class ejecucion:
         indice = 0
         for i in range(len(self.variables)):
             palabras = self.variables[i].split('-') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-            #print(palabras, 'palabras en idenVar')
             if palabras[0] == str(idProg) and str(palabras[1]) == nomVar:
-                #print(palabras, 'palabras en idenVar  dentro del if')
-                #print(nomVar, 'nombre variable que busca')
                 indice=i
-                #print(i, 'supuesta pos posMemVar') 
-        #print(self.posMemVar,'supuestas pos de mem')
         posMem = self.posMemVar[indice]
-        #print(posMem)
         return posMem
     ############################################################################################################################################
   
@@ -809,7 +410,6 @@ class ejecucion:
     def eNueva(self, linea, idProg):
         if(len(linea)==4) :
             if linea[2] == 'I':
-                #print('entre aqui con valor', linea[3])
                 #con este segmento convierto a int la variable y el acumulador si es posible 
                 #####################################
                 anumeroIntVar = 0
@@ -900,11 +500,9 @@ class ejecucion:
     #fin funcion sNueva
 
     def eCargue(self, linea, idProg):
-        #print('estoy cargando el valVar',self.memoria[self.idenVar(linea[1],idProg)], 'con', 'la posMem', self.idenVar(linea[1],idProg),'al acum')
         self.memoria[0] = self.memoria[self.idenVar(linea[1],idProg)] # se identifica la posicion de memoria y se trae el valor al acumulador
        
     def eAlmacene(self, linea, idProg):
-        #print('estoy almacenando el valAcum: ', self.memoria[0], 'a', 'la posMem', self.idenVar(linea[1],idProg))
         self.memoria[self.idenVar(linea[1],idProg)] = self.memoria[0] # se identifica la posicion de memoria y se trae el valor del acumulador
 
     def eSume(self, linea, idProg):
@@ -1013,8 +611,6 @@ class ejecucion:
 
         if varInt and acumInt: #(varInt or varFloat) and (acumInt or acumFloat):
             oper=int(self.memoria[0])
-            #print("supuesto contenido",self.memoria[self.idenVar(linea[1],idProg)], 'supesta dir:',self.idenVar(linea[1],idProg) ) 
-            #print(self.memoria)
             oper -= int(self.memoria[self.idenVar(linea[1],idProg)]) # se identifica la posicion de memoria y se trae el valor al acumulador
             self.memoria[0] = oper
 
@@ -1336,11 +932,7 @@ class ejecucion:
     def eElimine(self, linea, idProg):
         varTem = self.memoria[0].replace(self.memoria[self.idenVar(linea[1],idProg)],"") # se guara en una variable temporal el resultado de quitar la cadena en Variable a el acumulador
         self.memoria[0] = varTem
-        """
-        variable = "quedeque" # ejemplo de elimine
-        var2 = variable.replace("que","")
-        print(var2, len(var2))
-        """
+
     def eExtraiga(self, linea, idProg):
         varTem = str(self.memoria[0])
         self.memoria[0] = varTem[:self.memoria[self.idenVar(linea[1],idProg)]] # se extraen los primeros(cantidad que esté en la variable) caracteres de la cadena que se encuentra en el acumulador 
@@ -1443,13 +1035,10 @@ class ejecucion:
         posMemEti1 = self.idenEtiq(linea[1], idProg)
         posMemEti2 = self.idenEtiq(linea[2], idProg)
 
-        #print(self.memoria[0], 'acum en el vaya')
         if int(self.memoria[0]) > 0 or float(self.memoria[0])> 0.0:
-            #print('aqui if', 'posMemo ',self.idenEtiq(linea[1], idProg), 'de eti corres', linea[1])
             self.ejecutarProg(posMemEti1) # #aquí se llama el metodo donde cambia el flujo del programa con la posicion que entregue (posMemEti1)
             
         elif int(self.memoria[0]) < 0 or float(self.memoria[0])< 0.0:
-           # print('aqui elif')
             self.ejecutarProg(posMemEti2) # #aquí se llama el metodo donde cambia el flujo del programa con la posicion que entregue (posMemEti2)
             
         else:
@@ -1457,10 +1046,7 @@ class ejecucion:
             pass
 
     def eLea(self, linea, idProg, enQueLeerVa):
-        #global activarVentLeer
         valorLeido = ""
-        #activarVentLeer = True
-        #global continuarLeyendo
         global valoresLeidos
 
         try:
@@ -1469,59 +1055,3 @@ class ejecucion:
             valorLeido = -1
 
         self.memoria[self.idenVar(linea[1],idProg)] = valorLeido #guarda la posicion de memoria 
-        """
-        while(self.continuarLeyendo):
-            valorLeido = self.valoraLeer
-            if self.valoraLeer == '':
-                break
-        """
-        """
-        while(continuarLeyendo):
-            valorLeido = valoraLeer
-            time.sleep(2)
-        """
-
-        #valorLeido = 10
-        #if self.valoraLeer == '':
-        #    keyboard.wait('esc')
-        #else:  
-        #    valorLeido = self.valoraLeer
-
-        #print(valoraLeer, 'este es el valor leer')
-        #print('esto se guarda en la vari:', valorLeido)
-        #valorLeido = self.valoraLeer
-        #valorLeido = 10 #self.valoraLeer
-
-
-        #activarVentLeer = False
-        
-        #self.playHppal()
-        
-        
-
-     
-        #    
-    """
-    prueba local de la cantidad de memoria disponible 
-    #print(memoria)
-    #print(cantmemoria, 'cantidad de disponible')
-    #print(len(memoria))
-    #variables.append('0'+'-'+'variable')
-    #print(variables)
-    #palabras = variables[0].split('-')
-    #print(palabras)
-    """
-
-
-    ##################
-
-    """
-
-    if not(self.continuarLeyendo) and self.valoraLeer == '':
-        self.activarVentLeer = True
-        while(self.continuarLeyendo):
-            valorLeido = self.valoraLeer
-    else:
-        self.activarVentLeer = False
-        self.memoria[self.idenVar(linea[1],idProg)] = valorLeido #guarda la posicion de memoria 
-    """
