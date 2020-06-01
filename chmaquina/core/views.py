@@ -9,6 +9,9 @@ from .ejecucion import ejecucion
 from .pasoapaso import PaP
 from django.core.files import File # se hace necesario para la apertura del archivo
 
+import os
+import gc
+
 import json
 from django.http import HttpResponse
 from django.http import JsonResponse # ultimo agregado
@@ -29,7 +32,7 @@ cuantosLeaFaltan = -1
 listaValoresVariTeclado = []
 listaValoresVariTecladoPaP = []
 tieneQueLeerPaP= -2
-
+todasInstancias =[]
 ## con esta view permite agregar varios archivos ch a la vez 
 class HomePageView2(CreateView):
     model = EjecArchCh
@@ -106,17 +109,20 @@ class HomePageView2(CreateView):
             
             leerLimp2=[i for i in leerLimp if i != ''] # se utiliza para quitar los espacios vacios que pueda tener la lista
             ####################################################################
-
+            global todasInstancias
+            
             instanciaArch = cargArchivo(tup, nombres, memoriaTotal, kernelFinal, ruta, leer, proEjec)
-
+            todasInstancias.append(instanciaArch)
             #############################################################################################################
             instanciaSintaxis= sintax() # se crea una instancia de la clase sintax para poder llamar el método que prueba toda la sintaxis de un archivo .ch
-            
+            todasInstancias.append(instanciaSintaxis)
+
             instanciaSintaxis.setLeer(leerLimp2) # se envia la lista con todas la lineas a sintaxis 
             ###############################################################################################
 
 
             instanciaEjec = ejecucion() # se crea una instancia de la clase ejecucion para poder llamar los metodos necesarios para la ejecucion
+            todasInstancias.append(instanciaEjec)
             #######################################################################
             instanciaEjec.setCantMemo(int(instanciaArch.getMemoriaDB())) # se envia la cantidad de memoria a la ejecución
             instanciaEjec.setKernel(int(instanciaArch.getKernelBD())) # se envia la cantidad de kernel a la ejecución
@@ -126,6 +132,7 @@ class HomePageView2(CreateView):
             ########################################################################
            
             instanciaPaP = PaP() # se crea una instancia de la clase paso a paso para poder llamar los metodos necesarios para la ejecucion paso a paso
+            todasInstancias.append(instanciaPaP)
             ########################################################################
             instanciaPaP.setCantMemo(int(instanciaArch.getMemoriaDB())) # se envia la cantidad de memoria a la ejecución
             instanciaPaP.setKernel(int(instanciaArch.getKernelBD())) # se envia la cantidad de kernel a la ejecución
@@ -674,6 +681,32 @@ class salirView(DeleteView):
     success_url= reverse_lazy('home')
 
     def get_object(self, queryset=None):
+        self.eliminaArchivos()
+        self.eliminaInstancias()
         deleteTodo = EjecArchCh.objects.all()
         return deleteTodo
+    
+    def eliminaArchivos(self):
 
+        tup = EjecArchCh.objects.all() # aquí se toman los datos desde la base de datos 
+        for tp in tup: 
+            nombres=tp.archivo # aquí se toman todas la rutas de los archivos cargados en la bd
+            nombrActual = str(nombres)
+            try:
+                os.remove("media/" + nombrActual)
+            except:
+                print('no se ha eliminado el archivo')
+
+    def eliminaInstancias(self):
+        tam = len(todasInstancias)
+        
+        for i in range(tam-1):
+            
+            try:
+                print('instanacia', i) 
+                n = gc.collect(2)
+                print(todasInstancias)
+            except:
+                print('nada')
+
+        
