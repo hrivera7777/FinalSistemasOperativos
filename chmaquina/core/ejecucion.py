@@ -351,7 +351,7 @@ class ejecucion:
         try:
             for i in range(len(self.ruta2)):
                 palabras = str(self.ruta2[i]).split('/') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
-                tempoDic[i]= {'prog':palabras[1], 'ins': int(self.rlc[i] - self.rb[i]),'rb':self.rb[i], 'rlc':self.rlc[i], 'rlp':self.rlp[i]}
+                tempoDic[i]= {'prog':palabras[1], 'ins': int(self.rlc[i] - self.rb[i]),'rb':self.rb[i], 'rlc':self.rlc[i]-1, 'rlp':self.rlp[i]-1}
         except:
             tempoDic={}
         return tempoDic
@@ -1055,3 +1055,24 @@ class ejecucion:
             valorLeido = -1
 
         self.memoria[self.idenVar(linea[1],idProg)] = valorLeido #guarda la posicion de memoria 
+    
+    def clean(self):
+        self.cantmemoria= 0 
+        self.cantidadFull = 0 #cantidad full de memoria
+        self.kernel= 0
+        self.proEjec=0 # id del programa que se ejecuta actualmente
+        self.leer=[] # todas las lineas del codigo del programa .ch
+        self.ruta2=[]
+        self.memoria =[] # memoria donde se guarda el kernel, los programas y el acumulador
+        self.variables =[] #aqui se guardan los nombres de las variables
+        self.posMemVar=[]
+        self.cantidVarixPro=[0]*30 # aqui se sabe cuantas variables son agregadas en cada uno de los programas, que representan una posicion en el arreglo 
+        self.etiquetas =[] #aqui se guardan los nombres de la etiquetas
+        self.posMemEtiq=[]
+        self.rb=[] # registro base del programa, donde empieza el programa, cada posicion corresponde a un programa (ejem rb[0] es el rb del programa 0)
+        self.rlc =[] # registro limite del codigo, hasta donde llegan las instrucciones del programa, cada posicion corresponde a un programa (ejem rlc[0] es el rlc del programa 0) 
+        self.rlp=[] # registro limite del programa, hasta donde llega el programa, con variables incluidas, cada posicion corresponde a un programa (ejem rlp[0] es el rlp del programa 0)
+        self.pantalla =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
+        self.impresora =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
+        valoresLeidos=[] #valor traido desde el front para la funcion leer
+

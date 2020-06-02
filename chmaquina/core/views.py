@@ -89,16 +89,16 @@ class HomePageView2(CreateView):
             proEjec=len(ruta)-1 # este será el programa que se ejecutará, el ultimo programa que fue agregado a la base de datos
             
             f="" #se utiliza para abrir el archivo desde la ruta relativa
-            myfile ="" #se utiliza para crear una instancia de la clase file y así tener un manejo desde django
+            #myfile ="" #se utiliza para crear una instancia de la clase file y así tener un manejo desde django
             leer=[] # aquí se guardan todas las instrucciones del archivo .ch 
             
             #aqui tratamos de leer el archivo si es posible.
             try:
                 f = open("media/" + ruta[proEjec], "r")
-                myfile = File(f)
-                leer = myfile.readlines() #para leer linea a linea
+                #myfile = File(f)
+                leer = f.readlines() #para leer linea a linea
                 f.close()
-                myfile.close()
+                #myfile.close()
             except:
                 print('no se puede abrir el archivo solicitado')  
 
@@ -111,8 +111,8 @@ class HomePageView2(CreateView):
             ####################################################################
             global todasInstancias
             
-            instanciaArch = cargArchivo(tup, nombres, memoriaTotal, kernelFinal, ruta, leer, proEjec)
-            todasInstancias.append(instanciaArch)
+            #instanciaArch = cargArchivo(tup, nombres, memoriaTotal, kernelFinal, ruta, leer, proEjec)
+            #todasInstancias.append(instanciaArch)
             #############################################################################################################
             instanciaSintaxis= sintax() # se crea una instancia de la clase sintax para poder llamar el método que prueba toda la sintaxis de un archivo .ch
             todasInstancias.append(instanciaSintaxis)
@@ -124,21 +124,23 @@ class HomePageView2(CreateView):
             instanciaEjec = ejecucion() # se crea una instancia de la clase ejecucion para poder llamar los metodos necesarios para la ejecucion
             todasInstancias.append(instanciaEjec)
             #######################################################################
-            instanciaEjec.setCantMemo(int(instanciaArch.getMemoriaDB())) # se envia la cantidad de memoria a la ejecución
-            instanciaEjec.setKernel(int(instanciaArch.getKernelBD())) # se envia la cantidad de kernel a la ejecución
+            instanciaEjec.setCantMemo(int(memoriaTotal)) # se envia la cantidad de memoria a la ejecución
+            #instanciaEjec.setCantMemo(int(instanciaArch.getMemoriaDB())) # se envia la cantidad de memoria a la ejecución
+            #instanciaEjec.setKernel(int(instanciaArch.getKernelBD())) # se envia la cantidad de kernel a la ejecución
+            instanciaEjec.setKernel(int(kernelFinal)) # se envia la cantidad de kernel a la ejecución
             instanciaEjec.setLeer(leerLimp2) # se envia la lista con todas la lineas a ejecucion 
             instanciaEjec.setProgEjec(int(proEjec)) # se envia el programa a ser ejecutado a la ejecución
-            instanciaEjec.setRuta(instanciaArch.getRutaBD()) # se envia las rutas de los archivos a la ejecución
+            instanciaEjec.setRuta(ruta) # se envia las rutas de los archivos a la ejecución
             ########################################################################
            
             instanciaPaP = PaP() # se crea una instancia de la clase paso a paso para poder llamar los metodos necesarios para la ejecucion paso a paso
             todasInstancias.append(instanciaPaP)
             ########################################################################
-            instanciaPaP.setCantMemo(int(instanciaArch.getMemoriaDB())) # se envia la cantidad de memoria a la ejecución
-            instanciaPaP.setKernel(int(instanciaArch.getKernelBD())) # se envia la cantidad de kernel a la ejecución
+            instanciaPaP.setCantMemo(int(memoriaTotal)) # se envia la cantidad de memoria a la ejecución
+            instanciaPaP.setKernel(int(kernelFinal)) # se envia la cantidad de kernel a la ejecución
             instanciaPaP.setLeer(leerLimp2) # se envia la lista con todas la lineas a paso a paso 
             instanciaPaP.setProgEjec(int(proEjec)) # se envia el programa a ser ejecutado a la ejecución
-            instanciaPaP.setRuta(instanciaArch.getRutaBD()) # se envia las rutas de los archivos a la ejecución
+            instanciaPaP.setRuta(ruta) # se envia las rutas de los archivos a la ejecución
             cambioCurso = instanciaPaP.getCambiaCurso()
             ##########################################################################
 
@@ -635,7 +637,7 @@ class HomePageView2(CreateView):
         
         profile, created= EjecArchCh.objects.get_or_create()
         return profile
-        
+"""        
 class cargArchivo(): #clase que hace de puente para enviar los datos para la sintaxis o la ejecución 
 
     tup =[]
@@ -673,8 +675,16 @@ class cargArchivo(): #clase que hace de puente para enviar los datos para la sin
     def getRutaBD(self): # retorna la lista de programas en la bd 
         return self.ruta    
 
-
-
+    def clean(self):
+        tup =[]
+        ruta=[""] #aqui se agregan todos los archivos para abrir 
+        cantmemoria= 0
+        kernel= 0
+        proEjec = 0
+        tempo=""
+        nombre2=""
+        tp =[]
+"""
 class salirView(DeleteView):
 
     template_name = "core/delete.html"
@@ -682,6 +692,7 @@ class salirView(DeleteView):
 
     def get_object(self, queryset=None):
         self.eliminaArchivos()
+        self.cleanAll()
         self.eliminaInstancias()
         deleteTodo = EjecArchCh.objects.all()
         return deleteTodo
@@ -697,6 +708,13 @@ class salirView(DeleteView):
             except:
                 print('no se ha eliminado el archivo')
 
+    def cleanAll(self):
+        for i in range(len(todasInstancias)):
+            try:
+                todasInstancias[i].clean()
+            except:
+                print('no limpió nada')
+    
     def eliminaInstancias(self):
         tam = len(todasInstancias)
         
@@ -704,7 +722,8 @@ class salirView(DeleteView):
             
             try:
                 print('instanacia', i) 
-                n = gc.collect(2)
+                del todasInstancias[i]
+                #n = gc.collect(2)
                 print(todasInstancias)
             except:
                 print('nada')

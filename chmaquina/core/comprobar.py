@@ -435,3 +435,8 @@ class sintax:
         else:
             return i
     
+
+    def clean(self):
+        self.leer=[] #donde se almacenan todas las instrucciones del archivo
+        self.pantalla =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
+        self.listaErrores =[]
