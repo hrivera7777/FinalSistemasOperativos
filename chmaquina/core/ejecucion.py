@@ -959,7 +959,13 @@ class ejecucion:
         else:
             self.pantalla.append("la variable 2 no es de tipo lógico")
 
-        self.memoria[self.idenVar(linea[3],idProg)] = var1Bol and var2Bol
+
+        if var1Bol and var2Bol:
+            self.memoria[self.idenVar(linea[3],idProg)] = 1
+        else:
+            self.memoria[self.idenVar(linea[3],idProg)] = 0
+
+        #self.memoria[self.idenVar(linea[3],idProg)] = var1Bol and var2Bol
 
     def eO(self, linea, idProg):
         #valores boleanos son  0 para falso y 1 para verdadero
@@ -983,15 +989,18 @@ class ejecucion:
         else:
             self.pantalla.append("la variable 2 no es de tipo lógico")
 
-        self.memoria[self.idenVar(linea[3],idProg)] = var1Bol or var2Bol
+        if var1Bol or var2Bol:
+            self.memoria[self.idenVar(linea[3],idProg)] = 1
+        else:
+            self.memoria[self.idenVar(linea[3],idProg)] = 0
+
+        #self.memoria[self.idenVar(linea[3],idProg)] = var1Bol or var2Bol
 
     def eNo(self, linea, idProg):
         #valores boleanos son  0 para falso y 1 para verdadero
 
         var1 = linea[1] # aquí se toman los datos ingresados a la variable lógica 1
-        var2= linea[2] # aquí se toman los datos ingresados a la variable lógica 2
         var1Bol = False # variable para convertir el dato(variable 1) ingresado a booleano 
-        var2Bol = False # variable para convertir el dato(variable 2) ingresado a booleano 
 
         if int(var1) ==0:
             var1Bol=False
@@ -999,8 +1008,13 @@ class ejecucion:
             var1Bol = True 
         else:
             self.pantalla.append("la variable 1 no es de tipo lógico")  
+        
+        if not(var1Bol):
+            self.memoria[self.idenVar(linea[2],idProg)] = 1
+        else:
+            self.memoria[self.idenVar(linea[2],idProg)] = 0
 
-        self.memoria[self.idenVar(linea[2],idProg)] = not(var1Bol)
+        #self.memoria[self.idenVar(linea[2],idProg)] = not(var1Bol)
     
     def eMuestre(self, linea, idProg):
         if(linea[1]=='acumulador'):

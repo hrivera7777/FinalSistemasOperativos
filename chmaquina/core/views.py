@@ -1,20 +1,20 @@
 from django.shortcuts import render
-from django.views.generic.base import TemplateView
+#from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.urls import reverse_lazy
 from .models import  EjecArchCh #ArchivosCh,
-from django.shortcuts import get_object_or_404
+#from django.shortcuts import get_object_or_404
 from .comprobar import sintax
 from .ejecucion import ejecucion
 from .pasoapaso import PaP
 from django.core.files import File # se hace necesario para la apertura del archivo
-
+from .memoria import memoria
 import os
 import gc
 
-import json
-from django.http import HttpResponse
-from django.http import JsonResponse # ultimo agregado
+#import json
+#from django.http import HttpResponse
+#from django.http import JsonResponse # ultimo agregado
 
 
 # ########################################################################################################################
@@ -109,10 +109,10 @@ class HomePageView2(CreateView):
             
             leerLimp2=[i for i in leerLimp if i != ''] # se utiliza para quitar los espacios vacios que pueda tener la lista
             ####################################################################
-            global todasInstancias
+            global todasInstancias #podría removerse
             
-            #instanciaArch = cargArchivo(tup, nombres, memoriaTotal, kernelFinal, ruta, leer, proEjec)
-            #todasInstancias.append(instanciaArch)
+            instanciaMemoria = memoria(int(memoriaTotal),int(kernelFinal))
+
             #############################################################################################################
             instanciaSintaxis= sintax() # se crea una instancia de la clase sintax para poder llamar el método que prueba toda la sintaxis de un archivo .ch
             todasInstancias.append(instanciaSintaxis)
@@ -125,8 +125,6 @@ class HomePageView2(CreateView):
             todasInstancias.append(instanciaEjec)
             #######################################################################
             instanciaEjec.setCantMemo(int(memoriaTotal)) # se envia la cantidad de memoria a la ejecución
-            #instanciaEjec.setCantMemo(int(instanciaArch.getMemoriaDB())) # se envia la cantidad de memoria a la ejecución
-            #instanciaEjec.setKernel(int(instanciaArch.getKernelBD())) # se envia la cantidad de kernel a la ejecución
             instanciaEjec.setKernel(int(kernelFinal)) # se envia la cantidad de kernel a la ejecución
             instanciaEjec.setLeer(leerLimp2) # se envia la lista con todas la lineas a ejecucion 
             instanciaEjec.setProgEjec(int(proEjec)) # se envia el programa a ser ejecutado a la ejecución
@@ -151,6 +149,7 @@ class HomePageView2(CreateView):
                 return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':['No hay suficiente espacio para el kernel con respecto al tamaño de la memoria.'],'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal, 'modo':'Modo kernel'}) # })#,   
             
             else:
+                #instanciaMemoria.agregarKernelMemoria() 07-06-2020
                 instanciaEjec.agregarKernelMemoria()
 
                 if contadorPasos ==0 and proEjec == 0 and not(cambioCurso):
@@ -161,6 +160,7 @@ class HomePageView2(CreateView):
                 for i in range (kernelFinal): #aqui se llena la lista con los valores de la posicion de memoria que ocupa el kernel
                     cantidadKernel.append(i+1) 
 
+                #if not(instanciaMemoria.puedeEjecProg()) and request.method == 'GET': 07-06-2020
                 if not(instanciaEjec.puedeEjecProg()) and request.method == 'GET':
                         return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':['No hay suficiente espacio para el programa con respecto al tamaño de la memoria.'],'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memKer':cantidadKernel, 'memoriaTotal':memoriaTotal,'modo':'Modo kernel'}) # })#,
 
