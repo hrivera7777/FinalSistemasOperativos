@@ -107,6 +107,9 @@ class ejecucion:
         vlrIni = "-2"
         hilo = threading.Thread(target=self.ejecutarProg, args=("-2",))
         hilo.start()
+    
+    def getTamMemoriaKernelProg(self):
+        return len(self.memoria)
 
     def stopHppal(self):
         self.stopH = True

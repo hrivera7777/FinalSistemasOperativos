@@ -11,6 +11,7 @@ from django.core.files import File # se hace necesario para la apertura del arch
 from .memoria import memoria
 import os
 import gc
+from collections import deque
 
 #import json
 #from django.http import HttpResponse
@@ -33,6 +34,7 @@ listaValoresVariTeclado = []
 listaValoresVariTecladoPaP = []
 tieneQueLeerPaP= -2
 todasInstancias =[]
+colaP = deque() # para agregar los procesos que van llegando 
 ## con esta view permite agregar varios archivos ch a la vez 
 class HomePageView2(CreateView):
     model = EjecArchCh
@@ -49,6 +51,27 @@ class HomePageView2(CreateView):
     global cuantosLea
     global cuantosLeaFaltan
     global tieneQueLeerPaP
+
+    # metodo que comprueba si es posible realizar la ejecución (la memoria disponible debe ser mayor que el programa a cargar)
+    def puedeEjecProg(self, leer,proEjec, cantmemoriaConKernel, cantMemoriaTotal, tamMemoriaConProg):
+        posiblesVar = 0 # se utiliza para verificar cuantas variables se crean en el programa 
+
+        for i in range(len(leer)):
+            palabras = leer[i].rstrip().split()
+            operador = palabras[0]
+            if operador == 'nueva':
+                posiblesVar +=1
+        if proEjec == 0:
+            if cantmemoriaConKernel >= (len(leer)+posiblesVar): 
+                return True
+            else:
+                return False #se mostraria un error en la pantalla 
+        else:
+            if (cantMemoriaTotal - tamMemoriaConProg) >= (len(leer)+posiblesVar):
+                return True
+            else:
+                return False #se mostraria un error en la pantalla 
+
     
     def get(self, request, *args, **kwargs):
         global contadorPasos
@@ -108,6 +131,12 @@ class HomePageView2(CreateView):
                 leerLimp.append(leer[w].rstrip()) #se deja el archivo sin el salto de linea que agrega python
             
             leerLimp2=[i for i in leerLimp if i != ''] # se utiliza para quitar los espacios vacios que pueda tener la lista
+            
+            global colaP
+            colaP.appendleft(leerLimp2)
+            print("cola inicio",colaP)
+            tempoLeer= colaP.pop() # se usa para tomar el ultimo proceso que llegó 
+           
             ####################################################################
             global todasInstancias #podría removerse
             
@@ -117,7 +146,7 @@ class HomePageView2(CreateView):
             instanciaSintaxis= sintax() # se crea una instancia de la clase sintax para poder llamar el método que prueba toda la sintaxis de un archivo .ch
             todasInstancias.append(instanciaSintaxis)
 
-            instanciaSintaxis.setLeer(leerLimp2) # se envia la lista con todas la lineas a sintaxis 
+            instanciaSintaxis.setLeer(tempoLeer) # se envia la lista con todas la lineas a sintaxis 
             ###############################################################################################
 
 
@@ -126,7 +155,7 @@ class HomePageView2(CreateView):
             #######################################################################
             instanciaEjec.setCantMemo(int(memoriaTotal)) # se envia la cantidad de memoria a la ejecución
             instanciaEjec.setKernel(int(kernelFinal)) # se envia la cantidad de kernel a la ejecución
-            instanciaEjec.setLeer(leerLimp2) # se envia la lista con todas la lineas a ejecucion 
+            instanciaEjec.setLeer(tempoLeer) # se envia la lista con todas la lineas a ejecucion 
             instanciaEjec.setProgEjec(int(proEjec)) # se envia el programa a ser ejecutado a la ejecución
             instanciaEjec.setRuta(ruta) # se envia las rutas de los archivos a la ejecución
             ########################################################################
@@ -136,7 +165,7 @@ class HomePageView2(CreateView):
             ########################################################################
             instanciaPaP.setCantMemo(int(memoriaTotal)) # se envia la cantidad de memoria a la ejecución
             instanciaPaP.setKernel(int(kernelFinal)) # se envia la cantidad de kernel a la ejecución
-            instanciaPaP.setLeer(leerLimp2) # se envia la lista con todas la lineas a paso a paso 
+            instanciaPaP.setLeer(tempoLeer) # se envia la lista con todas la lineas a paso a paso 
             instanciaPaP.setProgEjec(int(proEjec)) # se envia el programa a ser ejecutado a la ejecución
             instanciaPaP.setRuta(ruta) # se envia las rutas de los archivos a la ejecución
             cambioCurso = instanciaPaP.getCambiaCurso()
