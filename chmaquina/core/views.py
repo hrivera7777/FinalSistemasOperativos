@@ -35,6 +35,8 @@ listaValoresVariTecladoPaP = []
 tieneQueLeerPaP= -2
 todasInstancias =[]
 colaP = deque() # para agregar los procesos que van llegando 
+proEjec=0
+entro=0
 ## con esta view permite agregar varios archivos ch a la vez 
 class HomePageView2(CreateView):
     model = EjecArchCh
@@ -51,6 +53,7 @@ class HomePageView2(CreateView):
     global cuantosLea
     global cuantosLeaFaltan
     global tieneQueLeerPaP
+    global proEjec
 
     # metodo que comprueba si es posible realizar la ejecución (la memoria disponible debe ser mayor que el programa a cargar)
     def puedeEjecProg(self, leer,proEjec, cantmemoriaConKernel, cantMemoriaTotal, tamMemoriaConProg):
@@ -72,11 +75,37 @@ class HomePageView2(CreateView):
             else:
                 return False #se mostraria un error en la pantalla 
 
-    
+    def abrirArch(self, ruta):
+        f="" #se utiliza para abrir el archivo desde la ruta relativa
+        #myfile ="" #se utiliza para crear una instancia de la clase file y así tener un manejo desde django
+        leer=[] # aquí se guardan todas las instrucciones del archivo .ch 
+        
+        #aqui tratamos de leer el archivo si es posible.
+        try:
+            f = open("media/" + ruta, "r")
+            #myfile = File(f)
+            leer = f.readlines() #para leer linea a linea
+            f.close()
+            #myfile.close()
+        except:
+            print('no se puede abrir el archivo solicitado')  
+
+        #aquí se retiran el \n que adiciona python cuando lee un archivo de texto
+        leerLimp=[] 
+        for w in range(len(leer)):
+            leerLimp.append(leer[w].rstrip()) #se deja el archivo sin el salto de linea que agrega python
+        
+        leerLimp2=[i for i in leerLimp if i != ''] # se utiliza para quitar los espacios vacios que pueda tener la lista
+
+        return leerLimp2
+
+
     def get(self, request, *args, **kwargs):
         global contadorPasos
         global cambioCurso
-
+        global proEjec
+        global entro
+        leerLimp2=[] 
         ejecute = request.GET.get('ejecute') # se toma lo que se envia a través de una peticion ajax 
  
 
@@ -85,6 +114,8 @@ class HomePageView2(CreateView):
             return render(request, self.template_name,{'title': "Ch Máquina",'pantallaBack':['Presione abir y cargue un archivo .ch, así, también cargará el tamaño de la memoria y el tamaño del kernel.'],'modo':'Modo kernel'}) # })#,   
            
         else:
+            entro +=1
+            print("esto es proEjec", proEjec)
             ejecute = request.GET.get('ejecute') # se utliza este metodo para tomar la peticion ajax realizada desde el front para ejecutar un archivo .ch
             pasoaPaso = request.GET.get('pasoapaso')
             sgtPaso = request.GET.get('sgtpaso')
@@ -109,8 +140,33 @@ class HomePageView2(CreateView):
                 cantidMemoriaDisp=[] # se utulizan listas para mostrar las posiciones de memoria disponible  
 
             ##################################################################
-            proEjec=len(ruta)-1 # este será el programa que se ejecutará, el ultimo programa que fue agregado a la base de datos
+            #20-06-2020 proEjec=len(ruta)-1 # este será el programa que se ejecutará, el ultimo programa que fue agregado a la base de datos
+            global colaP
+            print('entro', entro,"\n")
+            if entro == len(ruta):
+                rutaPrograma =""
+                try:
+                    rutaPrograma =ruta[proEjec]
+                except:
+                    rutaPrograma =ruta[0]
+                    print("error en la ruta del último programa")
+                leerLimp2= self.abrirArch(rutaPrograma)
+                colaP.clear
             
+            else:
+                rutaPrograma =""
+                try:
+                    rutaPrograma =ruta[proEjec]
+                except:
+                    rutaPrograma =ruta[0]
+                    print("error en la ruta del último programa")
+
+                leerLimp2= self.abrirArch(rutaPrograma)
+                #colaP.pop()
+                colaP.appendleft(leerLimp2)
+            print("cola inicio",colaP)
+
+            """ 20-06-2020
             f="" #se utiliza para abrir el archivo desde la ruta relativa
             #myfile ="" #se utiliza para crear una instancia de la clase file y así tener un manejo desde django
             leer=[] # aquí se guardan todas las instrucciones del archivo .ch 
@@ -131,11 +187,9 @@ class HomePageView2(CreateView):
                 leerLimp.append(leer[w].rstrip()) #se deja el archivo sin el salto de linea que agrega python
             
             leerLimp2=[i for i in leerLimp if i != ''] # se utiliza para quitar los espacios vacios que pueda tener la lista
+            """
             
-            global colaP
-            colaP.appendleft(leerLimp2)
-            print("cola inicio",colaP)
-            tempoLeer= colaP.pop() # se usa para tomar el ultimo proceso que llegó 
+            #tempoLeer= colaP.pop() # se usa para tomar el ultimo proceso que llegó 
            
             ####################################################################
             global todasInstancias #podría removerse
@@ -146,16 +200,18 @@ class HomePageView2(CreateView):
             instanciaSintaxis= sintax() # se crea una instancia de la clase sintax para poder llamar el método que prueba toda la sintaxis de un archivo .ch
             todasInstancias.append(instanciaSintaxis)
 
-            instanciaSintaxis.setLeer(tempoLeer) # se envia la lista con todas la lineas a sintaxis 
+            instanciaSintaxis.setLeer(leerLimp2) # se envia la lista con todas la lineas a sintaxis 
             ###############################################################################################
 
 
             instanciaEjec = ejecucion() # se crea una instancia de la clase ejecucion para poder llamar los metodos necesarios para la ejecucion
+            if proEjec==0: # se necesita para cuando se sale del programa chmaquina y se vuelve a ingresar 
+                instanciaEjec.clean()
             todasInstancias.append(instanciaEjec)
             #######################################################################
             instanciaEjec.setCantMemo(int(memoriaTotal)) # se envia la cantidad de memoria a la ejecución
             instanciaEjec.setKernel(int(kernelFinal)) # se envia la cantidad de kernel a la ejecución
-            instanciaEjec.setLeer(tempoLeer) # se envia la lista con todas la lineas a ejecucion 
+           # instanciaEjec.setLeer(tempoLeer) # se envia la lista con todas la lineas a ejecucion 
             instanciaEjec.setProgEjec(int(proEjec)) # se envia el programa a ser ejecutado a la ejecución
             instanciaEjec.setRuta(ruta) # se envia las rutas de los archivos a la ejecución
             ########################################################################
@@ -165,12 +221,14 @@ class HomePageView2(CreateView):
             ########################################################################
             instanciaPaP.setCantMemo(int(memoriaTotal)) # se envia la cantidad de memoria a la ejecución
             instanciaPaP.setKernel(int(kernelFinal)) # se envia la cantidad de kernel a la ejecución
-            instanciaPaP.setLeer(tempoLeer) # se envia la lista con todas la lineas a paso a paso 
+            #instanciaPaP.setLeer(tempoLeer) # se envia la lista con todas la lineas a paso a paso 
+            instanciaPaP.setLeer(leerLimp2) # se envia la lista con todas la lineas a paso a paso 
             instanciaPaP.setProgEjec(int(proEjec)) # se envia el programa a ser ejecutado a la ejecución
             instanciaPaP.setRuta(ruta) # se envia las rutas de los archivos a la ejecución
             cambioCurso = instanciaPaP.getCambiaCurso()
             ##########################################################################
 
+            
 
             if not(instanciaEjec.puedeEjecKernel()):
                 for i in range (tamMemoriaDisp): #aqui se llena la lista con los valores de la posicion de memoria disponible
@@ -190,7 +248,8 @@ class HomePageView2(CreateView):
                     cantidadKernel.append(i+1) 
 
                 #if not(instanciaMemoria.puedeEjecProg()) and request.method == 'GET': 07-06-2020
-                if not(instanciaEjec.puedeEjecProg()) and request.method == 'GET':
+                if not(self.puedeEjecProg(leerLimp2, proEjec,(memoriaTotal-kernelFinal),memoriaTotal,instanciaEjec.getTamMemoriaKernelProg())) and request.method == 'GET':
+                #if not(instanciaEjec.puedeEjecProg()) and request.method == 'GET':
                         return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':['No hay suficiente espacio para el programa con respecto al tamaño de la memoria.'],'memoriaDis': cantidMemoriaDisp, 'kernel': kernelFinal, 'memKer':cantidadKernel, 'memoriaTotal':memoriaTotal,'modo':'Modo kernel'}) # })#,
 
                 else:
@@ -216,7 +275,7 @@ class HomePageView2(CreateView):
 
                        
                         if str(ejecute) == 'ejecutarOk' or varPrev !='': 
-
+                            
                             global varALeer
                             global varALeerPaP
                             global cuantosLea
@@ -323,6 +382,11 @@ class HomePageView2(CreateView):
                                                 'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer, }) 
 
                             else:
+                                tempoLeer= colaP.pop() # se usa para tomar el ultimo proceso que llegó 
+                                print("esto es leer", tempoLeer, 'programa', proEjec)
+                                print("esto queda en la cola",colaP)
+                                instanciaEjec.setLeer(tempoLeer) # se envia la lista con todas la lineas a ejecucion 
+                                proEjec+=1
                                 ActivarVentLeer = False
                                 instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
                                 instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
@@ -720,10 +784,14 @@ class salirView(DeleteView):
     success_url= reverse_lazy('home')
 
     def get_object(self, queryset=None):
+        global proEjec
+        global entro
         self.eliminaArchivos()
-        self.cleanAll()
+        #self.cleanAll()
         self.eliminaInstancias()
         deleteTodo = EjecArchCh.objects.all()
+        proEjec = 0
+        entro=-1
         return deleteTodo
     
     def eliminaArchivos(self):
