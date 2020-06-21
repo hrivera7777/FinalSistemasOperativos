@@ -205,7 +205,7 @@ class HomePageView2(CreateView):
 
 
             instanciaEjec = ejecucion() # se crea una instancia de la clase ejecucion para poder llamar los metodos necesarios para la ejecucion
-            if proEjec==0: # se necesita para cuando se sale del programa chmaquina y se vuelve a ingresar 
+            if proEjec==0 and entro==1: # se necesita para cuando se sale del programa chmaquina y se vuelve a ingresar 
                 instanciaEjec.clean()
             todasInstancias.append(instanciaEjec)
             #######################################################################
@@ -386,7 +386,7 @@ class HomePageView2(CreateView):
                                 print("esto es leer", tempoLeer, 'programa', proEjec)
                                 print("esto queda en la cola",colaP)
                                 instanciaEjec.setLeer(tempoLeer) # se envia la lista con todas la lineas a ejecucion 
-                                proEjec+=1
+                                
                                 ActivarVentLeer = False
                                 instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
                                 instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
@@ -401,7 +401,7 @@ class HomePageView2(CreateView):
                                 mem = instanciaEjec.getMemoria() # (list) 
                                 prog = instanciaEjec.getProgramas() # (list) 
                                 memDis = instanciaEjec.getMemoriaDispo() # (list) 
-
+                                proEjec+=1
                                 return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                                 'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
                                                 'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer, }) 

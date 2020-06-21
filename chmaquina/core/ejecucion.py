@@ -179,6 +179,7 @@ class ejecucion:
             if operador == 'nueva':
                 posiblesVar +=1
         for i in range(len(self.rlc)): # se delimita el registro limite del programa 
+            print("registro limite ", self.rlc, "\n") 
             self.rlp.append(self.rlc[self.proEjec] + posiblesVar)
         ##############################
         self.cantmemoria -= ((self.rlc[self.proEjec]- self.rb[self.proEjec]) + posiblesVar) # se resta el espacio que ocupa el programa con su variables 
