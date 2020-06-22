@@ -42,7 +42,8 @@ class PaP: # clase paso a paso
     pantalla =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
     impresora =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
     valoraLeer="" #valor traido desde el front para la funcion leer
-    
+    programasEjecutados={}
+
     activarVentLeer = True # se enviará al front para mostrar una ventana donde se leen los datos de las var
     stopH=False # variable para detener ejecucion del hilo ppal
     lienaActual = ""
@@ -186,8 +187,8 @@ class PaP: # clase paso a paso
         if(self.proEjec == 0) and memVacia == "":
             for i in range(self.kernel):
                 self.memoria.append("***kernel ch***")
-        else:
-            print('no hay necesidad de agregar kernel')
+        #else:
+        #    print('no hay necesidad de agregar kernel')
     
 
     #metodo para agregar las instrucciones a la memoria 
@@ -222,7 +223,8 @@ class PaP: # clase paso a paso
                 self.rlp.append(self.rlc[self.proEjec] + posiblesVar)
             ##############################
             self.cantmemoria -= ((self.rlc[self.proEjec]- self.rb[self.proEjec]) + posiblesVar) # se resta el espacio que ocupa el programa con su variables 
-    
+        self.setProgramasEjecutados()
+
     def agregarEtiquetas(self): # se hace necesario agregar las etiquetas puesto que se pueden usar antes de ser cargadas 
         instruc=[] # numero de la instruccion hacia donde debe ir 
         for i in range(self.rb[self.proEjec],self.rlc[self.proEjec]):
@@ -383,14 +385,25 @@ class PaP: # clase paso a paso
             tempoDic[j] =self.memoria[j]
         return tempoDic 
     
+
+    def setProgramasEjecutados(self):
+        palabras = str(self.ruta2[self.proEjec]).split('/') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
+        self.programasEjecutados[self.proEjec]= {'prog':palabras[1], 'ins': int(self.rlc[self.proEjec] - self.rb[self.proEjec]),'rb':self.rb[self.proEjec], 'rlc':self.rlc[self.proEjec]-1, 'rlp':self.rlp[self.proEjec]-1}
+
     #metodo para obtener cada etiqueta que esta memoria del programa que se esta ejecutando (etiquetas en el frontend)
     def getProgramas(self):
-        i= 0
-        tempoDic={} # se usa un diccionario para facilitar la manera de mostrar los datos en el frontend
+        #tempoDic={} # se usa un diccionario para facilitar la manera de mostrar los datos en el frontend
+        
+
+        #palabras = str(self.ruta2[self.proEjec]).split('/') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
+        #tempoDic[self.proEjec]= {'prog':palabras[1], 'ins': int(self.rlc[self.proEjec] - self.rb[self.proEjec]),'rb':self.rb[self.proEjec], 'rlc':self.rlc[self.proEjec]-1, 'rlp':self.rlp[self.proEjec]-1}
+
+        """
         for i in range(len(self.ruta2)):
             palabras = str(self.ruta2[i]).split('/') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
             tempoDic[i]= {'prog':palabras[1], 'ins': int(self.rlc[i] - self.rb[i]),'rb':self.rb[i], 'rlc':self.rlc[i]-1, 'rlp':self.rlp[i]-1}
-        return tempoDic
+        """
+        return self.programasEjecutados 
     
     def getMemoriaDispo(self):
         libre = []
@@ -1097,12 +1110,14 @@ class PaP: # clase paso a paso
             cambiaCurso = True
             print('entre al if del vayasi, valor cambiacurso', cambiaCurso)
             posaCambiar = posMemEti1
-            self.ejecutarProgPaP(posMemEti1) # #aquí se llama el metodo donde cambia el flujo del programa con la posicion que entregue (posMemEti1)
+          
+           # self.ejecutarProgPaP(posMemEti1) # #aquí se llama el metodo donde cambia el flujo del programa con la posicion que entregue (posMemEti1)
         elif int(self.memoria[0]) < 0 or float(self.memoria[0])< 0.0:
             print('entre al elif del vayasi, valor cambiacurso', cambiaCurso)
             cambiaCurso = True
             posaCambiar = posMemEti2
-            self.ejecutarProgPaP(posMemEti2) # #aquí se llama el metodo donde cambia el flujo del programa con la posicion que entregue (posMemEti2)
+           
+           # self.ejecutarProgPaP(posMemEti2) # #aquí se llama el metodo donde cambia el flujo del programa con la posicion que entregue (posMemEti2)
             
         else:
             print('entre al else del vayasi, valor cambiacurso', cambiaCurso)

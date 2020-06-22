@@ -156,8 +156,8 @@ class ejecucion:
         if(self.proEjec == 0) and memVacia == "":
             for i in range(self.kernel):
                 self.memoria.append("***kernel ch***")
-        else:
-            print('no hay necesidad de agregar kernel')
+        #else:
+           # print('no hay necesidad de agregar kernel')
     
 
     #metodo para agregar las instrucciones a la memoria 

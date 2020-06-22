@@ -125,25 +125,30 @@ class HomePageView2(CreateView):
             nombre=""
             tup = EjecArchCh.objects.all() # aquí se toman los datos desde la base de datos 
             ruta=[]
-            for tp in tup: 
+            nombreArchivos=[]
+            for tp in tup:
+
                 nombres=tp.archivo # aquí se toman todas la rutas de los archivos cargados en la bd
                 ruta.append(str(nombres)) # se toman todo las rutas relativas de la base de datos
                 memorias= tp.memoria # aquí se toman las cantidades de memoria guardadas en la bd
                 kernels=tp.kernel # aquí se toman las cantidades de kernel guardadas en la bd
                 tempo2= str(nombres).split('/')
-                nombre=tempo2[1]
+                nombreArchivos.append(tempo2[1])
                 memoriaTotal=int(memorias) # con esto sabemos cuanto es la memoria final entregado por el usuario
                 kernelFinal=int(kernels) # con esto sabemos cuanto es el kernel final entregado por el usuario
             
                 tamMemoriaDisp = memoriaTotal- kernelFinal -1 # aquí se verifica cuanta memoria disponible hay (kernel - acumulador - total memoria)
                 cantidadKernel=[] # se utilizan listas para mostrar las posiciones de memoria en el kernel 
                 cantidMemoriaDisp=[] # se utulizan listas para mostrar las posiciones de memoria disponible  
-
+            
+            nombre=nombreArchivos[proEjec] #nombre del archivo que se muestra en el front
+            
+            
             ##################################################################
             #20-06-2020 proEjec=len(ruta)-1 # este será el programa que se ejecutará, el ultimo programa que fue agregado a la base de datos
             global colaP
             print('entro', entro,"\n")
-            if entro == len(ruta):
+            if entro == len(ruta) or contadorPasos>0:
                 rutaPrograma =""
                 try:
                     rutaPrograma =ruta[proEjec]
@@ -198,16 +203,19 @@ class HomePageView2(CreateView):
 
             #############################################################################################################
             instanciaSintaxis= sintax() # se crea una instancia de la clase sintax para poder llamar el método que prueba toda la sintaxis de un archivo .ch
-            todasInstancias.append(instanciaSintaxis)
+            #todasInstancias.append(instanciaSintaxis)
 
             instanciaSintaxis.setLeer(leerLimp2) # se envia la lista con todas la lineas a sintaxis 
             ###############################################################################################
 
 
             instanciaEjec = ejecucion() # se crea una instancia de la clase ejecucion para poder llamar los metodos necesarios para la ejecucion
+            instanciaPaP = PaP() # se crea una instancia de la clase paso a paso para poder llamar los metodos necesarios para la ejecucion paso a paso
+
             if proEjec==0 and entro==1: # se necesita para cuando se sale del programa chmaquina y se vuelve a ingresar 
                 instanciaEjec.clean()
-            todasInstancias.append(instanciaEjec)
+                instanciaPaP.clean()
+            #todasInstancias.append(instanciaEjec)
             #######################################################################
             instanciaEjec.setCantMemo(int(memoriaTotal)) # se envia la cantidad de memoria a la ejecución
             instanciaEjec.setKernel(int(kernelFinal)) # se envia la cantidad de kernel a la ejecución
@@ -216,16 +224,17 @@ class HomePageView2(CreateView):
             instanciaEjec.setRuta(ruta) # se envia las rutas de los archivos a la ejecución
             ########################################################################
            
-            instanciaPaP = PaP() # se crea una instancia de la clase paso a paso para poder llamar los metodos necesarios para la ejecucion paso a paso
-            todasInstancias.append(instanciaPaP)
+            
+            #todasInstancias.append(instanciaPaP)
             ########################################################################
             instanciaPaP.setCantMemo(int(memoriaTotal)) # se envia la cantidad de memoria a la ejecución
             instanciaPaP.setKernel(int(kernelFinal)) # se envia la cantidad de kernel a la ejecución
             #instanciaPaP.setLeer(tempoLeer) # se envia la lista con todas la lineas a paso a paso 
-            instanciaPaP.setLeer(leerLimp2) # se envia la lista con todas la lineas a paso a paso 
+            #instanciaPaP.setLeer(leerLimp2) # se envia la lista con todas la lineas a paso a paso 
             instanciaPaP.setProgEjec(int(proEjec)) # se envia el programa a ser ejecutado a la ejecución
             instanciaPaP.setRuta(ruta) # se envia las rutas de los archivos a la ejecución
-            cambioCurso = instanciaPaP.getCambiaCurso()
+            #cambioCurso = instanciaPaP.getCambiaCurso()
+            #print(cambioCurso, 'cambioCurso linea 232')
             ##########################################################################
 
             
@@ -266,11 +275,8 @@ class HomePageView2(CreateView):
                             varPrev = request.GET.get('leaTeclado')
                         if request.GET.get('leaTecladoPaP') == None:
                             varPrevPaP = ""
-                            print('entré aquí if varpre')
                         else:
                             varPrevPaP = request.GET.get('leaTeclado')
-                            print('entré aquí else varpre')
-                        print(varPrevPaP, ' esto es varPrevPap')
                         ##############################################
 
                        
@@ -363,6 +369,10 @@ class HomePageView2(CreateView):
                                 listaValoresVariTeclado.append(variablePorTeclado)
 
                                 instanciaEjec.setValoraLeer(listaValoresVariTeclado) ##despues de leer todos los valores
+                                
+                                tempoLeer= colaP.pop() # se usa para tomar el ultimo proceso que llegó 
+                                instanciaEjec.setLeer(tempoLeer) # se envia la lista con todas la lineas a ejecucion 
+
                                 instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
                                 instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
 
@@ -383,8 +393,8 @@ class HomePageView2(CreateView):
 
                             else:
                                 tempoLeer= colaP.pop() # se usa para tomar el ultimo proceso que llegó 
-                                print("esto es leer", tempoLeer, 'programa', proEjec)
-                                print("esto queda en la cola",colaP)
+                                #print("esto es leer", tempoLeer, 'programa', proEjec)
+                                #print("esto queda en la cola",colaP)
                                 instanciaEjec.setLeer(tempoLeer) # se envia la lista con todas la lineas a ejecucion 
                                 
                                 ActivarVentLeer = False
@@ -408,8 +418,11 @@ class HomePageView2(CreateView):
                         
                         #aquí comienza el paso a paso
                         elif str(pasoaPaso) == 'pasoapaso' or str(sgtPaso) == 'sgtpaso' or str(sgtPaso) == 'fin' or varPrevPaP !='':
+                            if str(pasoaPaso) == 'pasoapaso':
+                                tempoLeer= colaP.pop() # se usa para tomar el ultimo proceso que llegó 
+                                instanciaPaP.setLeer(leerLimp2) # se envia la lista con todas la lineas a paso a paso 
+                                instanciaPaP.agregarInstrMemoria()
                             
-                            instanciaPaP.agregarInstrMemoria()
                             rb = instanciaPaP.getRB() #se trae el registro base del programa en ejecución
                             rlc = instanciaPaP.getRLC() #se trae el registro límite de código del programa en ejecución
                             lineaParaIr= rb + contadorPasos
@@ -441,7 +454,7 @@ class HomePageView2(CreateView):
                                     print('este es el if', ' leer en pos cont en if 1.1', leerLimp2[contadorPasos])
                                     instanciaPaP.ejecutarProgPaP(rb) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
                                     
-                                    
+                                    cambioCurso = instanciaPaP.getCambiaCurso()
 
                                     if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
                                         contadorPasos = instanciaPaP.getPosaCambiar() - rb
@@ -471,7 +484,7 @@ class HomePageView2(CreateView):
                                 elif (str(sgtPaso) == 'sgtpaso' and lineaParaIr < rlc) or (varPrevPaP != '' and lineaParaIr < rlc):
                                     print('este es el elif 1.1', ' leer en pos cont', leerLimp2[contadorPasos])
                                     instanciaPaP.ejecutarProgPaP(lineaParaIr) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
-                                    
+                                    cambioCurso = instanciaPaP.getCambiaCurso()
                                     if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
                                         contadorPasos = instanciaPaP.getPosaCambiar() - rb
                                         cambioCurso=False
@@ -530,7 +543,7 @@ class HomePageView2(CreateView):
                                     print('este es el elif 2.2', ' leer en pos cont', leerLimp2[contadorPasos])
                                
                                     instanciaPaP.ejecutarProgPaP(lineaParaIr) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
-                                    
+                                    cambioCurso = instanciaPaP.getCambiaCurso()
                                     if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
                                         contadorPasos = instanciaPaP.getPosaCambiar() - rb
                                         cambioCurso=False
@@ -595,7 +608,7 @@ class HomePageView2(CreateView):
                                     print('este es el else 3.2', ' leer en pos cont', leerLimp2[contadorPasos])
                               
                                     instanciaPaP.ejecutarProgPaP(lineaParaIr) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
-                                    
+                                    cambioCurso = instanciaPaP.getCambiaCurso()
                                     if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
                                         contadorPasos = instanciaPaP.getPosaCambiar() - rb
                                         cambioCurso=False
@@ -643,12 +656,13 @@ class HomePageView2(CreateView):
 ######################################################################################################################
                             else: # no tiene ningun lea para ingresar datos por teclado
                                 instanciaPaP.setContinuarLeyendo(False)
+                                print("esto es contador pasos", contadorPasos)
                                 
                                 if contadorPasos == 0:
                                     print('este es el if sin llamar leer 1.1', ' leer en pos cont', leerLimp2[contadorPasos])
                                     instanciaPaP.ejecutarProgPaP(rb) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
                                     
-                                    
+                                    cambioCurso = instanciaPaP.getCambiaCurso()
 
                                     if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
                                         contadorPasos = instanciaPaP.getPosaCambiar() - rb
@@ -679,8 +693,12 @@ class HomePageView2(CreateView):
                                     print('este es el elif sin llamar leer 1.2', ' leer en pos cont', leerLimp2[contadorPasos])
                                     instanciaPaP.ejecutarProgPaP(lineaParaIr) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
                                     
+
+                                    cambioCurso = instanciaPaP.getCambiaCurso()
+                                   
+
                                     if cambioCurso:#(operando == 'vayasi' or operando == 'vaya') and cambioCurso:
-                                        
+                                        print("entre cambio curso", cambioCurso)
                                         contadorPasos = instanciaPaP.getPosaCambiar() - rb
                                         cambioCurso=False
                                         instanciaPaP.setCambiaCurso(False)
@@ -717,7 +735,9 @@ class HomePageView2(CreateView):
                                     memDis = instanciaPaP.getMemoriaDispo() # (list)     
 
                                     contadorPasos=0
-
+                                    entro=0
+                                    proEjec +=1
+                                    print("ultimo paso sgte prog", proEjec)
                                     return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                                     'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
                                                     'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog, 'continuarPaP':'False', 'sgtpaso':'fin', 'contadorPasos':contadorPasos}) 
@@ -786,12 +806,15 @@ class salirView(DeleteView):
     def get_object(self, queryset=None):
         global proEjec
         global entro
+        global contadorPasos
         self.eliminaArchivos()
+
         #self.cleanAll()
-        self.eliminaInstancias()
+        #self.eliminaInstancias()
         deleteTodo = EjecArchCh.objects.all()
         proEjec = 0
         entro=-1
+        contadorPasos=0
         return deleteTodo
     
     def eliminaArchivos(self):
