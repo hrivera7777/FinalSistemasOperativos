@@ -383,3 +383,27 @@ tr{
     top: 34%;
 }
 
+/*adicional para algorimos de planificación*/
+
+#Pinicio{
+	clear: both;
+	background-color: #F2B84B;
+	font-weight: bold;
+	font-size: larger;
+	text-align: justify;
+	width: 25%;
+	height: 10%;
+	margin: 7% 38%;
+	padding: 15px 15px ;
+	float: left;
+	
+	
+	
+}
+
+.list-group-item-action:focus, .list-group-item-action:hover {
+    z-index: 1;
+    color: #495057;
+    text-decoration: none;
+	background-color: #d9d9d9;
+}

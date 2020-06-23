@@ -1,5 +1,5 @@
 from django.shortcuts import render
-#from django.views.generic.base import TemplateView
+from django.views.generic.base import TemplateView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.urls import reverse_lazy
 from .models import  EjecArchCh #ArchivosCh,
@@ -43,7 +43,7 @@ class HomePageView2(CreateView):
     fields = ['archivo', 'memoria','kernel']
     
 
-    success_url= reverse_lazy('home')
+    success_url= reverse_lazy('fcfs')
     template_name = "core/base.html"
     global cambioCurso
     global ActivarVentLeer
@@ -848,4 +848,9 @@ class salirView(DeleteView):
             except:
                 print('nada')
 
-        
+## nuevas clases para los algoritmos de planificación de procesos
+
+
+class InicioPageView(TemplateView):
+
+    template_name = "core/inicio.html"

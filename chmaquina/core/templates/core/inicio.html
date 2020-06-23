@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{{title}}</title> <!--carga de archivos static-->
+    {% load static %}
+	<!--css-->
+	<link rel="stylesheet" href="{% static 'core/css/bootstrap.min.css' %}"> 
+	<link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
+	
+	
+	<!--js-->
+	<script src="{% static 'core/js/jquery-3.4.1.min.js' %}"></script>
+	<script src="{% static 'core/js/bootstrap.min.js' %}"></script>
+	
+	<!--favicon-->
+	<link rel="shortcut icon" type="image/png" href="{% static 'core/img/favicon.ico' %}"/>
+
+
+</head>
+
+<body>
+		<div id="Pinicio">
+        <div style='margin: 0px 0px 15px 0px;'> Bienvenido al CH Máquina, por favor escoja uno de los algoritmos de planificación de procesos para continuar</div>
+			<ul class="list-group">
+				<a  class="list-group-item list-group-item-action" href="{% url 'fcfs' %}" style="font-weight: bold; text-align: center;">FCFS</a>
+				<button type="button"  class="list-group-item list-group-item-action" href="" style="font-weight: bold; text-align: center;">SJF/SPN</button>
+				<button type="button"  class="list-group-item list-group-item-action" href="" style="font-weight: bold; text-align: center;">SJF/SRNT</button>
+				<button type="button"  class="list-group-item list-group-item-action" href="" style="font-weight: bold; text-align: center;">Por prioridad/no expropiativo</button>
+				<button type="button"  class="list-group-item list-group-item-action" href="" style="font-weight: bold; text-align: center;" >Por prioridad/expropiativo</button>
+				<button type="button" class="list-group-item list-group-item-action" href="" style="font-weight: bold; text-align: center;">Round-Robin</button>
+			
+
+			</ul>
+		</div>
+
+
+
+</body>
