@@ -78,7 +78,6 @@ class HomePageView2(CreateView):
 
     def abrirArch(self, ruta):
         f="" #se utiliza para abrir el archivo desde la ruta relativa
-        #myfile ="" #se utiliza para crear una instancia de la clase file y así tener un manejo desde django
         leer=[] # aquí se guardan todas las instrucciones del archivo .ch 
         
         #aqui tratamos de leer el archivo si es posible.
@@ -874,6 +873,30 @@ class SPNView(CreateView):
 
         return leerLimp2
 
+    def procesoCorto(self,listaProcesos):
+        #global proEjec
+        listaKeys = list(listaProcesos.keys())
+        masCorto = listaProcesos[listaKeys[0]] 
+        numProc =0
+        #print('mas corto---', masCorto)
+        print('esto es el diccionario',listaProcesos, '\n')  
+        #print(listaProcesos[0]['tRafaga'],'listpro')
+        
+        for clave, valor in listaProcesos.items():   
+            #print(listaProcesos[clave]['tRafaga'], '-trafaga de cada proceso')
+            #print(masCorto['tRafaga'], 'mas corto')
+            if listaProcesos[clave]['tRafaga'] < masCorto['tRafaga']: # compara los tiempos de rafaga 
+                print('aquí \n luego proEjec')
+                #proEjec = clave
+                numProc = clave
+                print(proEjec)
+                masCorto = listaProcesos[clave]
+            else:
+                numProc = listaKeys[0]
+
+
+        print('el proceso mas corto es :', masCorto, '\n')
+        return numProc
 
     def get(self, request, *args, **kwargs):
         global contadorPasos
@@ -916,11 +939,42 @@ class SPNView(CreateView):
                 cantidadKernel=[] # se utilizan listas para mostrar las posiciones de memoria en el kernel 
                 cantidMemoriaDisp=[] # se utulizan listas para mostrar las posiciones de memoria disponible  
             
-            nombre=nombreArchivos[proEjec] #nombre del archivo que se muestra en el front
+            nombre=nombreArchivos[0] #nombre del archivo que se muestra en el front
             
             
             ##################################################################
             print('entro', entro,"\n")
+            print(len(ruta), 'len de ruta')
+
+            if entro <= len(ruta): #or contadorPasos==0:
+                rutaPrograma =""
+                try:
+                    rutaPrograma =ruta[proEjec]
+                except:
+                    rutaPrograma =ruta[0]
+                    print("error en la ruta del último programa")
+                
+                leerLimp2= self.abrirArch(rutaPrograma)
+                tLlegada = 0
+                tRafaga= Calcular.Rafaga(leerLimp2)
+                if proEjec ==0:
+                    tLlegada = 0
+                else:
+                    tLlegada = Calcular.tiempoLlegada(len(leerLimp2),dicProc[proEjec-1]['tLlegada'])
+                
+                dicProc[proEjec]= {'leer':leerLimp2,'tLlegada':tLlegada,'tRafaga':tRafaga} #guarda cada proceso con sus instrucciones, tiempo llegada y tiempo de rafaga
+                print('se incrementa proEjc')
+                proEjec +=1
+            else:
+                rutaPrograma =""
+                try:
+                    rutaPrograma =ruta[proEjec]
+                except:
+                    rutaPrograma =ruta[0]
+                    print("error en la ruta del último programa")
+                leerLimp2= self.abrirArch(rutaPrograma)
+
+            """
             if entro == len(ruta) or contadorPasos>0:
                 rutaPrograma =""
                 try:
@@ -930,6 +984,7 @@ class SPNView(CreateView):
                     print("error en la ruta del último programa")
                 leerLimp2= self.abrirArch(rutaPrograma)
                 dicProc.clear()
+                
             
             else:
                 rutaPrograma =""
@@ -945,13 +1000,14 @@ class SPNView(CreateView):
                 if proEjec ==0:
                     tLlegada = 0
                 else:
-                    tLlegada = Calcular.tiempoLlegada(len(leerLimp2),2)
+                    tLlegada = Calcular.tiempoLlegada(len(leerLimp2),dicProc[proEjec]['tLlegada'])
                 
-                dicProc[proEjec]= {'leer':leerLimp2,'tLlegada':tLlegada,'tRafaga':tRafaga}
+                dicProc[proEjec]= {'leer':leerLimp2,'tLlegada':tLlegada,'tRafaga':tRafaga} #guarda cada proceso con sus instrucciones, tiempo llegada y tiempo de rafaga
                
-                #proEjec +=1
+                proEjec +=1
+            """
             #print("cola inicio",colaP)
-            print("esto es spn")
+            #print("esto es spn")
             instanciaMemoria = memoria(int(memoriaTotal),int(kernelFinal))
 
             #############################################################################################################
@@ -973,7 +1029,7 @@ class SPNView(CreateView):
             instanciaEjec.setCantMemo(int(memoriaTotal)) # se envia la cantidad de memoria a la ejecución
             instanciaEjec.setKernel(int(kernelFinal)) # se envia la cantidad de kernel a la ejecución
            
-            instanciaEjec.setProgEjec(int(proEjec)) # se envia el programa a ser ejecutado a la ejecución
+            #instanciaEjec.setProgEjec(int(0)) # se envia el programa a ser ejecutado a la ejecución
             instanciaEjec.setRuta(ruta) # se envia las rutas de los archivos a la ejecución
             ########################################################################
            
@@ -1141,8 +1197,11 @@ class SPNView(CreateView):
                             
                             #####################ejecución sin leer nada por teclado######################33
                             else:
-                                temporal =dicProc.pop(proEjec)
-
+                                #self.procesoCorto(dicProc)
+                                procesoSgte = self.procesoCorto(dicProc)
+                                temporal = dicProc.pop(procesoSgte) #self.procesoCorto(dicProc)  #dicProc.pop(0)
+                                instanciaEjec.setProgEjec(procesoSgte) # se envia el programa a ser ejecutado a la ejecución
+                                print(procesoSgte,'programa que se va a ejec','y esto es proceso sgte: ', procesoSgte)
                                 instanciaEjec.setLeer(temporal['leer']) # se envia la lista con todas la lineas a ejecucion 
                                 
                                 ActivarVentLeer = False
@@ -1154,12 +1213,12 @@ class SPNView(CreateView):
                                 acum = instanciaEjec.getAcumulador() # (str) 
                                 linAct = instanciaEjec.getLineaActual() # (str) 
                                 codProAct = instanciaEjec.getCodProgActual() # (list) 
-                                varAct = instanciaEjec.getVariablesActuales()# (list) 
+                                varAct = instanciaEjec.getVariablesActuales()# (list)  
                                 etiqAct = instanciaEjec.getEtiquetasActuales() # (list) 
                                 mem = instanciaEjec.getMemoria() # (list) 
                                 prog = instanciaEjec.getProgramas() # (list) 
                                 memDis = instanciaEjec.getMemoriaDispo() # (list) 
-                                proEjec+=1
+                                #proEjec+=1
                                 return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                                 'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
                                                 'etiqAct': etiqAct,'mem':mem, 'modo':'Modo usuario', 'prog':prog,'actiModal':ActivarVentLeer, }) 
