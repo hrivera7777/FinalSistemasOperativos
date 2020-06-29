@@ -35,9 +35,9 @@ class ejecucion:
     posMemEtiq=[]
     memoria.append(0) # memoria en la primera posición será el acumudador (variable requerida en el ch máquina)
     cantmemoria -= 1 # aqui se disminuye en 1 cuando se toma el acumulador 
-    rb=[] # registro base del programa, donde empieza el programa, cada posicion corresponde a un programa (ejem rb[0] es el rb del programa 0)
-    rlc =[] # registro limite del codigo, hasta donde llegan las instrucciones del programa, cada posicion corresponde a un programa (ejem rlc[0] es el rlc del programa 0) 
-    rlp=[] # registro limite del programa, hasta donde llega el programa, con variables incluidas, cada posicion corresponde a un programa (ejem rlp[0] es el rlp del programa 0)
+    rb=[-1]*15 # registro base del programa, donde empieza el programa, cada posicion corresponde a un programa (ejem rb[0] es el rb del programa 0)
+    rlc =[-1]*15 # registro limite del codigo, hasta donde llegan las instrucciones del programa, cada posicion corresponde a un programa (ejem rlc[0] es el rlc del programa 0) 
+    rlp=[-1]*15 # registro limite del programa, hasta donde llega el programa, con variables incluidas, cada posicion corresponde a un programa (ejem rlp[0] es el rlp del programa 0)
     pantalla =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
     impresora =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
     
@@ -164,10 +164,10 @@ class ejecucion:
     def agregarInstrMemoria(self): # idProg la variable global es proEjec, este metodo puede ser llamado desde views
         for i in range(len(self.leer)):
             if i==0:
-                self.rb.append(len(self.memoria))# para saber donde inicia el programa ---------- #self.rb[self.proEjec]=len(self.memoria)  
+                self.rb[self.proEjec]=len(self.memoria)  #self.rb.append(len(self.memoria))# para saber donde inicia el programa ---------- #self.rb[self.proEjec]=len(self.memoria)  
                 self.memoria.append(self.leer[i].rstrip()) 
             elif i == len(self.leer)-1:
-                self.rlc.append(len(self.memoria)+1)# para saber donde termina el programa --------- #self.rlc[self.proEjec] = len(self.memoria) 
+                self.rlc[self.proEjec] = (len(self.memoria)+1) #self.rlc.append(len(self.memoria)+1)# para saber donde termina el programa --------- #self.rlc[self.proEjec] = len(self.memoria) 
                 self.memoria.append(self.leer[i].rstrip()) 
             else:
                 self.memoria.append(self.leer[i].rstrip())
@@ -178,9 +178,9 @@ class ejecucion:
             operador = palabras[0]
             if operador == 'nueva':
                 posiblesVar +=1
-        for i in range(len(self.rlc)): # se delimita el registro limite del programa 
-            print("registro limite ", self.rlc, "\n") 
-            self.rlp.append(self.rlc[self.proEjec] + posiblesVar)
+        for i in range(len(self.rlc)-self.rlc.count(-1)): # se delimita el registro limite del programa 
+            print("registro limite ", self.rlc, "\n")
+            self.rlp[self.proEjec]=self.rlc[self.proEjec] + posiblesVar #self.rlp.append(self.rlc[self.proEjec] + posiblesVar)
         ##############################
         self.cantmemoria -= ((self.rlc[self.proEjec]- self.rb[self.proEjec]) + posiblesVar) # se resta el espacio que ocupa el programa con su variables 
     
@@ -355,7 +355,10 @@ class ejecucion:
         try:
             for i in range(len(self.ruta2)):
                 palabras = str(self.ruta2[i]).split('/') # con palabras se crea un array y ahí la posicion 0 es el id del programa y la posicion 1 es el nombre de la variable
+                #if rb[i] != -1:
                 tempoDic[i]= {'prog':palabras[1], 'ins': int(self.rlc[i] - self.rb[i]),'rb':self.rb[i], 'rlc':self.rlc[i]-1, 'rlp':self.rlp[i]-1}
+                #else:
+                #    tempoDic ={}    
         except:
             tempoDic={}
         return tempoDic
@@ -1087,9 +1090,9 @@ class ejecucion:
         self.cantidVarixPro=[0]*30 # aqui se sabe cuantas variables son agregadas en cada uno de los programas, que representan una posicion en el arreglo 
         self.etiquetas =[] #aqui se guardan los nombres de la etiquetas
         self.posMemEtiq=[]
-        self.rb=[] # registro base del programa, donde empieza el programa, cada posicion corresponde a un programa (ejem rb[0] es el rb del programa 0)
-        self.rlc =[] # registro limite del codigo, hasta donde llegan las instrucciones del programa, cada posicion corresponde a un programa (ejem rlc[0] es el rlc del programa 0) 
-        self.rlp=[] # registro limite del programa, hasta donde llega el programa, con variables incluidas, cada posicion corresponde a un programa (ejem rlp[0] es el rlp del programa 0)
+        self.rb=[-1]*15  # registro base del programa, donde empieza el programa, cada posicion corresponde a un programa (ejem rb[0] es el rb del programa 0)
+        self.rlc =[-1]*15 # registro limite del codigo, hasta donde llegan las instrucciones del programa, cada posicion corresponde a un programa (ejem rlc[0] es el rlc del programa 0) 
+        self.rlp=[-1]*15 # registro limite del programa, hasta donde llega el programa, con variables incluidas, cada posicion corresponde a un programa (ejem rlp[0] es el rlp del programa 0)
         self.pantalla =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
         self.impresora =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
         valoresLeidos=[] #valor traido desde el front para la funcion leer

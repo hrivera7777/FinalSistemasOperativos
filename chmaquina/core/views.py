@@ -973,6 +973,17 @@ class SPNView(CreateView):
                     rutaPrograma =ruta[0]
                     print("error en la ruta del último programa")
                 leerLimp2= self.abrirArch(rutaPrograma)
+            """
+            listaprueba=[-1]*15
+            print('\n','len 1', len(listaprueba))
+            listaprueba[2] = '2'
+            print(listaprueba.count(-1)-len(listaprueba))
+            #listaprueba.insert(1,'k')
+            #listaprueba.insert(0,'w')
+            print('len 2', len(listaprueba),'\n')
+            print('esto es lp',listaprueba)
+            print('esto es lp',listaprueba[2])
+            """
 
             """
             if entro == len(ruta) or contadorPasos>0:
@@ -1037,7 +1048,7 @@ class SPNView(CreateView):
             ########################################################################
             instanciaPaP.setCantMemo(int(memoriaTotal)) # se envia la cantidad de memoria a la ejecución
             instanciaPaP.setKernel(int(kernelFinal)) # se envia la cantidad de kernel a la ejecución
-            instanciaPaP.setProgEjec(int(proEjec)) # se envia el programa a ser ejecutado a la ejecución
+            #instanciaPaP.setProgEjec(int(proEjec)) # se envia el programa a ser ejecutado a la ejecución
             instanciaPaP.setRuta(ruta) # se envia las rutas de los archivos a la ejecución
             ##########################################################################
 
@@ -1174,9 +1185,12 @@ class SPNView(CreateView):
 
                                 instanciaEjec.setValoraLeer(listaValoresVariTeclado) ##despues de leer todos los valores
                                 
-                                tempoLeer= colaP.pop() # se usa para tomar el ultimo proceso que llegó 
-                                instanciaEjec.setLeer(tempoLeer) # se envia la lista con todas la lineas a ejecucion 
-
+                                procesoSgte = self.procesoCorto(dicProc)
+                                temporal = dicProc.pop(procesoSgte) #self.procesoCorto(dicProc)  #dicProc.pop(0)
+                                instanciaEjec.setProgEjec(procesoSgte) # se envia el programa a ser ejecutado a la ejecución
+                                
+                                instanciaEjec.setLeer(temporal['leer']) # se envia la lista con todas la lineas a ejecucion 
+                                
                                 instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
                                 instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
 
@@ -1201,9 +1215,10 @@ class SPNView(CreateView):
                                 procesoSgte = self.procesoCorto(dicProc)
                                 temporal = dicProc.pop(procesoSgte) #self.procesoCorto(dicProc)  #dicProc.pop(0)
                                 instanciaEjec.setProgEjec(procesoSgte) # se envia el programa a ser ejecutado a la ejecución
-                                print(procesoSgte,'programa que se va a ejec','y esto es proceso sgte: ', procesoSgte)
+                                
                                 instanciaEjec.setLeer(temporal['leer']) # se envia la lista con todas la lineas a ejecucion 
                                 
+                                #print(procesoSgte,'programa que se va a ejec','y esto es proceso sgte: ', procesoSgte)
                                 ActivarVentLeer = False
                                 instanciaEjec.agregarInstrMemoria() # agrega las instrucciones a la memoria
                                 instanciaEjec.ejecutarProg(-2) # se agrega un valor negativo puesto que no es necesario este parametro para una ejecución normal
@@ -1226,8 +1241,14 @@ class SPNView(CreateView):
                         #######################aquí comienza el paso a paso############################3
                         elif str(pasoaPaso) == 'pasoapaso' or str(sgtPaso) == 'sgtpaso' or str(sgtPaso) == 'fin' or varPrevPaP !='':
                             if str(pasoaPaso) == 'pasoapaso':
-                                tempoLeer= colaP.pop() # se usa para tomar el ultimo proceso que llegó 
-                                instanciaPaP.setLeer(leerLimp2) # se envia la lista con todas la lineas a paso a paso 
+                               
+                                procesoSgte = self.procesoCorto(dicProc)
+                                temporal = dicProc.pop(procesoSgte) #self.procesoCorto(dicProc)  #dicProc.pop(0)
+                                instanciaPaP.setProgEjec(procesoSgte) # se envia el programa a ser ejecutado a la ejecución
+                                
+                                instanciaPaP.setLeer(temporal['leer']) # se envia la lista con todas la lineas a ejecucion 
+                                
+                                
                                 instanciaPaP.agregarInstrMemoria()
                             
                             rb = instanciaPaP.getRB() #se trae el registro base del programa en ejecución
@@ -1539,7 +1560,7 @@ class SPNView(CreateView):
 
                                     contadorPasos=0
                                     entro=0
-                                    proEjec +=1
+                                    
                                     print("ultimo paso sgte prog", proEjec)
                                     return render(request, self.template_name,{'title': "Ch Máquina",'nombre':nombre, 'pantallaBack':pant ,'memoriaDis': memDis, 'kernel': kernelFinal, 'memoriaTotal':memoriaTotal,
                                                     'impre': impre, 'acum': acum, 'linAct': linAct,  'codProAct': codProAct, 'varAct': varAct,
