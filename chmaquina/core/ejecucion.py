@@ -502,8 +502,7 @@ class ejecucion:
                 self.varConIdProg(idProg, linea[1], len(self.memoria)-1)
                 self.cantidVarixPro[idProg] += 1
         else:
-            self.pantalla.append('no se agregó nada nuevo')
-        
+            self.pantalla.append('no se agregó nada nuevo')    
     #fin funcion sNueva
 
     def eCargue(self, linea, idProg):
@@ -1097,3 +1096,79 @@ class ejecucion:
         self.impresora =[] # aqui se guardaran los posibles mensajes o lo que desee mostrar (en pantalla en el frontend)
         valoresLeidos=[] #valor traido desde el front para la funcion leer
 
+#################################################################################
+#metodo de ejecución para algoritmos expropiativos
+
+#metodo que realiza la ejecución del programa
+    def ejecutarProgEXP(self, posMemEjec, posMemFin): # posMemEjec se requerirá si se llega  a una instrucción vaya o vayasi para cambiar la ejecucion del programa
+        # proEjec no se envia como parametro, porque no se conoce cuando se realice el primer llamado en views
+        numlea =0
+        varEjer = 0 # esta variable cambiara dependiendo si es una ejecucion normal o si se ingresa el parametro posMemEjec para cambiar la ejecucion a una linea especifica
+        
+        if int(posMemEjec) >=0: #si se llega a cambiar el orden de ejecucion del programa
+            varEjer = posMemEjec 
+        else:
+            varEjer = self.rb[self.proEjec]
+            self.agregarEtiquetas() # se agregan las etiquetas del programa
+
+        for i in range(varEjer,posMemFin):
+            palabras = self.memoria[i].rstrip().split()
+            operador = palabras[0]
+        
+            if operador == 'cargue':
+                self.eCargue(palabras, self.proEjec) 
+            elif operador == 'almacene':
+                self.eAlmacene(palabras, self.proEjec)
+            elif operador == 'vaya':
+                self.eVaya(palabras, self.proEjec)
+            elif operador == 'nueva':
+                self.eNueva(palabras, self.proEjec)
+            elif operador == 'etiqueta':
+                pass
+            elif operador == 'lea':
+                self.eLea(palabras,self.proEjec, numlea) 
+                numlea +=1
+            elif operador == 'sume':
+                self.eSume(palabras, self.proEjec)
+            elif operador == 'reste':
+                self.eReste(palabras, self.proEjec)
+            elif operador == 'multiplique':
+                self.eMultiplique(palabras, self.proEjec)
+            elif operador == 'divida':
+                self.eDivida(palabras, self.proEjec)
+            elif operador == 'potencia':
+                self.ePotencia(palabras, self.proEjec)
+            elif operador == 'modulo':
+                self.eModulo(palabras, self.proEjec)
+            elif operador == 'concatene':
+                self.eConcatene(palabras, self.proEjec)
+            elif operador == 'elimine':
+                self.eElimine(palabras, self.proEjec)
+            elif operador == 'extraiga':
+                self.eExtraiga(palabras, self.proEjec)
+            elif operador == 'Y':
+                self.eY(palabras, self.proEjec)
+            elif operador == 'O':
+                self.eO(palabras, self.proEjec)
+            elif operador == 'NO':
+                self.eNo(palabras, self.proEjec)
+            elif operador == 'muestre' and varEjer == self.rb[self.proEjec]: #se verifica que sea la ejecucion base para evitar que se repitan valores
+                self.eMuestre(palabras, self.proEjec)
+            elif operador == 'imprima' and varEjer == self.rb[self.proEjec]: #se verifica que sea la ejecucion base para evitar que se repitan valores
+                self.eImprima(palabras, self.proEjec)
+            elif operador == 'absoluto':
+                self.eAbsoluto(palabras, self.proEjec)
+            elif operador == 'vayasi':
+                self.eVayaSi(palabras, self.proEjec)   
+
+            elif operador == 'retorne' and varEjer == self.rb[self.proEjec]: #se verifica que sea la ejecucion base para evitar que se repitan valores
+                self.pantalla.append("*****************************")
+                self.pantalla.append("se finalizó la ejecución del programa: " + str(self.proEjec))
+                self.pantalla.append("*****************************")
+            else:
+                pass
+#metodo para encontrar la linea que corresponde dentro del programa 
+    def posMemLinea(self, linea, proc):
+        for i in range(self.rb[proc], self.rlc[proc]):
+            if linea == self.memoria[i]:
+                return i
