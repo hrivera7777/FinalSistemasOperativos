@@ -832,10 +832,6 @@ class Calcular:
         print(dicTRafagaLinea)
         return rafagaCPU+rafagaIO
 
-        
-
-
-
 ###############################################################################################    
 class InicioPageView(TemplateView):#clase que muestra el listado de algoritmos en el front
 
@@ -1604,7 +1600,6 @@ class SPNView(CreateView):
         profile, created= EjecArchCh.objects.get_or_create()
         return profile
 
-
 ############################################################################################################################3
 #aquí comienza POR PRIORIDAD NO EXPROPIATIVO
 
@@ -2324,7 +2319,6 @@ class PrioridadNoExpView(CreateView):
         
         profile, created= EjecArchCh.objects.get_or_create()
         return profile
-
 
 ######################################################################################3
 #aquí comienza SRTN
@@ -3857,7 +3851,7 @@ class RRView(CreateView):
 
         return leerLimp2
 
-    def procesoCorto(self,listaProcesos):
+    def factible(self,listaProcesos):
         #global proEjec
         listaKeys = list(listaProcesos.keys())
         masCorto = listaProcesos[listaKeys[0]] 
@@ -4125,7 +4119,7 @@ class RRView(CreateView):
 
                                 instanciaEjec.setValoraLeer(listaValoresVariTeclado) ##despues de leer todos los valores
                                 
-                                procesoSgte = self.procesoCorto(dicProc)
+                                procesoSgte = self.factible(dicProc)
                                 temporal = dicProc.pop(procesoSgte) #self.procesoCorto(dicProc)  #dicProc.pop(0)
                                 instanciaEjec.setProgEjec(procesoSgte) # se envia el programa a ser ejecutado a la ejecución
                                 
@@ -4152,7 +4146,7 @@ class RRView(CreateView):
                             #####################ejecución sin leer nada por teclado######################33
                             else:
                                 #self.procesoCorto(dicProc)
-                                procesoSgte = self.procesoCorto(dicProc)
+                                procesoSgte = self.factible(dicProc)
                                 temporal = dicProc.pop(procesoSgte) #self.procesoCorto(dicProc)  #dicProc.pop(0)
                                 instanciaEjec.setProgEjec(procesoSgte) # se envia el programa a ser ejecutado a la ejecución
                                 
@@ -4182,7 +4176,7 @@ class RRView(CreateView):
                         elif str(pasoaPaso) == 'pasoapaso' or str(sgtPaso) == 'sgtpaso' or str(sgtPaso) == 'fin' or varPrevPaP !='':
                             if str(pasoaPaso) == 'pasoapaso':
                                
-                                procesoSgte = self.procesoCorto(dicProc)
+                                procesoSgte = self.factible(dicProc)
                                 temporal = dicProc.pop(procesoSgte) #self.procesoCorto(dicProc)  #dicProc.pop(0)
                                 instanciaPaP.setProgEjec(procesoSgte) # se envia el programa a ser ejecutado a la ejecución
                                 
