@@ -1,2 +1,2 @@
 Pillow==12.2.0
-Django==4.2.29
+Django==4.2.30
